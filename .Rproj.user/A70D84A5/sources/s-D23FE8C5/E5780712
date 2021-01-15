@@ -1,0 +1,24 @@
+{
+    "id": "E5780712",
+    "path": "~/Repositories/cure-pipeline/R/example-script.R",
+    "project_path": "R/example-script.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": true,
+    "created": 1610686895894.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "cursorPosition": "31,0",
+        "scrollLine": "10"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1610687370,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1610687388996,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,25 @@
+{
+    "id": "7C2EB88F",
+    "path": "~/Repositories/cure-pipeline/R/calibration-curve.R",
+    "project_path": "R/calibration-curve.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1610685136942.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "tempName": "Untitled1",
+        "cursorPosition": "84,0",
+        "scrollLine": "65"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1610687075,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1610687075666,
+    "read_only": false,
+    "read_only_alternatives": []
+}

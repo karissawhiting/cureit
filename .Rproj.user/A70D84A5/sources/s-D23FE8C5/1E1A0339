@@ -1,0 +1,25 @@
+{
+    "id": "1E1A0339",
+    "path": "~/Repositories/cure-pipeline/R/model-fitting.R",
+    "project_path": "R/model-fitting.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1610671367443.0,
+    "source_on_save": false,
+    "relative_order": 9,
+    "properties": {
+        "tempName": "Untitled1",
+        "cursorPosition": "95,29",
+        "scrollLine": "84"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1610686360,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1610686360971,
+    "read_only": false,
+    "read_only_alternatives": []
+}

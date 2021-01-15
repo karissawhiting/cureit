@@ -1,0 +1,21 @@
+{
+    "debugBreakpointsState": {
+        "breakpoints": [
+            {
+                "id": 0,
+                "path": "~/Repositories/cure-pipeline/R/fit-model.R",
+                "line_number": 33,
+                "function_steps": "",
+                "function_name": "fit_model",
+                "state": 2,
+                "editor_state": 2,
+                "editor_line_number": 33,
+                "is_pending_debug_completion": false,
+                "needs_updated_steps": true,
+                "type": 0,
+                "is_package_breakpoint": false,
+                "package_name": ""
+            }
+        ]
+    }
+}

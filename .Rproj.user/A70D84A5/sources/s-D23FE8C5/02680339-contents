@@ -1,0 +1,346 @@
+load(here::here("data-raw", "msk.RData"))
+
+library(rms)
+library(scales)
+library(tidyverse)
+library(smcure)
+library(fastDummies)
+library(patchwork)
+
+# MODEL
+msk <- msk %>%
+  mutate(primary_tumor_size = 
+      case_when(primary_tumor_size == "Unknown" ~ NA_character_, 
+        TRUE ~ primary_tumor_size))
+
+msk2 <- msk %>% 
+  select(presentation_status, age_at_diagnosis, sex,
+    local_recurrence_or_death, 
+    rfs_years) %>%
+  na.omit() %>%
+  mutate(sex_binary = case_when(sex == "Male" ~ 0,
+    TRUE ~ 1)) %>%
+  mutate(presentation_status_binary = case_when(
+    presentation_status == "Primary" ~ 0, 
+    presentation_status == 	"Local recurrence" ~ 1))
+
+
+df <- msk %>%
+  select(
+  primary_tumor_size, 
+  local_recurrence_or_death, 
+    rfs_years) %>%
+  na.omit()
+
+mm <- model.matrix(~ primary_tumor_size, data = df)[,-1] %>%
+  as_tibble() %>%
+  cbind.data.frame(local_recurrence_or_death = df$local_recurrence_or_death, 
+    rfs_years = df$rfs_years)
+
+
+fit <- smcure(Surv(rfs_years, local_recurrence_or_death) ~
+    `primary_tumor_size> 10 cm` + `primary_tumor_size> 5, <= 10 cm`,
+  cureform= ~`primary_tumor_size> 10 cm` + `primary_tumor_size> 5, <= 10 cm`,
+     data = mm,
+  model="ph", Var = FALSE)
+
+
+fit <- smcure(Surv(rfs_years, local_recurrence_or_death) ~
+    `primary_tumor_size> 10 cm` + `primary_tumor_size> 5, <= 10 cm`,
+  cureform= ~`primary_tumor_size> 10 cm` + `primary_tumor_size> 5, <= 10 cm`,
+     data = mm,
+  model="ph", Var = FALSE)
+
+
+
+# COX NOMOGRAM --------------------------------------------------
+
+# Scaling Constant -----------
+
+# calculate x* Beta for everything
+coef1 <- fit$beta[1]
+coef2 <- fit$beta[2]
+
+
+pretty1 <- pretty(data$age_at_diagnosis, 10)
+pretty2 <- as.factor(rep(levels(as.factor(data$sex)), length.out = 10))
+pretty2_binary <- data$sex_binary
+pretty3 <- as.factor(rep(levels(as.factor(data$presentation_status)), length.out = 10))
+pretty3_binary <- data$presentation_status_binary
+
+prettyx <- c("ref", names(mm)[-c(3,4)])
+prettyx <- rep(prettyx, length.out = 10)
+
+pretty1 <- mm$`primary_tumor_size> 10 cm`
+pretty2 <- mm$`primary_tumor_size> 5, <= 10 cm`
+
+# x*Beta
+xbeta1 <- coef1*pretty1
+xbeta2 <- coef2*pretty2
+
+x <- max(xbeta1) - min(xbeta1)
+y <- max(xbeta2) - min(xbeta2)
+
+max_range <- max(x, y)
+sc <- 100/max_range
+
+# Coef 1 -----
+c1 <- (xbeta1 - min(xbeta1))*sc
+
+df_coef1 <- as.data.frame(c1) %>%
+  transmute(x = round(c1, 1),
+    label = as.character(pretty1), 
+    y = "primary_tumor_size> 10 cm") 
+
+
+# Coef 2 -----
+c2 <- (xbeta2 - min(xbeta2))*sc
+
+df_coef2 <- as.data.frame(c2) %>%
+  transmute(x = c2, 
+    label = case_when(c2 == 0 ~ "Male", 
+      TRUE ~ "Female"), 
+    y = "Sex")
+
+
+# Coef 3 -----
+c3 <- (xbeta3 - min(xbeta3))*sc
+
+df_coef3 <- as.data.frame(c3) %>%
+  transmute(x = c3, 
+    label = case_when(c3 == 0 ~ "Primary", 
+      TRUE ~ "Local Recurrence"), 
+    y = "Presentation Status")
+
+# Points  ----------
+# Linear Predictor ---
+
+lp_data <- data %>%
+  mutate(
+    xbeta_coef2 = coef2*sex_binary, 
+    xbeta_coef1 = coef1*age_at_diagnosis, 
+    xbeta_coef3 = coef3*presentation_status_binary
+    ) %>%
+  # raw lp
+  mutate(lp_raw = xbeta_coef1 + xbeta_coef2 + xbeta_coef3)  %>%
+  mutate(lp = scale(lp_raw, scale = FALSE))
+
+Intercept_raw <- -mean(lp_data$lp_raw)
+Intercept <- Intercept_raw  + sum(min(xbeta1) + min(xbeta2))
+
+lp <- pretty(range(lp_data$lp), n = 10)
+scaled_lp <- (lp-Intercept) *sc
+
+
+
+points = pretty(0:100, 10)
+df_points <- as.data.frame(points) %>%
+  transmute(x = points,
+    label = as.character(points), 
+    y = "Points")
+
+
+upper_range <-  max(sc*max(lp-Intercept), 100)
+total_points <- pretty(c(0, upper_range), n=10)
+upper_range_pretty <- max(total_points)
+
+df_lp <- as.data.frame(lp) %>%
+  transmute(x = scaled_lp, 
+    label = as.character(lp), 
+    y = "Linear Predictor") %>%
+  mutate(x = (x/upper_range_pretty)*100)
+
+
+df_tp <- as.data.frame(total_points) %>%
+  mutate(label = as.character(round(total_points, 0)), 
+    x = rescale(total_points, to = c(0, 100)), 
+    y = "Total Points") %>%
+  select(-total_points)
+
+# Prediction -------
+
+#baseline <- cbind.data.frame(fit$s,fit$Time)
+s03 <- 0.5711191
+
+# ebetaX = exp(object$beta %*% t(newX))
+#         for (i in 1:nrow(newZ)) {
+#             scure[, i] = s0^ebetaX[i]
+            
+df_pred1 <- as.data.frame(scaled_lp) %>%
+  transmute(x = (scaled_lp/upper_range_pretty)*100, 
+    label = as.character(round(s03^exp((scaled_lp/sc) + Intercept + 
+        mean(lp_data$lp_raw)), 1)), 
+    y = "3 Year Surv Prob")
+
+s05 <- 	0.4707346
+df_pred2 <- as.data.frame(scaled_lp) %>%
+  transmute(x = (scaled_lp/upper_range_pretty)*100, 
+    label = as.character(round(s05^exp((scaled_lp/sc) + Intercept + 
+        mean(lp_data$lp_raw)), 1)), 
+    y = "5 Year Surv Prob")
+
+
+# Plot -----------------
+
+all <- bind_rows(df_lp, df_coef1, df_coef2, df_coef3,
+  df_tp, df_points, df_pred1, df_pred2)
+
+all <- all %>%
+  mutate(y = fct_relevel(y, "Points", "Age at Diagnosis", "Sex",
+    "Presentation Status", 
+    "Total Points", "Linear Predictor",
+    "3 Year Surv Prob", 
+    "5 Year Surv Prob")) %>%
+  mutate(y = fct_rev(y))
+
+p1 <- all %>%
+  ggplot(aes(x = x, y = y)) + geom_line() +
+  geom_point() + 
+  geom_text(aes(label = label), vjust = 1.5) +
+  theme_minimal() + ylab(" ") + xlab(" ") +
+  ggtitle("Estimated Survival for Uncured")
+
+p1
+
+# LOGISTIC --------------------------------------------------
+
+# Scaling Constant -----------
+
+# calculate x* Beta for everything
+Intercept_raw <- fit$logistfit$coefficients[1]
+
+coef1 <- fit$logistfit$coefficients[2]
+coef2 <- fit$logistfit$coefficients[3]
+coef3 <- fit$logistfit$coefficients[4]
+
+pretty1 <- pretty(data$age_at_diagnosis, 10)
+pretty2 <- as.factor(rep(levels(as.factor(data$sex)), length.out = 10))
+pretty2_binary <- data$sex_binary
+pretty3 <- as.factor(rep(levels(as.factor(data$presentation_status)), length.out = 10))
+pretty3_binary <- data$presentation_status_binary
+
+# x*Beta
+xbeta1 <- coef1*pretty1
+xbeta2 <- coef2*pretty2_binary
+xbeta3 <- coef3*pretty3_binary
+
+x <- max(xbeta1) - min(xbeta1)
+y <- max(xbeta2) - min(xbeta2)
+z <- max(xbeta3) - min(xbeta3)
+
+max_range <- max(x, y, z)
+sc <- 100/max_range
+
+Intercept <- Intercept_raw  + sum(min(xbeta1) + min(xbeta2) + min(xbeta3))
+
+# Coef 1 -----
+c1 <- (xbeta1 - min(xbeta1))*sc
+
+df_coef1 <- as.data.frame(c1) %>%
+  transmute(x = round(c1, 1),
+    label = as.character(pretty1), 
+    y = "Age at Diagnosis") 
+
+
+# Coef 2 -----
+c2 <- (xbeta2 - min(xbeta2))*sc
+
+df_coef2 <- as.data.frame(c2) %>%
+  transmute(x = c2, 
+    label = case_when(c2 == 0 ~ "Female", 
+      TRUE ~ "Male"), 
+    y = "Sex")
+
+
+# Coef 3 -----
+c3 <- (xbeta3 - min(xbeta3))*sc
+
+df_coef3 <- as.data.frame(c3) %>%
+  transmute(x = c3, 
+    label = case_when(c3 == 0 ~ "Primary", 
+      TRUE ~ "Local Recurrence"), 
+    y = "Presentation Status")
+
+
+# Points  ----------
+# Linear Predictor ---
+
+lp_data <- data %>%
+  mutate(
+    xbeta_coef2 = coef2*sex_binary, 
+    xbeta_coef1 = coef1*age_at_diagnosis, 
+    xbeta_coef3 = coef3*presentation_status_binary
+    ) %>%
+  # raw lp
+  mutate(lp = xbeta_coef1 + xbeta_coef2 + xbeta_coef3 + Intercept_raw) 
+
+
+lp <- pretty(range(lp_data$lp), n = 10)
+
+scaled_lp <- (lp-Intercept) *sc
+pretty_scaled_lp <- pretty(scaled_lp, 10)
+sclp <- max(pretty_scaled_lp)/100
+
+upper_range <-  max(sc*max(lp-Intercept), 100)
+total_points <- pretty(c(0, upper_range), n=10)
+upper_range_pretty <- max(total_points)
+
+
+points = pretty(0:100, 10)
+df_points <- as.data.frame(points) %>%
+  transmute(x = points,
+    label = as.character(points), 
+    y = "Points")
+
+# upper_range <-  max(sc*max(lp-Intercept), 100)
+# total_points <- pretty(c(0, upper_range), n=10)
+# upper_range_pretty <- max(total_points)
+
+df_lp <- as.data.frame(lp) %>%
+  transmute(x = scaled_lp, 
+    label = as.character(lp), 
+    y = "Linear Predictor") %>%
+  mutate(x = (x/upper_range_pretty)*100)
+
+df_tp <- as.data.frame(total_points) %>%
+  mutate(label = as.character(round(total_points, 0)), 
+    x = rescale(total_points, to = c(0, 100)), 
+    y = "Total Points") %>%
+  select(-total_points)
+
+# Prediction -------
+df_pred <- as.data.frame(scaled_lp) %>%
+  transmute(x = (scaled_lp/upper_range_pretty)*100, 
+    label = as.character(round(exp(lp)/(1+exp(lp)), digits = 2)), 
+    y = "Predicted Value")
+
+
+# Plot -----------------
+
+all <- bind_rows(df_lp, df_coef1, df_coef2, df_coef3,
+  df_tp, df_points, df_pred)
+
+all <- all %>%
+  mutate(y = fct_relevel(y, "Points", "Age at Diagnosis", "Sex",
+    "Presentation Status", 
+    "Total Points", "Linear Predictor", "Predicted Value")) %>%
+  mutate(y = fct_rev(y))
+
+p2 <- all %>%
+  ggplot(aes(x = x, y = y)) + geom_line() +
+  geom_point() + 
+  geom_text(aes(label = label), vjust = 1.5) +
+  theme_minimal() + ylab(" ") + xlab(" ") +
+  ggtitle("Uncured Fraction")
+
+p2
+
+p3 <- p2 + p1 +
+  plot_annotation(
+    title = 'Uncured Prob * Survival Prob + (1 - Uncured Prob)',
+    theme = theme(plot.title = element_text(size = 16))
+  )
+
+p3
+ggsave(plot = p3, here::here("sarcoma-noma.png"), width = 16)
+ 
