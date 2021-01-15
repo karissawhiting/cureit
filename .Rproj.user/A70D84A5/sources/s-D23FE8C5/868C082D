@@ -1,0 +1,25 @@
+{
+    "id": "868C082D",
+    "path": "~/Repositories/cure-pipeline/R/clean-model-results.R",
+    "project_path": "R/clean-model-results.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1610687727650.0,
+    "source_on_save": false,
+    "relative_order": 6,
+    "properties": {
+        "tempName": "Untitled1",
+        "cursorPosition": "18,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1610677076,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1610677076,
+    "read_only": false,
+    "read_only_alternatives": []
+}

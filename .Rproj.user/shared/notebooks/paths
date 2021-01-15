@@ -1,3 +1,5 @@
+/Users/Whiting/Repositories/cure-pipeline/.gitignore.R="49A77F14"
+/Users/Whiting/Repositories/cure-pipeline/.gitignore.txt="2612A3E9"
 /Users/Whiting/Repositories/cure-pipeline/R/calibration-curve.R="B528D07F"
 /Users/Whiting/Repositories/cure-pipeline/R/clean-model-results.R="A08AB9C4"
 /Users/Whiting/Repositories/cure-pipeline/R/cure-nomo-multi-var.R="D92F689D"
@@ -7,4 +9,5 @@
 /Users/Whiting/Repositories/cure-pipeline/R/model-fitting.R="856F92CF"
 /Users/Whiting/Repositories/cure-pipeline/R/nomogram.R="EAD810B9"
 /Users/Whiting/Repositories/cure-pipeline/R/stability-tests.R="230A6CB9"
+/Users/Whiting/Repositories/cure-pipeline/README.Rmd="7EDBDC2F"
 /Users/Whiting/Repositories/cure-pipeline/example.R="270BFC7C"

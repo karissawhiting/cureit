@@ -18,15 +18,25 @@ mel <- ISwR::melanom %>%
                          ulc == 2 ~ "absent"))
 
 # Run Pipeline --------------------------
-fit <- fit_cure(formula = Surv(days, status) ~ ulc + sex + thick_cat + thick + no,
+fit <- fit_cure(formula = Surv(days, status) ~ ulc + sex + thick_cat + thick ,
                 data = mel)
 
 cure_nomogram(fit, prediction_time = 300)
 
 cure_calibration(fit, prediction_time = 300)
 
-stability <- multiple_mod_runs(formula = Surv(days, status) ~ ulc + sex + thick_cat + thick + no,
-                data = mel, 
-                 num_repeats = 4)
 
-stability
+# Stability example----
+formula <- Surv(days, status) ~ ulc + sex
+x <- multiple_mod_runs(formula,
+                              nboot = 200,
+                              eps = 0.0001,
+                              num_repeats = 3,
+                              data = mel)
+x$model_results
+
+x$var_surv_stab
+x$p_surv_stab
+
+x$var_cure_stab
+x$p_cure_stab

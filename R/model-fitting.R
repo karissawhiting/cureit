@@ -1,7 +1,6 @@
 # Functions to Run Cure Models (Once or Multiple Times) ------------------------
 # ------------------------------------------------------------------------------
 
-source(here::here("R", "clean-model-results.R"))
 
 # Single Model Run -------------------------------------------------------------
 # Wrapper function for smcure to accept multi-level variables and save necessary 
@@ -96,6 +95,8 @@ multiple_mod_runs <- function(formula,
                               num_repeats = 10, 
                               data = mel) {
 
+  source(here::here("R", "clean-model-results.R"))
+  
   # pull original variables from formula
   mf <- formula
   mf <- eval(mf, parent.frame())
@@ -235,28 +236,4 @@ multiple_mod_runs <- function(formula,
 }
 
 
-# Examples
-
-# data <- ISwR::melanom %>%
-#   mutate(status = case_when(status %in% c(1, 3) ~ 1, 
-#                             TRUE ~ 0)) %>%
-#   mutate(sex = case_when(sex == 2 ~ "male", 
-#                          sex == 1 ~ "female"),
-#          ulc = case_when(ulc == 1 ~ "present", 
-#                          ulc == 2 ~ "absent"))
-# 
-# formula <- Surv(days, status) ~ ulc + sex
-#   
-# x <- multiple_mod_runs(formula,
-#                               nboot = 200,
-#                               eps = 0.0001, 
-#                               num_repeats = 3, 
-#                               data = data)
-# x$model_results
-# 
-# x$var_surv_stab
-# x$p_surv_stab
-# 
-# x$var_cure_stab
-# x$p_cure_stab
   
