@@ -11,6 +11,7 @@ cure_nomogram <- function(fit, prediction_time = 3) {
   fit_obj <- fit$smcure_model_object
   mm <- fit$model_matrix
   betas <- fit_obj$beta
+  data <- fit$data
   
   # change to be only if backticks
   names(betas) <- str_remove(names(betas), fixed("X[, -1]")) %>%
@@ -34,7 +35,7 @@ cure_nomogram <- function(fit, prediction_time = 3) {
    beta_cat <- betas[names(betas) %in% cat2]
    
   cont_df <- data %>%
-    select(all_of(cont))
+    dplyr::select(all_of(cont))
 
   
   # make "pretty" continuous ---

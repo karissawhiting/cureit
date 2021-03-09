@@ -1,0 +1,179 @@
+---
+title: "Cure Model Analysis Example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Cure Model Analysis Example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+gt_compact_fun <- function(x) {
+  gt::tab_options(x, 
+                  table.font.size = 'small',
+                  data_row.padding = gt::px(1),
+                  summary_row.padding = gt::px(1),
+                  grand_summary_row.padding = gt::px(1),
+                  footnotes.padding = gt::px(1),
+                  source_notes.padding = gt::px(1),
+                  row_group.padding = gt::px(1))
+}
+
+library(smcure)
+library(survival)
+library(tidyverse)
+library(gtsummary)
+library(survival)
+library(ggpubr)
+library(survminer)
+library(gt)
+
+files <- list.files(here::here("R"), full.names = TRUE)
+
+map(files, ~source(.x))
+```
+
+
+# Introduction
+
+This package allows you to easily build and report cure mixture models. The modeling functions are wrappers for the `smcure()` function from the {smcure} package and several functions are available to diagnose and visualize your cure model results.
+
+# Example data set
+
+We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The data is available in the {ISwR} package (Dalgaard, 2008). 
+
+Variables include:
+- `ulc` - ulceration status
+- `thick` - tumor thickness in mm
+- `sex` - sex
+
+We created categorized version of tumor thickness
+
+```{r}
+df <- ISwR::melanom
+
+mel <- ISwR::melanom %>%
+  mutate(status = case_when(status %in% c(1) ~ 1, 
+                            status %in% c(2, 3) ~ 0)) %>%
+  mutate(thick_cat = 
+              case_when(thick <= 129 ~ "≤ 129", 
+                        thick <= 322 ~ "less equal 322", 
+                        thick > 322 ~ "greater 322")) %>%
+  mutate(thick_cat = fct_relevel(thick_cat, "≤ 129", "≤ 322")) %>%
+  mutate(sex = case_when(sex == 2 ~ "male", 
+                         sex == 1 ~ "female"),
+         ulc = case_when(ulc == 1 ~ "present", 
+                         ulc == 2 ~ "absent"))
+
+mel %>%
+  select(thick_cat, sex, ulc) %>%
+  tbl_summary() %>%
+  bold_labels()
+
+
+```
+
+To calculate overall survival, we will only consider death from melanoma as an event. Patients who died from other cause or were lost to follow-up are censored. 
+
+```{r}
+fit <- survfit(Surv(days/365, status) ~ ulc, data = mel)
+
+fit %>% ggsurvplot()
+
+```
+
+# Fitting the Cure Model
+
+The `fit_cure()` function is a wrapper for `smcure::smcure()`. It differs from the original function in that it allows you to pass multi-level categorical variables and also provides necessary model outputs to create calibration curves and calculate k-indicies. 
+
+
+```{r }
+
+fit <- fit_cure(formula = Surv(days, status) ~ ulc + sex + 
+                  thick_cat,
+                data = mel)
+
+x <- mmcure(fit$smcure_model_object) %>%
+  transmute(variable = str_remove_all(name, fixed("Z[, -1]")), 
+            value, 
+            pvalue) %>%
+  filter(variable != "(Intercept)")
+
+
+y <- mmsurv(fit$smcure_model_object) %>%
+  transmute(variable = str_remove_all(
+    str_remove_all(name, fixed("X[, -1]")), fixed("`")), 
+            value, 
+            pvalue) 
+
+all <- x %>% left_join(y, by = "variable", suffix = c("_cure", "_survival"))
+all %>%
+  gt()
+```
+
+# K-Index
+
+Below we calculate the K and C indicies for this model
+
+```{r}
+library(ROCR)
+  
+mod_data <- mel %>%
+  mutate(sex = as.integer(as.factor(sex))-1) 
+
+mm <- model.matrix(~ulc + sex + 
+                  thick_cat, data = mod_data)[, -1]
+
+mod2 <- mod_data %>%
+  dplyr::select(days, status) %>%
+  cbind(mm)
+  
+k_fit <- evacure::smcure1(Surv(days, status) ~ ulcpresent + 
+                            sex + 
+                            `thick_catgreater 322` + 
+                            `thick_catless equal 322`,
+      cureform = ~ ulcpresent + 
+                            sex + 
+                            `thick_catgreater 322` + 
+                            `thick_catless equal 322`,
+      data = mod2,
+      model = "ph",
+      nboot = 200,
+      Var = T
+      )
+```
+
+```{r}
+
+k_index <- k_fit$eva["K"]
+c_index <- k_fit$eva["C"]
+
+
+tribble(
+  ~"Statistic", ~"Value", 
+  "k-index", k_index, 
+  "c-index", c_index) %>%
+  mutate_if(is.numeric, ~round(.x, 3)) %>%
+  gt() %>%
+  gt::tab_options(table.font.size = "small", 
+        data_row.padding = gt::px(1),
+        summary_row.padding = gt::px(1), 
+        grand_summary_row.padding = gt::px(1),
+        footnotes.padding = gt::px(1), 
+        source_notes.padding = gt::px(1),
+        row_group.padding = gt::px(1))
+```
+
+
+# Calibration Curve
+
+```{r}
+
+cure_calibration(fit, prediction_time = 1000)
+```
+

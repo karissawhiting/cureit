@@ -25,7 +25,7 @@ fit_cure <-  function(formula, data) {
    
    # create model matrix for dummy variables
    model_mat <- model.matrix(mf, data = data_sub)
-   model_mat_sub <- model_mat[,-1]
+   model_mat_sub <- model_mat[,-1, drop = FALSE]
    
    # edited data set for necessary variables in smcure
   data_for_smcure <- data_sub %>%
@@ -116,7 +116,7 @@ multiple_mod_runs <- function(formula,
 
   # create model matrix for dummy variables
   model_mat <- model.matrix(mf, data = data_sub)
-  model_mat_sub <- model_mat[, -1]
+  model_mat_sub <- model_mat[, -1, drop = FALSE]
 
   # edited data set for necessary variables in smcure
   data_for_smcure <- data_sub %>%

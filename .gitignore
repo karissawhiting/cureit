@@ -1,3 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+inst/doc
+
 # ignore R data files
 .Rproj.user
 .Rhistory
