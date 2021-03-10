@@ -2,41 +2,67 @@
 # library(ISwR)
 # library(gtsummary)
 # library(tidyverse)
-
-# Prepare Data --------------------------
+# 
+# # Prepare Data --------------------------
 # mel <- ISwR::melanom %>%
-#   mutate(status = case_when(status %in% c(1, 3) ~ 1, 
+#   mutate(status = case_when(status %in% c(1, 3) ~ 1,
 #                             TRUE ~ 0)) %>%
-#   mutate(thick_cat = 
-#               case_when(thick <= 129 ~ "≤ 129", 
-#                         thick <= 322 ~ "less equal 322", 
+#   mutate(thick_cat =
+#               case_when(thick <= 129 ~ "≤ 129",
+#                         thick <= 322 ~ "less equal 322",
 #                         thick > 322 ~ "greater 322")) %>%
 #   mutate(thick_cat = fct_relevel(thick_cat, "≤ 129", "≤ 322")) %>%
-#   mutate(sex = case_when(sex == 2 ~ "male", 
+#   mutate(sex = case_when(sex == 2 ~ "male",
 #                          sex == 1 ~ "female"),
-#          ulc = case_when(ulc == 1 ~ "present", 
+#          ulc = case_when(ulc == 1 ~ "present",
 #                          ulc == 2 ~ "absent"))
-
-# Run Pipeline --------------------------
-# fit <- fit_cure(formula = Surv(days, status) ~ ulc + sex + thick_cat + thick ,
-#                 data = mel)
+# 
+# 
+# x <- prepare_variables(formula = Surv(days, status) ~ ulc + sex + thick_cat + thick, 
+#                   data = mel)
+# 
+# x <- prepare_variables(formula = Surv(days, status) ~ thick, 
+#                   data = mel)
+# 
+# data(e1684)
+# # fit PH mixture cure model
+# pd <- smcure(Surv(FAILTIME,FAILCENS)~TRT+SEX+AGE,cureform=~TRT+SEX+AGE,
+#      data=e1684,
+#      model="ph",Var = FALSE)
+# 
+# 
+# x <- prepare_variables(formula = Surv(FAILTIME,FAILCENS)~TRT+SEX+AGE, 
+#                   data = e1684)
+# 
+# # Try Parallel --------------------------
+# 
+# d <- e1684[1:150,]
+# 
+# library(tictoc)
+# 
+# #1170.896/60 =19.51493
+# tic()
+# test2 <- fit_cure(formula = Surv(FAILTIME,FAILCENS)~TRT + AGE, 
+#                   data = d,
+#                   eps = .01, nboot = 20, n_runs = 3)
+# toc()
+# 
+# # 520.561 /60
+# tic()
+# test3 <- fit_cure(formula = Surv(FAILTIME,FAILCENS)~TRT + AGE, 
+#                   data = d,
+#                   eps = .01, nboot = 20, n_runs = 3, 
+#                   parallel = TRUE, workers = 3)
+# toc()
+# 
+# 
+# test4 <- fit_cure(formula = Surv(FAILTIME,FAILCENS)~TRT + AGE, 
+#                   data = d,
+#                   eps = .01, nboot = 20, n_runs = 1, 
+#                   parallel = TRUE, workers = 3)
+# toc()
 # 
 # cure_nomogram(fit, prediction_time = 1000)
 # 
 # cure_calibration(fit, prediction_time = 1000)
 
-
-# Stability example----
-# formula <- Surv(days, status) ~ ulc + sex
-# x <- multiple_mod_runs(formula,
-#                               nboot = 200,
-#                               eps = 0.0001,
-#                               num_repeats = 3,
-#                               data = mel)
-# x$model_results
-# 
-# x$var_surv_stab
-# x$p_surv_stab
-# 
-# x$var_cure_stab
-# x$p_cure_stab

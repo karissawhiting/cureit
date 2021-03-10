@@ -16,3 +16,4 @@ mmsurv <- function(fit_k2_cat) {
             value = round(exp(value.x), 2), 
             pvalue = round(value.y, 2))
 }
+
