@@ -138,8 +138,11 @@ fit_cure <- function(formula, data, n_runs = 1,
  
  if (parallel == TRUE) {
    res <- furrr::future_map(1:n_runs,
-                           ~repeated_model_run(),
-                           .options = furrr::future_options(seed = 123))
+                           ~repeated_model_run()
+                           
+                           #,
+                           #.options = furrr::future_options(seed = 123)
+                           )
  } else {
     res <- map(1:n_runs, ~repeated_model_run())
  }
