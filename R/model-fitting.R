@@ -18,7 +18,7 @@ prepare_variables  <-  function(formula, data) {
    
    # only keep variables we need 
     data_sub <- data %>%
-      select(all.vars(mf)[1],
+      dplyr::select(all.vars(mf)[1],
             all.vars(mf)[2], 
             labels(terms(mf))) %>%
     mutate(across(is.character, ~as.factor(.x))) %>%
@@ -32,14 +32,14 @@ prepare_variables  <-  function(formula, data) {
    
    # edited data set for necessary variables in smcure
   data_for_smcure <- data_sub %>%
-      select(all.vars(mf)[1],
+      dplyr::select(all.vars(mf)[1],
             all.vars(mf)[2]) %>%
      bind_cols(as.data.frame(model_mat_sub))
    
    # create new formula from dummy variables for cure model
    vars <- colnames(model_mat_sub)
-   w <- grep(pattern = " ", x = vars, fixed = TRUE)
-   vars[w] <- sprintf("`%s`", vars[w])
+#w <- grep(pattern = " ", x = vars, fixed = TRUE)
+   vars <- sprintf("`%s`", vars)
    
    new_formula <- paste0("Surv(", all.vars(mf)[1], ", ", all.vars( mf)[2], ")",
                          " ~ ", paste(vars, collapse=" + ") )
@@ -108,18 +108,22 @@ fit_cure <- function(formula, data, n_runs = 1,
   
   var_metadata <- x$variable_metadata
   model_matrix <- x$model_matrix
-  data_for_smcure <- x$data
   surv_formula <- x$surv_formula
   cure_formula <- x$cure_formula
+  data_for_smcure <- x$data
 
   # results -----
 
-  smcure(surv_formula,
-          cureform = cure_formula,
-       data = data_for_smcure, Var = TRUE,
-       model = "ph", ...)
+  # smcure(surv_formula,
+  #         cureform = cure_formula,
+  #      data = data_for_smcure, Var = TRUE,
+  #      model = "ph", ...)
   
+# p <- progressor(steps = length(n_runs))
  repeated_model_run <- function(...) {
+    
+ #   p()
+    
     tryCatch(
       {
         smcure(surv_formula,
@@ -129,21 +133,27 @@ fit_cure <- function(formula, data, n_runs = 1,
           model = "ph",
           ...
         )
+      
       },
       error = function(e) {
         NA
       }
     )
+
   }
  
+
+ 
  if (parallel == TRUE) {
+   
+    
    res <- furrr::future_map(1:n_runs,
                            ~repeated_model_run()
                            
                            #,
                            #.options = furrr::future_options(seed = 123)
                            )
- } else {
+ } else if (parallel != TRUE) {
     res <- map(1:n_runs, ~repeated_model_run())
  }
  
@@ -166,9 +176,82 @@ fit_cure <- function(formula, data, n_runs = 1,
 }
 
 
+# K Index ------------------ -------------------------------------------------
 
+fit_kindex <- function(formula, data, n_runs = 1,
+                     parallel = FALSE, 
+                     workers = 2, ...) {
+  
+  if (parallel == TRUE) {
+    plan(multisession, workers = workers)
+  }
+  
+  input_list <- list(...)
+  x <- prepare_variables(formula, data)
+  
+  var_metadata <- x$variable_metadata
+  model_matrix <- x$model_matrix
+  surv_formula <- x$surv_formula
+  cure_formula <- x$cure_formula
+  data_for_smcure <- x$data
 
+  # results -----
 
+# p <- progressor(steps = length(n_runs))
+ repeated_model_run <- function(...) {
+    
+ #   p()
+    
+    tryCatch(
+      {
+        smcure1(surv_formula,
+          cureform = cure_formula,
+          data = data_for_smcure,
+          Var = T, 
+          model = "ph",
+          ...
+        )
+      
+      },
+      error = function(e) {
+        NA
+      }
+    )
+
+  }
+ 
+
+ 
+ if (parallel == TRUE) {
+   
+    
+   res <- furrr::future_map(1:n_runs,
+                           ~repeated_model_run()
+                           
+                           #,
+                           #.options = furrr::future_options(seed = 123)
+                           )
+ } else if (parallel != TRUE) {
+    res <- map(1:n_runs, ~repeated_model_run())
+ }
+ 
+  res <- res[!is.na(res)]
+  
+  message(paste0(length(res), " of ", n_runs, " successful model runs"))
+  
+  return(res)
+
+  # 
+     # return(list(
+     #   "cure_fit_obj" = model,
+     #   "variable_metadata" = var_metadata,
+     #   "model_matrix" = model_matrix, 
+     #   "data" = data_for_smcure, 
+     #   "formula" = formula))
+  
+ # res
+
+}
 
 
 # OLD ----Multiple Model Runs -----------------------------------------------------------

@@ -26,7 +26,8 @@ Imports:
     smcure,
     furrr,
     gtsummary,
-    tidyr
+    tidyr,
+    stringr
 Suggests: 
     knitr,
     rmarkdown

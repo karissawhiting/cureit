@@ -28,7 +28,7 @@ tidy_surv <- function(x,
                       conf.level = 0.95, ...) {
   tidy <-
     tibble::tibble(
-      term = x$betanm,
+      term = stringr::str_remove_all(x$betanm, fixed("`")),
       estimate = x$beta,
       std.error = NA,
       statistic = x$beta_zvalue,
@@ -44,9 +44,30 @@ tidy_surv <- function(x,
   tidy
 }
 
-# tidy_cure() {
-#   
-# }
+tidy_cure <- function(x,
+                      exponentiate =  FALSE,
+                      conf.level = 0.95, ...) {
+  
+  or <- tbl_regression(x, 
+                       tidy_fun = tidy_cure_frac,
+                       exponentiate = TRUE) %>%
+  modify_column_hide(column = ci) %>%
+    bold_p()
+  
+  hr <- tbl_regression(x, 
+                       tidy_fun = tidy_surv,
+                       exponentiate = TRUE)%>%
+  modify_column_hide(column = ci) %>%
+    bold_p()
+
+  
+  res <-  gtsummary::tbl_merge(list(or, hr), 
+                       tab_spanner = c("**Cure Fraction**",
+                                       "**Survival**")) 
+  
+  res
+  
+  }
 
 # Multiple Model Runs Tidiers ---------------------------------------------
 
@@ -68,7 +89,7 @@ multi_tidy_cure_frac <- function(multi_x,
    nest() %>%
    mutate(density = map(data, ~density(.x$p.value))) %>%
    mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
-   mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))]))
+   mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))
  
   tidy <-
     tibble::tibble(
@@ -107,11 +128,11 @@ multi_tidy_surv <- function(multi_x,
    nest() %>%
    mutate(density = map(data, ~density(.x$p.value))) %>%
    mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
-   mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))]))
+   mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))
  
   tidy <-
     tibble::tibble(
-      term = cure_res$term,
+      term = stringr::str_remove_all(cure_res$term, fixed("`")),
       estimate = cure_res$est,
       std.error = NA,
       statistic = NA,
@@ -133,12 +154,14 @@ multi_tidy_cure <- function(multi_x,
   or <- tbl_regression(multi_x, 
                        tidy_fun = multi_tidy_cure_frac,
                        exponentiate = TRUE) %>%
-  modify_column_hide(column = ci)
+  modify_column_hide(column = ci) %>%
+    bold_p()
   
   hr <- tbl_regression(multi_x, 
                        tidy_fun = multi_tidy_surv,
                        exponentiate = TRUE)%>%
-  modify_column_hide(column = ci)
+  modify_column_hide(column = ci) %>%
+    bold_p()
 
   
   res <-  gtsummary::tbl_merge(list(or, hr), 
@@ -150,3 +173,38 @@ multi_tidy_cure <- function(multi_x,
   }
 
 
+# Extract Estimates ----------------
+extract_est <- function(multi_x,
+                      exponentiate =  FALSE,
+                      conf.level = 0.95, ...) {
+  
+   multi_x_tidy <- map_dfr(multi_x, ~tidy_surv(.x)) 
+  
+   den_fun <- function(dd) {
+     final_p <- dd$x[which.max(dd$y)]
+     final_p
+   }
+   
+ surv_res <- multi_x_tidy %>%
+   group_by(term) %>%
+   nest() %>%
+   mutate(density = map(data, ~density(.x$p.value))) %>%
+   mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
+   mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))%>% 
+   unnest(cols = c(data))
+ 
+
+  multi_x_tidy <- map_dfr(multi_x, ~tidy_cure_frac(.x)) 
+  
+   
+ cure_res <- multi_x_tidy %>%
+   group_by(term) %>%
+   nest() %>%
+   mutate(density = map(data, ~density(.x$p.value))) %>%
+   mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
+   mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))%>% 
+   unnest(cols = c(data))
+ 
+ return(list(surv_res, cure_res))
+ 
+}
