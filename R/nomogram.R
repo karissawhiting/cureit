@@ -6,9 +6,10 @@ library(tidyverse)
 # fit an smcure model but with terms and data attached for multi-level factors
 cure_nomogram <- function(fit, prediction_time = 3) {
   
+
   # extract from model fit---
   var_metadata <- fit$variable_metadata
-  fit_obj <- fit$smcure_model_object
+  fit_obj <- fit$cure_fit_obj
   mm <- fit$model_matrix
   betas <- fit_obj$beta
   data <- fit$data
@@ -54,7 +55,7 @@ cure_nomogram <- function(fit, prediction_time = 3) {
   #   select(all_of(cat))
   
    cat_df <- mm %>%
-     as_tibble() %>%
+     tibble::as_tibble() %>%
      select(all_of(cat2))
    
   cat_pretty <- map(cat_df,
@@ -105,10 +106,10 @@ cure_nomogram <- function(fit, prediction_time = 3) {
   
   
 #   coefs <- apply(x_beta, 2, function(x) (x - min(x))*sc) %>%
- #    as_tibble()
+ #    tibble::as_tibble()
   
   x_beta_tb <- x_beta %>%
-    as_tibble()
+    tibble::as_tibble()
    
   names(all_pretty_beta) <- str_remove(names(all_pretty_beta), fixed("X[, -1]")) %>%
     str_remove_all(., fixed("`"))
@@ -121,7 +122,7 @@ cure_nomogram <- function(fit, prediction_time = 3) {
   
 
   cat_final_vars  <- tibble(coefs) %>% bind_cols(names(all_pretty_beta)) %>%
-    unnest(cols = c(coefs)) %>%
+    tidyr::unnest(cols = c(coefs)) %>%
     rename("new_var" = `...2`) %>%
     left_join(select(var_metadata, original_vars, new_var, factor)) %>%
     filter(factor == "yes")

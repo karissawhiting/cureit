@@ -86,7 +86,7 @@ multi_tidy_cure_frac <- function(multi_x,
    
  cure_res <- multi_x_tidy %>%
    group_by(term) %>%
-   nest() %>%
+   tidyr::nest() %>%
    mutate(density = map(data, ~density(.x$p.value))) %>%
    mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
    mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))
@@ -125,7 +125,7 @@ multi_tidy_surv <- function(multi_x,
    
  cure_res <- multi_x_tidy %>%
    group_by(term) %>%
-   nest() %>%
+   tidyr::nest() %>%
    mutate(density = map(data, ~density(.x$p.value))) %>%
    mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
    mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))
@@ -187,11 +187,11 @@ extract_est <- function(multi_x,
    
  surv_res <- multi_x_tidy %>%
    group_by(term) %>%
-   nest() %>%
+   tidyr::nest() %>%
    mutate(density = map(data, ~density(.x$p.value))) %>%
    mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
    mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))%>% 
-   unnest(cols = c(data))
+   tidyr::unnest(cols = c(data))
  
 
   multi_x_tidy <- map_dfr(multi_x, ~tidy_cure_frac(.x)) 
@@ -199,11 +199,11 @@ extract_est <- function(multi_x,
    
  cure_res <- multi_x_tidy %>%
    group_by(term) %>%
-   nest() %>%
+   tidyr::nest() %>%
    mutate(density = map(data, ~density(.x$p.value))) %>%
    mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
    mutate(est = map_dbl(data, ~.x$estimate[which(abs(.x$p.value - final_p) == min(abs(.x$p.value - final_p)))[[1]]]))%>% 
-   unnest(cols = c(data))
+   tidyr::unnest(cols = c(data))
  
  return(list(surv_res, cure_res))
  

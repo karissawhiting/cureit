@@ -60,20 +60,20 @@ cure_nomogram(fit, prediction_time = 300)
 cure_calibration(fit, prediction_time = 300)
 
 
-# Check Stability ----
-formula <- Surv(days, status) ~ ulc + sex
-x <- multiple_mod_runs(formula,
-                              nboot = 200,
-                              eps = 0.0001,
-                              num_repeats = 3,
-                              data = mel)
-x$model_results
-
-x$var_surv_stab
-x$p_surv_stab
-
-x$var_cure_stab
-x$p_cure_stab
+# Check Stability ---- Defunct
+# formula <- Surv(days, status) ~ ulc + sex
+# x <- multiple_mod_runs(formula,
+#                               nboot = 200,
+#                               eps = 0.0001,
+#                               num_repeats = 3,
+#                               data = mel)
+# x$model_results
+# 
+# x$var_surv_stab
+# x$p_surv_stab
+# 
+# x$var_cure_stab
+# x$p_cure_stab
 
 ```
 

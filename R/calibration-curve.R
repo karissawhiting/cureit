@@ -3,7 +3,7 @@
 ### Calibration Curve -----------------------------------------------------------
 
 cure_calibration <- function(fit, prediction_time = 3) {
-  fit_obj <- fit$smcure_model_object
+  fit_obj <- fit$cure_fit_obj
   mm <- fit$model_matrix
   data <- fit$data
   var_metadata <- fit$variable_metadata
@@ -17,23 +17,23 @@ cure_calibration <- function(fit, prediction_time = 3) {
   )
 
 
-  preds <- as_tibble(p$prediction) %>%
-    #  bind_cols(Time = fit$Time) %>%
-    mutate(time_dif = abs(Time - prediction_time)) %>%
-    filter(time_dif == min(time_dif)) %>%
-    dplyr::select(-Time, -time_dif) %>%
+  preds <- tibble::as_tibble(p$prediction) %>%
+  #   bind_cols(Time = fit$Time) %>%
+    mutate(time_dif = abs(.data$Time - prediction_time)) %>%
+    filter(time_dif == min(.data$time_dif)) %>%
+    dplyr::select(-.data$Time, -.data$time_dif) %>%
     t() %>%
-    as_tibble() %>%
+    tibble::as_tibble() %>%
     mutate(index = 1:nrow(.)) %>%
-    mutate(decile = ntile(V1, 10))
+    mutate(decile = ntile(.data$V1, 10))
 
 
   data <- data %>%
     mutate(index = 1:nrow(.))
 
   mean_pred <- preds %>%
-    group_by(decile) %>%
-    summarise(mean_pred = mean(V1))
+    group_by(.data$decile) %>%
+    summarise(mean_pred = mean(.data$V1))
 
   one <- preds %>%
     filter(decile == 2)
@@ -45,29 +45,29 @@ cure_calibration <- function(fit, prediction_time = 3) {
                          ") ~ 1"))
   
   f <- function(one) {
-    x <- data %>% filter(index %in% one$index)
+    x <- data %>% filter(.data$index %in% one$index)
     t <- survfit(survfit_form,
       data = x
     )
     broom::tidy(t) %>%
-      mutate(time_dif = abs(time - prediction_time)) %>%
-      filter(time_dif == min(time_dif)) %>%
-      pull(estimate)
+      mutate(time_dif = abs(.data$time - prediction_time)) %>%
+      filter(time_dif == min(.data$time_dif)) %>%
+      pull(.data$estimate)
   }
 
 
   preds2 <- preds %>%
-    group_by(decile) %>%
-    nest() %>%
+    group_by(.data$decile) %>%
+    tidyr::nest() %>%
     mutate(obs_prob = map_dbl(data, ~ f(.x)))
 
 
   all <- preds2 %>%
     left_join(mean_pred) %>%
-    dplyr::select(-data)
+    dplyr::select(-.data$data)
 
   all %>%
-    ggplot(aes(x = mean_pred, y = obs_prob)) +
+    ggplot(aes(x = .data$mean_pred, y = .data$obs_prob)) +
     geom_point() +
     geom_line() +
     theme_minimal() +

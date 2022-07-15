@@ -161,17 +161,22 @@ fit_cure <- function(formula, data, n_runs = 1,
   
   message(paste0(length(res), " of ", n_runs, " successful model runs"))
   
-  return(res)
-
-  # 
-     # return(list(
-     #   "cure_fit_obj" = model,
-     #   "variable_metadata" = var_metadata,
-     #   "model_matrix" = model_matrix, 
-     #   "data" = data_for_smcure, 
-     #   "formula" = formula))
+#  return(res)
   
- # res
+  if(length(res) == 1) {
+    model <- res[[1]]
+  } else {
+    rlang::abort("Multiple runs not supported yet")
+  }
+  
+  return(list(
+    "cure_fit_obj" = model,
+    "variable_metadata" = var_metadata,
+    "model_matrix" = model_matrix,
+    "data" = data_for_smcure,
+    "formula" = formula))
+
+
 
 }
 
@@ -293,7 +298,7 @@ fit_kindex <- function(formula, data, n_runs = 1,
 #     
 #  surv_site <- res_surv %>%
 #    group_by(name) %>%
-#    nest() %>%
+#    tidyr::nest() %>%
 #    mutate(density = map(data, ~density(.x$pvalue))) %>%
 #    mutate(final_p = map_dbl(density, ~den_fun(.x))) %>%
 #    mutate(est = map_dbl(data,

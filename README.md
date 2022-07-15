@@ -4,7 +4,6 @@
 # Cure Model Pipeline
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
 The goal of this package is to provide an easy way to build, evaluate
@@ -13,20 +12,20 @@ draft](https://docs.google.com/document/d/1Lhom9H7Hxb8_C6d55Trs9JHSfJCn1i6yuu_xs
 
 ## Available Functions
 
-  - `fit_cure()` - wrapper for `smcure::smcure()` function that allows
+-   `fit_cure()` - wrapper for `smcure::smcure()` function that allows
     you to pass multilevel variables as factors directly (instead of
     first creating dummy codes). It also saves outputs necessary to
     create nomogram.
-  - `nomogram()-` - accepts an object created by `fit_cure()` and
+-   `nomogram()-` - accepts an object created by `fit_cure()` and
     creates graphical nomogram based on model fit
-  - `cure_calibration()` - accepts an object created by `fit_cure()` and
+-   `cure_calibration()` - accepts an object created by `fit_cure()` and
     creates a calibration curve for uncured patients
-  - `multiple_mod_runs()`- allows you to check stability of models but
+-   `multiple_mod_runs()`- allows you to check stability of models but
     running them multiple times and viewing distributions of variables
     and p-values.
-  - Coming soon:
-      - k-index and C-index wrapper functions
-      - tidyr function to better clean/view coefficients from cure model
+-   Coming soon:
+    -   k-index and C-index wrapper functions
+    -   tidyr function to better clean/view coefficients from cure model
 
 ## Example
 
@@ -57,18 +56,18 @@ cure_nomogram(fit, prediction_time = 300)
 cure_calibration(fit, prediction_time = 300)
 
 
-# Check Stability ----
-formula <- Surv(days, status) ~ ulc + sex
-x <- multiple_mod_runs(formula,
-                              nboot = 200,
-                              eps = 0.0001,
-                              num_repeats = 3,
-                              data = mel)
-x$model_results
-
-x$var_surv_stab
-x$p_surv_stab
-
-x$var_cure_stab
-x$p_cure_stab
+# Check Stability ---- Defunct
+# formula <- Surv(days, status) ~ ulc + sex
+# x <- multiple_mod_runs(formula,
+#                               nboot = 200,
+#                               eps = 0.0001,
+#                               num_repeats = 3,
+#                               data = mel)
+# x$model_results
+# 
+# x$var_surv_stab
+# x$p_surv_stab
+# 
+# x$var_cure_stab
+# x$p_cure_stab
 ```
