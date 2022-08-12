@@ -52,7 +52,7 @@ tidy.smcure <- function(x,
       df_surv[,c(2,5,6)] <- exp(df_surv[,c(2,5,6)])
     }
   }else{
-    df_surv <- data.frame(term=names(x$beta),
+    df_surv <- data.frame(term=paste0(x$betanm,", Survival model"),
                           estimate=x$beta,
                           std.error=x$beta_sd,
                           statistic=x$beta_zvalue,
@@ -63,7 +63,9 @@ tidy.smcure <- function(x,
   }
   
   list(df_cure=df_logit,
-       df_surv=df_surv)}
+       df_surv=df_surv)
+  
+}
 
 
 #' Broom methods for cureit objects

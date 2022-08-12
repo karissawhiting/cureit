@@ -6,15 +6,13 @@
 \alias{cureit.default}
 \title{Cure Model Regression}
 \usage{
-\method{cureit}{formula}(formula, data, conf.level = 0.95, nboot = 100, ...)
+\method{cureit}{formula}(surv_formula, cure_formula, data, conf.level = 0.95, nboot = 100, ...)
 
 cureit(x, ...)
 
 \method{cureit}{default}(x, ...)
 }
 \arguments{
-\item{formula}{formula with \code{Surv()} on LHS and covariates on RHS.}
-
 \item{data}{data frame}
 
 \item{conf.level}{confidence level. Default is 0.95.}
@@ -24,6 +22,8 @@ cureit(x, ...)
 \item{...}{passed to methods}
 
 \item{x}{input object}
+
+\item{formula}{formula with \code{Surv()} on LHS and covariates on RHS.}
 }
 \value{
 cureit object

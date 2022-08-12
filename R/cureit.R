@@ -17,38 +17,47 @@ NULL
 # Formula method
 #' @rdname cureit
 #' @export
-cureit.formula <- function(formula, data, conf.level = 0.95, nboot = 100, ...) {
+cureit.formula <- function(surv_formula, cure_formula, data, conf.level = 0.95, nboot = 100, ...) {
   
   # checking inputs  -------------------------
-  checking(formula = formula, data = data)
+  checking(surv_formula = surv_formula, cure_formula = cure_formula, data = data)
   
   # process model variables ----------------------------------------------------
-  processed <- cureit_mold(formula, data)
+  processed <- cureit_mold(surv_formula, cure_formula, data)
   
   # building model -------------------------------------------------------------
-  cureit_bridge(processed, formula, data, conf.level = conf.level, nboot = nboot)
+  cureit_bridge(processed, surv_formula, cure_formula, data, conf.level = conf.level, nboot = nboot)
 }
 
-cureit_mold <- function(formula, data) {
-  processed <-
+cureit_mold <- function(surv_formula, cure_formula, data) {
+  surv_processed <-
     hardhat::mold(
-      formula, data,
+      surv_formula, data,
       blueprint = hardhat::default_formula_blueprint(intercept = TRUE)
     )
   # remove intercept
-  processed$predictors <- processed$predictors[, -1]
-  processed$predictors <- processed$predictors %>% janitor::clean_names()
-  processed$outcomes <- processed$outcomes %>% janitor::clean_names()
+  surv_processed$predictors <- surv_processed$predictors[, -1]
+  surv_processed$predictors <- surv_processed$predictors %>% janitor::clean_names()
+  surv_processed$outcomes <- surv_processed$outcomes %>% janitor::clean_names()
   
-  processed
+  cure_processed <-
+    hardhat::mold(
+      cure_formula, data,
+      blueprint = hardhat::default_formula_blueprint(intercept = TRUE)
+    )
+  # remove intercept
+  cure_processed$predictors <- cure_processed$predictors[, -1]
+  cure_processed$predictors <- cure_processed$predictors %>% janitor::clean_names()
+
+  list(surv_processed=surv_processed,cure_processed=cure_processed)
 }
 
-checking <- function(formula, data, keep_all = FALSE) {
+checking <- function(surv_formula, cure_formula, data, keep_all = FALSE) {
   # evaluating LHS of formula --------------------------------------------------
-  formula_lhs <-
+  surv_formula_lhs <-
     tryCatch(
       {
-        rlang::f_lhs(formula) %>%
+        rlang::f_lhs(surv_formula) %>%
           rlang::eval_tidy(data = data)
       },
       error = function(e) {
@@ -57,9 +66,11 @@ checking <- function(formula, data, keep_all = FALSE) {
       }
     )
   
-  # checking type of LHS -------------------------------------------------------
-  if (!inherits(formula_lhs, "Surv") ||
-      !identical(attr(formula_lhs, "type"), "right")) {
+  ### !!! Need to check cure model formula as well: LHS should be empty
+  
+  # checking type of survival model formula LHS -------------------------------------------------------
+  if (!inherits(surv_formula_lhs, "Surv") ||
+      !identical(attr(surv_formula_lhs, "type"), "right")) {
     paste(
       "The LHS of the formula must be of class 'Surv' and type 'right'.",
       "Please review expected syntax in the help file.",
@@ -72,26 +83,40 @@ checking <- function(formula, data, keep_all = FALSE) {
   
 }
 
-new_cureit <- function(coefs, coef_names, surv_formula, cure_formula, tidy, smcure, data,
+new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names, surv_formula, cure_formula, tidy, smcure, data,
                     blueprint, conf.level, nboot) {
   
   # function to create an object
   
-  if (!is.numeric(coefs)) {
-    stop("`coefs` should be a numeric vector.", call. = FALSE)
+  if (!is.numeric(surv_coefs)) {
+    stop("`surv_coefs` should be a numeric vector.", call. = FALSE)
   }
   
-  if (!is.character(coef_names)) {
-    stop("`coef_names` should be a character vector.", call. = FALSE)
+  if (!is.character(surv_coef_names)) {
+    stop("`surv_coef_names` should be a character vector.", call. = FALSE)
   }
   
-  if (length(coefs) != length(coef_names)) {
-    stop("`coefs` and `coef_names` must have the same length.")
+  if (length(surv_coefs) != length(surv_coef_names)) {
+    stop("`surv_coefs` and `surv_coef_names` must have the same length.")
+  }
+  
+  if (!is.numeric(cure_coefs)) {
+    stop("`cure_coefs` should be a numeric vector.", call. = FALSE)
+  }
+  
+  if (!is.character(cure_coef_names)) {
+    stop("`cure_coef_names` should be a character vector.", call. = FALSE)
+  }
+  
+  if (length(cure_coefs) != length(cure_coef_names)) {
+    stop("`cure_coefs` and `cure_coef_names` must have the same length.")
   }
   
   hardhat::new_model(
-    coefs = coefs %>% stats::setNames(coef_names),
+    surv_coefs = surv_coefs %>% stats::setNames(surv_coef_names),
+    cure_coefs = cure_coefs %>% stats::setNames(cure_coef_names),
     surv_formula = surv_formula,
+    cure_formula = cure_formula,
     data = data,
     conf.level = conf.level,
     nboot = nboot,
@@ -130,44 +155,55 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
   # broom method can be constructed later 
   tidy <- broom::tidy(cureit_fit, conf.int = TRUE, conf.level = conf.level)
   
-  coefs <- tidy$estimate
-  coef_names <- tidy$term
+  s.coefs <- tidy$df_surv$estimate
+  s.coef_names <- tidy$df_surv$term
+  c.coefs <- tidy$df_cure$estimate
+  c.coef_names <- tidy$df_cure$term
   
   list(
-    coefs = coefs,
-    coef_names = coef_names,
+    surv_coefs = s.coefs,
+    surv_coef_names = s.coef_names,
+    cure_coefs = c.coefs,
+    cure_coef_names = c.coef_names,
     tidy = tidy,
     smcure = cureit_fit
   )
 }
 
-cureit_bridge <- function(processed, formula, data, conf.level, nboot) {
+cureit_bridge <- function(processed, surv_formula, cure_formula, data, conf.level, nboot) {
   
   # function to connect object and implementation
   
   # validate_outcomes_are_univariate(processed$outcomes)
   
-  predictors <- as.matrix(processed$predictors)
-  outcomes <- as.matrix(processed$outcomes[, 1, drop = TRUE])
-  newdata <- data.frame(cbind(outcomes,predictors))
-  new_formula <- paste0("Surv(", paste(colnames(outcomes),collapse=","), ")",
-                        " ~ ", paste(colnames(predictors), collapse=" + ") )
-  surv_formula <- as.formula(new_formula)
-  # NOTE: eventually need to allow different cure variables 
-  cure_formula <- surv_formula[-2]
+  s.predictors <- as.matrix(processed$surv_processed$predictors)
+  s.outcomes <- as.matrix(processed$surv_processed$outcomes[, 1, drop = TRUE])
+  surv_formula <- paste0("Surv(", paste(colnames(s.outcomes),collapse=","), ")",
+                        " ~ ", paste(colnames(s.predictors), collapse=" + ") )
+  surv_formula <- as.formula(surv_formula)
+  
+  c.predictors <- as.matrix(processed$cure_processed$predictors)
+  cure_formula <- paste0(" ~ ", paste(colnames(c.predictors), collapse=" + ") )
+  cure_formula <- as.formula(cure_formula)
+  
+  comb.data <- cbind(s.outcomes,s.predictors,c.predictors)
+  comb.data <- comb.data[,!duplicated(t(comb.data))]
+  newdata <- data.frame(comb.data)
   
   fit <- cureit_impl(surv_formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot)
   
   output <-
     new_cureit(
-      coefs = fit$coefs,
-      coef_names = fit$coef_names,
+      surv_coefs = fit$surv_coefs,
+      surv_coef_names = fit$surv_coef_names,
+      cure_coefs = fit$cure_coefs,
+      cure_coef_names = fit$cure_coef_names,
       surv_formula = surv_formula,
       cure_formula = cure_formula,
-      data = newdata,
       tidy = fit$tidy,
       smcure = fit$smcure,
-      blueprint = processed$blueprint,
+      data = newdata,
+      blueprint = processed$surv_processed$blueprint,
       conf.level = conf.level,
       nboot=nboot
     )
