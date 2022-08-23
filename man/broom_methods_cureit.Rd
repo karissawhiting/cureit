@@ -5,29 +5,14 @@
 \alias{tidy.cureit}
 \title{Broom methods for cureit objects}
 \usage{
-\method{tidy}{cureit}(x, exponentiate = FALSE, conf.int = FALSE, conf.level = x$conf.level, ...)
+\method{tidy}{cureit}(x, exponentiate = FALSE, conf.int = FALSE, conf.level = 0.95, ...)
 }
 \arguments{
-\item{x}{A \code{glm} object returned from \code{\link[stats:glm]{stats::glm()}}.}
-
 \item{exponentiate}{Logical indicating whether or not to exponentiate the
 coefficient estimates. Defaults to \code{FALSE}.}
 
-\item{conf.int}{Logical indicating whether or not to include a confidence
-interval in the tidied output. Defaults to \code{FALSE}.}
-
 \item{conf.level}{Level of the confidence interval. Default matches that in
-\code{cureit(conf.level=)} (typically, 0.95)}
-
-\item{...}{Additional arguments. Not used. Needed to match generic
-signature only. \strong{Cautionary note:} Misspelled arguments will be
-absorbed in \code{...}, where they will be ignored. If the misspelled
-argument has a default value, the default value will be used.
-For example, if you pass \code{conf.lvel = 0.9}, all computation will
-proceed using \code{conf.level = 0.95}. Additionally, if you pass
-\code{newdata = my_tibble} to an \code{\link[broom:reexports]{augment()}} method that does not
-accept a \code{newdata} argument, it will use the default value for
-the \code{data} argument.}
+\code{smcure(conf.level=)} (typically, 0.95)}
 }
 \value{
 a tibble
