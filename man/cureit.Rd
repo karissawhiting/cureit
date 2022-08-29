@@ -36,6 +36,8 @@ cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
 }
 \seealso{
 Other cureit() functions: 
-\code{\link{broom_methods_cureit}}
+\code{\link{broom_methods_cureit}},
+\code{\link{nomogram_methods_cureit}},
+\code{\link{predict.cureit}()}
 }
 \concept{cureit() functions}

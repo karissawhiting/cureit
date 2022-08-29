@@ -48,7 +48,7 @@ cureit_mold <- function(surv_formula, cure_formula, data) {
   # remove intercept
   cure_processed$predictors <- cure_processed$predictors[, -1]
   cure_processed$predictors <- cure_processed$predictors %>% janitor::clean_names()
-
+  
   list(surv_processed=surv_processed,cure_processed=cure_processed)
 }
 
@@ -83,8 +83,10 @@ checking <- function(surv_formula, cure_formula, data, keep_all = FALSE) {
   
 }
 
-new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names, surv_formula, cure_formula, tidy, smcure, data,
-                    blueprint, conf.level, nboot) {
+new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names, 
+                       surv_formula_input, cure_formula_input, surv_formula_smcure,
+                       cure_formula_smcure, tidy, smcure, data,
+                       blueprint, conf.level, nboot) {
   
   # function to create an object
   
@@ -115,13 +117,27 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
   hardhat::new_model(
     surv_coefs = surv_coefs %>% stats::setNames(surv_coef_names),
     cure_coefs = cure_coefs %>% stats::setNames(cure_coef_names),
-    surv_formula = surv_formula,
-    cure_formula = cure_formula,
+    surv_formula = surv_formula_input,
+    cure_formula = cure_formula_input,
     data = data,
     conf.level = conf.level,
     nboot = nboot,
-    xlevels =
-      stats::model.frame(surv_formula, data = data)[, -1, drop = FALSE] %>%
+    surv_xlevels =
+      stats::model.frame(surv_formula_input, data = data)[, -1, drop = FALSE] %>%
+      purrr::map(
+        function(.x) {
+          if (inherits(.x, "factor")) {
+            return(levels(.x))
+          }
+          if (inherits(.x, "character")) {
+            return(unique(.x) %>% sort())
+          }
+          return(NULL)
+        }
+      ) %>%
+      purrr::compact(),
+    cure_xlevels =
+      stats::model.frame(cure_formula_input, data = data)[, -1, drop = FALSE] %>%
       purrr::map(
         function(.x) {
           if (inherits(.x, "factor")) {
@@ -170,7 +186,7 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
   )
 }
 
-cureit_bridge <- function(processed, surv_formula, cure_formula, data, conf.level, nboot) {
+cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, conf.level, nboot) {
   
   # function to connect object and implementation
   
@@ -179,7 +195,7 @@ cureit_bridge <- function(processed, surv_formula, cure_formula, data, conf.leve
   s.predictors <- as.matrix(processed$surv_processed$predictors)
   s.outcomes <- as.matrix(processed$surv_processed$outcomes[, 1, drop = TRUE])
   surv_formula <- paste0("Surv(", paste(colnames(s.outcomes),collapse=","), ")",
-                        " ~ ", paste(colnames(s.predictors), collapse=" + ") )
+                         " ~ ", paste(colnames(s.predictors), collapse=" + ") )
   surv_formula <- as.formula(surv_formula)
   
   c.predictors <- as.matrix(processed$cure_processed$predictors)
@@ -198,11 +214,13 @@ cureit_bridge <- function(processed, surv_formula, cure_formula, data, conf.leve
       surv_coef_names = fit$surv_coef_names,
       cure_coefs = fit$cure_coefs,
       cure_coef_names = fit$cure_coef_names,
-      surv_formula = surv_formula,
-      cure_formula = cure_formula,
+      surv_formula_input = surv_formula_old,
+      cure_formula_input = cure_formula_old,
+      surv_formula_smcure = surv_formula,
+      cure_formula_smcure = cure_formula,
       tidy = fit$tidy,
       smcure = fit$smcure,
-      data = newdata,
+      data = data,
       blueprint = processed$surv_processed$blueprint,
       conf.level = conf.level,
       nboot=nboot
