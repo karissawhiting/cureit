@@ -4,7 +4,7 @@
 \alias{predict.cureit}
 \title{Predicted survival probability by cure model}
 \usage{
-\method{predict}{cureit}(x, times = NULL, probs = NULL, newdata = NULL, ...)
+\method{predict}{cureit}(x, times = NULL, probs = NULL, newdata = NULL, method = "prob", ...)
 }
 \arguments{
 \item{times}{Numeric vector of times to obtain survival probability estimates at}
@@ -13,6 +13,8 @@
 
 \item{newdata}{A \code{base::data.frame()} or \code{tibble::tibble()} containing all
 the original predictors used to create x. Defaults to \code{NULL}.}
+
+\item{method}{Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).}
 }
 \value{
 named list of prediction estimates

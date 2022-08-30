@@ -4,6 +4,7 @@
 #' @param probs Numeric vector of quantiles to obtain estimates at
 #' @param newdata A `base::data.frame()` or `tibble::tibble()` containing all
 #' the original predictors used to create x. Defaults to `NULL`.
+#' @param method Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).
 #'
 #' @return named list of prediction estimates
 #' @family cureit() functions
@@ -11,7 +12,7 @@
 #' @examples
 #' cureit(Surv(ttdeath, death_cr) ~ age, trial) %>%
 #'   predict(times = 12, newdata = trial[1:10, ])
-predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, ...) {
+predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method="prob", ...) {
   # checking inputs ------------------------------------------------------------
   if (is.null(times) + is.null(probs) != 1L) {
     stop("Must specify one and only one of `times=` and `probs=`.", call. = FALSE)
@@ -21,6 +22,9 @@ predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, ...) {
   }
   if (!is.null(probs) && !all(dplyr::between(probs, 0, 1))) {
     stop("`probs=` must be between 0 and 1.", call. = FALSE)
+  }
+  if (!(method %in% c("lp","prob"))) {
+    stop("`method=` must be one out of 'lp' or 'prob'.", call. = FALSE)
   }
   
   # getting predictions on the original model fit ------------------------------
@@ -56,19 +60,30 @@ predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, ...) {
   scure_prd = cbind(x$smcure$Time, scure)
   cure_prd = 1-uncureprob
   
-  if (!is.null(times)) {
-    return(list(cured = cure_prd,
-                surv_uncured = probs_at_times(scure_prd,times),
-                surv_marginal = probs_at_times(spop_prd,times)
-                )
-    )
+  if (method == "prob"){
+    
+    if (!is.null(times)) {
+      return(list(cured = cure_prd,
+                  surv_uncured = probs_at_times(scure_prd,times),
+                  surv_marginal = probs_at_times(spop_prd,times)
+      )
+      )
+    }
+    if (!is.null(probs)) {
+      return(list(cured = cure_prd,
+                  surv_uncured = times_at_probs(scure_prd,probs),
+                  surv_marginal = times_at_probs(spop_prd,probs))
+      )  
+    }
   }
-  if (!is.null(probs)) {
-    return(list(cured = cure_prd,
-                surv_uncured = times_at_probs(scure_prd,probs),
-                surv_marginal = times_at_probs(spop_prd,probs))
-    )  
+  
+  if (method == "lp"){
+    
+    return(list(lp_cure_model = x$smcure$b %*% t(newZ),
+                lp_surv_model = x$smcure$beta %*% t(newX)))
+    
   }
+  
 }
 
 times_at_probs <- function(matrix_pred, probs) {

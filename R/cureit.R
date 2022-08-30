@@ -137,7 +137,7 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
       ) %>%
       purrr::compact(),
     cure_xlevels =
-      stats::model.frame(cure_formula_input, data = data)[, -1, drop = FALSE] %>%
+      stats::model.frame(cure_formula_input, data = data)[, , drop = FALSE] %>%
       purrr::map(
         function(.x) {
           if (inherits(.x, "factor")) {
