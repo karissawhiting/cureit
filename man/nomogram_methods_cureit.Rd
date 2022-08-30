@@ -5,7 +5,9 @@
 \alias{nomogram.cureit}
 \title{Nomogram methods for cureit objects}
 \usage{
-nomogram.cureit(x, survival = TRUE, cure = TRUE, ...)
+
+nomogram.cureit(x, survival = TRUE, cure = TRUE, time = NULL, ...)
+
 }
 \arguments{
 \item{survival}{Logical indicating whether or not to output the nomogram
@@ -13,6 +15,9 @@ based on the survival submodel. Defaults to \code{TRUE}.}
 
 \item{cure}{Logical indicating whether or not to output the nomogram
 based on the cured probability submodel. Defaults to \code{TRUE}.}
+
+\item{time}{Numeric vector of times to obtain survival probability estimates at}
+
 }
 \value{
 a tibble
@@ -23,12 +28,17 @@ Nomogram methods for cureit objects
 \examples{
 cureit <- cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
 
-nomogram(cureit)
+
+nomogram(cureit,time=300)
+
 }
 \seealso{
 Other cureit() functions: 
 \code{\link{broom_methods_cureit}},
-\code{\link{cureit}()}
+
+\code{\link{cureit}()},
+\code{\link{predict.cureit}()}
+
 }
 \concept{cureit}
 \concept{cureit() functions}
