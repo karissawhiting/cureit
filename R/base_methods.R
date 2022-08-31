@@ -12,6 +12,7 @@
 #' @examples
 #' cureit(Surv(ttdeath, death_cr) ~ age, trial) %>%
 #'   predict(times = 12, newdata = trial[1:10, ])
+#'   
 predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method="prob", ...) {
   # checking inputs ------------------------------------------------------------
   if (is.null(times) + is.null(probs) != 1L) {

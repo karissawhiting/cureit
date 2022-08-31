@@ -18,19 +18,19 @@ Imports:
     tibble,
     ggplot2,
     broom,
-    here,
     scales,
     magrittr,
     purrr,
     survival,
     smcure,
-    furrr,
     gtsummary,
     tidyr,
     stringr,
     rlang,
-    cli
+    cli,
+    stats
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: http://www.karissawhiting.com/cureit/

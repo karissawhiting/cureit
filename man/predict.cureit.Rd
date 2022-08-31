@@ -25,6 +25,7 @@ Predicted survival probability by cure model
 \examples{
 cureit(Surv(ttdeath, death_cr) ~ age, trial) \%>\%
   predict(times = 12, newdata = trial[1:10, ])
+  
 }
 \seealso{
 Other cureit() functions: 

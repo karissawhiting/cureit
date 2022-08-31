@@ -1,5 +1,4 @@
 
-#' @import httr
 #' @import dplyr
 #' @keywords internal
 "_PACKAGE"
@@ -17,5 +16,7 @@ utils::globalVariables(".")
 #' @importFrom dplyr select
 #' @importFrom dplyr transmute
 #' @importFrom rlang abort
+#' @importFrom stats as.formula
+#' @importFrom stats predict
 ## usethis namespace: end
 NULL
