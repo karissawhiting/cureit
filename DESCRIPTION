@@ -2,13 +2,15 @@ Package: cureit
 Title: A package to build and evaluate cure models
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Karissa",
+    c(person(given = "Karissa",
            family = "Whiting",
            role = c("aut", "cre"),
            email = "karissa.whiting@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Teng", "Fei", role = "aut",
-           comment = c(ORCID = "0000-0001-7888-1715"))
+    person(given = "Teng",
+          family = "Fei",
+          role = "aut",
+           comment = c(ORCID = "0000-0001-7888-1715")))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -36,3 +38,5 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 URL: http://www.karissawhiting.com/cureit/
+Depends: 
+    R (>= 2.10)

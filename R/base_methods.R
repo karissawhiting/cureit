@@ -10,8 +10,10 @@
 #' @family cureit() functions
 #' @export
 #' @examples
-#' cureit(Surv(ttdeath, death_cr) ~ age, trial) %>%
-#'   predict(times = 12, newdata = trial[1:10, ])
+#' p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
+#'    cure_formula = ~ age,
+#'    data = trial) %>%
+#'    predict(times = 12, newdata = trial[1:10, ])
 #'   
 predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method="prob", ...) {
   # checking inputs ------------------------------------------------------------
@@ -45,6 +47,7 @@ predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method
   scure = array(0, dim = c(n, nrow(newX)))
   t = array(0, dim = c(n, nrow(newX)))
   spop = array(0, dim = c(n, nrow(newX)))
+  
   #### Only support PH model for now
   ebetaX = exp(x$smcure$beta %*% t(newX))
   for (i in 1:nrow(newZ)) {

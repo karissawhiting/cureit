@@ -9,7 +9,8 @@
 #' @return a tibble
 #' @family smcure() functions
 #' @examples
-#' smcure <- smcure(Surv(ttdeath, death_cr) ~ age + grade, trial)
+#' smcure <- smcure::smcure(Surv(ttdeath, death) ~ marker, cureform = ~marker,
+#'  data = trial, model = "ph")
 #'
 #' tidy(smcure)
 NULL
@@ -93,7 +94,8 @@ tidy.smcure <- function(x,
 #' @return a tibble
 #' @family cureit() functions
 #' @examples
-#' cureit <- cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
+#' cureit <- cureit(surv_formula = Surv(ttdeath, death) ~ marker, cure_formula = ~marker,
+#'  data = trial)
 #'
 #' tidy(cureit)
 NULL

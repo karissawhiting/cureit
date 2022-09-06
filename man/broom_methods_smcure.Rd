@@ -21,7 +21,9 @@ a tibble
 Broom methods for smcure objects
 }
 \examples{
-smcure <- smcure(Surv(ttdeath, death_cr) ~ age + grade, trial)
+smcure <- smcure::smcure(Surv(ttdeath, death_cr) ~ age,
+cureform =  ~age,
+ data = trial)
 
 tidy(smcure)
 }
