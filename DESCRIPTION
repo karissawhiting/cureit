@@ -35,7 +35,9 @@ Imports:
     forcats
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    survminer, 
+    gt
 VignetteBuilder: knitr
 URL: http://www.karissawhiting.com/cureit/
 Depends: 
