@@ -29,6 +29,7 @@ nomogram.cureit <- function(x,
                             survival = TRUE, 
                             cure = TRUE,
                             time = NULL,
+                            angle = 0
                             ...) {
   
   # Data checks -------
@@ -274,7 +275,7 @@ nomogram.cureit <- function(x,
   p1 <- all %>%
     ggplot(aes(x = x, y = y)) + geom_line(aes(color=model)) +
     geom_point(aes(color=model)) + 
-    geom_text(aes(label = levels), vjust = 1.5, angle=0)  + ylab(" ") + xlab(" ") +
+    geom_text(aes(label = levels), vjust = 1.5, angle=angle)  + ylab(" ") + xlab(" ") +
     # ggtitle("Estimated cureival for Uncured") +
     theme_minimal() +
     theme(panel.border = element_blank(),
