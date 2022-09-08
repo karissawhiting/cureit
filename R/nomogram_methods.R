@@ -74,7 +74,6 @@ nomogram.cureit <- function(x,
       )
     }
     
-    
     surv_nmmat$levels <- gsub(" ", "_", surv_nmmat$levels)
     surv_nmmat$combined <- ifelse(is.na(surv_nmmat$levels),
                                   surv_nmmat$variables,
@@ -99,14 +98,11 @@ nomogram.cureit <- function(x,
     }
     surv_nmmat$levels <- gsub("_", " ", surv_nmmat$levels)
     
-    # if (min(surv_nmmat$lp) < 0){
-    #   paste(
-    #     "The effect size must be greater than 0 for categorical variables.",
-    #     "Please adjust the reference group."
-    #   ) %>%
-    #     stop(call. = FALSE)
-    # }
-    
+    for (var in unique(surv_nmmat$variables)){
+      if (min(surv_nmmat$lpscale[surv_nmmat$variables==var]) < 0){
+        surv_nmmat$lpscale[surv_nmmat$variables==var] = surv_nmmat$lpscale[surv_nmmat$variables==var] - min(surv_nmmat$lpscale[surv_nmmat$variables==var])
+      }
+    }
     
     surv.lp <- pretty(range(predicted_lp$lp_surv_model), n = 10)
     surv.lp.scaled <- (surv.lp-min(surv.lp)) * nm_scale
@@ -206,13 +202,11 @@ nomogram.cureit <- function(x,
     }
     cure_nmmat$levels <- gsub("_", " ", cure_nmmat$levels)
     
-    # if (min(cure_nmmat$lp) < 0){
-    #   paste(
-    #     "The effect size must be greater than 0 for categorical variables.",
-    #     "Please adjust the reference group."
-    #   ) %>%
-    #     stop(call. = FALSE)
-    # }
+    for (var in unique(cure_nmmat$variables)){
+      if (min(cure_nmmat$lpscale[cure_nmmat$variables==var]) < 0){
+        cure_nmmat$lpscale[cure_nmmat$variables==var] = cure_nmmat$lpscale[cure_nmmat$variables==var] - min(cure_nmmat$lpscale[cure_nmmat$variables==var])
+      }
+    }
     
     cure.lp <- pretty(range(predicted_lp$lp_cure_model), n = 10)
     cure.lp.scaled <- (cure.lp-min(cure.lp)) * nm_scale

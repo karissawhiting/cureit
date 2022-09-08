@@ -1,8 +1,10 @@
 Package: cureit
 Title: A package to build and evaluate cure models
 Version: 0.0.0.9000
+
 Authors@R: 
     c(person(given = "Karissa",
+
            family = "Whiting",
            role = c("aut", "cre"),
            email = "karissa.whiting@gmail.com",
