@@ -37,7 +37,7 @@ The goal of this package is to provide an easy way to build, evaluate and visual
 library(smcure)
 library(ISwR)
 library(gtsummary)
-library(tidyverse)
+library(dplyr)
 
 # Prepare Data --------------------------
 mel <- ISwR::melanom %>%

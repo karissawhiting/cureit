@@ -27,12 +27,13 @@ gt_compact_fun <- function(x) {
 
 library(smcure)
 library(survival)
-library(tidyverse)
+library(dplyr)
 library(gtsummary)
 library(survival)
 library(ggpubr)
 library(survminer)
 library(gt)
+library(purrr)
 
 files <- list.files(here::here("R"), full.names = TRUE)
 
