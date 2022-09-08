@@ -1,15 +1,18 @@
 Package: cureit
 Title: A package to build and evaluate cure models
 Version: 0.0.0.9000
-Authors@R: c(
-    person(given = "Karissa",
+
+Authors@R: 
+    c(person(given = "Karissa",
+
            family = "Whiting",
            role = c("aut", "cre"),
            email = "karissa.whiting@gmail.com",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person("Teng", "Fei", role = "aut",
-           comment = c(ORCID = "0000-0001-7888-1715"))
-           )
+    person(given = "Teng",
+          family = "Fei",
+          role = "aut",
+           comment = c(ORCID = "0000-0001-7888-1715")))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -18,22 +21,24 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     dplyr,
-    tibble,
     ggplot2,
     broom,
     scales,
-    magrittr,
     purrr,
     survival,
     smcure,
     gtsummary,
-    tidyr,
     stringr,
     rlang,
     cli,
-    stats
+    stats,
+    hardhat,
+    janitor,
+    forcats
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
 URL: http://www.karissawhiting.com/cureit/
+Depends: 
+    R (>= 2.10)

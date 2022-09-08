@@ -3,11 +3,19 @@
 \name{nomogram_methods_cureit}
 \alias{nomogram_methods_cureit}
 \alias{nomogram.cureit}
+\alias{nomogram}
+\alias{nomogram.default}
 \title{Nomogram methods for cureit objects}
 \usage{
-nomogram.cureit(x, survival = TRUE, cure = TRUE, time = NULL, ...)
+\method{nomogram}{cureit}(x, survival = TRUE, cure = TRUE, time = NULL, ...)
+
+nomogram(x, ...)
+
+\method{nomogram}{default}(x, ...)
 }
 \arguments{
+\item{x}{a \code{cureit} object}
+
 \item{survival}{Logical indicating whether or not to output the nomogram
 based on the survival submodel. Defaults to \code{TRUE}.}
 
@@ -15,6 +23,8 @@ based on the survival submodel. Defaults to \code{TRUE}.}
 based on the cured probability submodel. Defaults to \code{TRUE}.}
 
 \item{time}{Numeric vector of times to obtain survival probability estimates at}
+
+\item{...}{Additional arguments passed to other methods.}
 }
 \value{
 a tibble
@@ -23,9 +33,9 @@ a tibble
 Nomogram methods for cureit objects
 }
 \examples{
-cureit <- cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
-
-nomogram(cureit,time=300)
+cureit <- cureit(surv_formula = Surv(ttdeath, death) ~ age + grade,
+cure_formula = ~age + grade, data =trial)
+nomogram(cureit, time = 300)
 }
 \seealso{
 Other cureit() functions: 

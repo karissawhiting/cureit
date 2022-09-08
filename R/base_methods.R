@@ -5,15 +5,17 @@
 #' @param newdata A `base::data.frame()` or `tibble::tibble()` containing all
 #' the original predictors used to create x. Defaults to `NULL`.
 #' @param method Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).
-#'
+#' @inheritParams cureit
 #' @return named list of prediction estimates
 #' @family cureit() functions
 #' @export
 #' @examples
-#' cureit(Surv(ttdeath, death_cr) ~ age, trial) %>%
-#'   predict(times = 12, newdata = trial[1:10, ])
+#' p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
+#'    cure_formula = ~ age,
+#'    data = trial) %>%
+#'    predict(times = 12, newdata = trial[1:10, ])
 #'   
-predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method="prob", ...) {
+predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", ...) {
   # checking inputs ------------------------------------------------------------
   if (is.null(times) + is.null(probs) != 1L) {
     stop("Must specify one and only one of `times=` and `probs=`.", call. = FALSE)
@@ -29,7 +31,7 @@ predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method
   }
   
   # getting predictions on the original model fit ------------------------------
-  processed <- cureit_mold(x$surv_formula, x$cure_formula, newdata %||% x$data)
+  processed <- cureit_mold(object$surv_formula, object$cure_formula, newdata %||% object$data)
   
   newX=processed$surv_processed$predictors
   newZ=processed$cure_processed$predictors
@@ -38,15 +40,16 @@ predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method
   newZ = cbind(1, newZ)
   if (is.vector(newX)) 
     newX = as.matrix(newX)
-  s0 = as.matrix(x$smcure$s, ncol = 1)
+  s0 = as.matrix(object$smcure$s, ncol = 1)
   n = nrow(s0)
-  uncureprob = exp(x$smcure$b %*% t(newZ))/(1 + exp(x$smcure$b %*% t(newZ)))
+  uncureprob = exp(object$smcure$b %*% t(newZ))/(1 + exp(object$smcure$b %*% t(newZ)))
   
   scure = array(0, dim = c(n, nrow(newX)))
   t = array(0, dim = c(n, nrow(newX)))
   spop = array(0, dim = c(n, nrow(newX)))
+  
   #### Only support PH model for now
-  ebetaX = exp(x$smcure$beta %*% t(newX))
+  ebetaX = exp(object$smcure$beta %*% t(newX))
   for (i in 1:nrow(newZ)) {
     scure[, i] = s0^ebetaX[i]
   }
@@ -57,8 +60,8 @@ predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method
     }
   }
   
-  spop_prd = cbind(x$smcure$Time, spop)
-  scure_prd = cbind(x$smcure$Time, scure)
+  spop_prd = cbind(object$smcure$Time, spop)
+  scure_prd = cbind(object$smcure$Time, scure)
   cure_prd = 1-uncureprob
   
   if (method == "prob"){
@@ -80,8 +83,8 @@ predict.cureit <- function(x, times = NULL, probs = NULL, newdata = NULL, method
   
   if (method == "lp"){
     
-    return(list(lp_cure_model = x$smcure$b %*% t(newZ),
-                lp_surv_model = x$smcure$beta %*% t(newX)))
+    return(list(lp_cure_model = object$smcure$b %*% t(newZ),
+                lp_surv_model = object$smcure$beta %*% t(newX)))
     
   }
   

@@ -1,7 +1,8 @@
 #' Cure Model Regression
 #'
-#' @param x input object
-#' @param formula formula with `Surv()` on LHS and covariates on RHS.
+#' @param object input object
+#' @param surv_formula formula with `Surv()` on LHS and covariates on RHS.
+#' @param cure_formula formula with covariates for cure fraction on RHS
 #' @param data data frame
 #' @param conf.level confidence level. Default is 0.95.
 #' @param nboot number of bootstrap samples used for inference.
@@ -11,7 +12,8 @@
 #' @family cureit() functions
 #' @name cureit
 #' @examples
-#' cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
+#' cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
+#' cure_formula = ~ age + grade,  data = trial)
 NULL
 
 # Formula method
@@ -73,7 +75,7 @@ checking <- function(surv_formula, cure_formula, data, keep_all = FALSE) {
       !identical(attr(surv_formula_lhs, "type"), "right")) {
     paste(
       "The LHS of the formula must be of class 'Surv' and type 'right'.",
-      "Please review expected syntax in the help file.",
+      "Please review ex pected syntax in the help file.",
       "The status variable must be a factor, where the first level indicates",
       "the observation was censored, and subsequent levels are the",
       "competing events. Cannot use `Surv(time2=)` argument."
@@ -235,13 +237,13 @@ cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, c
 # Generic
 #' @rdname cureit
 #' @export
-cureit <- function(x, ...) {
+cureit <- function(object, ...) {
   UseMethod("cureit")
 }
 
 # Default
 #' @rdname cureit
 #' @export
-cureit.default <- function(x, ...) {
-  stop("`cureit()` is not defined for a '", class(x)[1], "'.", call. = FALSE)
+cureit.default <- function(object, ...) {
+  stop("`cureit()` is not defined for a '", class(object)[1], "'.", call. = FALSE)
 }

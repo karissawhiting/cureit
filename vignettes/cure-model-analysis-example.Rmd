@@ -95,7 +95,7 @@ The `fit_cure()` function is a wrapper for `smcure::smcure()`. It differs from t
 
 ```{r }
 
-fit <- fit_cure(formula = Surv(days, status) ~ ulc + sex + 
+fit <- cureit(formula = Surv(days, status) ~ ulc + sex + 
                   thick_cat,
                 data = mel)
 

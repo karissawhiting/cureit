@@ -4,17 +4,22 @@
 #' coefficient estimates. Defaults to `FALSE`.
 #' @param conf.level Level of the confidence interval. Default matches that in
 #' `smcure(conf.level=)` (typically, 0.95)
-#'
+#' @param ... Additional arguments passed to other methods.
+#' 
 #' @name broom_methods_smcure
 #' @return a tibble
 #' @family smcure() functions
 #' @examples
-#' smcure <- smcure(Surv(ttdeath, death_cr) ~ age + grade, trial)
+#' smcure <- smcure::smcure(Surv(ttdeath, death) ~ marker, cureform = ~marker,
+#'  data = trial, model = "ph")
 #'
 #' tidy(smcure)
 NULL
 
+
 # tidy
+#' @param x An smcure object created by smcure::smcure()
+#' @param conf.int A Logical indicating whether or not to include a confidence interval in the tidied output. Defaults to FALSE.
 #' @rdname broom_methods_smcure
 #' @export
 #' @family smcure tidiers
@@ -88,12 +93,14 @@ tidy.smcure <- function(x,
 #' coefficient estimates. Defaults to `FALSE`.
 #' @param conf.level Level of the confidence interval. Default matches that in
 #' `smcure(conf.level=)` (typically, 0.95)
+#' @inheritParams broom_methods_smcure
 #'
 #' @name broom_methods_cureit
 #' @return a tibble
 #' @family cureit() functions
 #' @examples
-#' cureit <- cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
+#' cureit <- cureit(surv_formula = Surv(ttdeath, death) ~ marker, cure_formula = ~marker,
+#'  data = trial)
 #'
 #' tidy(cureit)
 NULL
@@ -102,6 +109,7 @@ NULL
 #' @rdname broom_methods_cureit
 #' @export
 #' @family cureit tidiers
+#' @inheritParams broom_methods_smcure
 tidy.cureit <- function(x,
                         exponentiate = FALSE,
                         conf.int = FALSE,

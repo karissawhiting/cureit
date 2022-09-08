@@ -4,9 +4,18 @@
 \alias{predict.cureit}
 \title{Predicted survival probability by cure model}
 \usage{
-\method{predict}{cureit}(x, times = NULL, probs = NULL, newdata = NULL, method = "prob", ...)
+\method{predict}{cureit}(
+  object,
+  times = NULL,
+  probs = NULL,
+  newdata = NULL,
+  method = "prob",
+  ...
+)
 }
 \arguments{
+\item{object}{input object}
+
 \item{times}{Numeric vector of times to obtain survival probability estimates at}
 
 \item{probs}{Numeric vector of quantiles to obtain estimates at}
@@ -15,6 +24,8 @@
 the original predictors used to create x. Defaults to \code{NULL}.}
 
 \item{method}{Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).}
+
+\item{...}{passed to methods}
 }
 \value{
 named list of prediction estimates
@@ -23,8 +34,10 @@ named list of prediction estimates
 Predicted survival probability by cure model
 }
 \examples{
-cureit(Surv(ttdeath, death_cr) ~ age, trial) \%>\%
-  predict(times = 12, newdata = trial[1:10, ])
+p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
+   cure_formula = ~ age,
+   data = trial) \%>\%
+   predict(times = 12, newdata = trial[1:10, ])
   
 }
 \seealso{
