@@ -90,38 +90,32 @@ fit %>% ggsurvplot()
 
 # Fitting the Cure Model
 
-The `fit_cure()` function is a wrapper for `smcure::smcure()`. It differs from the original function in that it allows you to pass multi-level categorical variables and also provides necessary model outputs to create calibration curves and calculate k-indicies. 
+The `cureit()` function is a wrapper for `smcure::smcure()`. 
 
 
 ```{r }
 
-fit <- cureit(formula = Surv(days, status) ~ ulc + sex + 
-                  thick_cat,
-                data = mel)
-
-x <- mmcure(fit$smcure_model_object) %>%
-  transmute(variable = str_remove_all(name, fixed("Z[, -1]")), 
-            value, 
-            pvalue) %>%
-  filter(variable != "(Intercept)")
-
-
-y <- mmsurv(fit$smcure_model_object) %>%
-  transmute(variable = str_remove_all(
-    str_remove_all(name, fixed("X[, -1]")), fixed("`")), 
-            value, 
-            pvalue) 
-
-all <- x %>% left_join(y, by = "variable", suffix = c("_cure", "_survival"))
-all %>%
-  gt()
+fit <- cureit(surv_formula = Surv(days, status) ~ ulc + sex + thick_cat,
+              cure_formula = ~ ulc + sex + thick_cat, data = mel)
 ```
+
+You ca
+
+```{r}
+tidy_mods <- tidy(fit)
+
+tbl_regression(fit, tidy_fun = tidy.cureit) %>% bold_labels()
+
+tidy_df <- left_join(fit$tidy$df_cure, fit$tidy$df_surv)
+```
+
+
 
 # K-Index
 
 Below we calculate the K and C indicies for this model
 
-```{r}
+```{r, eval=FALSE}
 library(ROCR)
   
 mod_data <- mel %>%
@@ -149,7 +143,7 @@ k_fit <- evacure::smcure1(Surv(days, status) ~ ulcpresent +
       )
 ```
 
-```{r}
+```{r, eval=FALSE}
 
 k_index <- k_fit$eva["K"]
 c_index <- k_fit$eva["C"]
@@ -173,7 +167,7 @@ tribble(
 
 # Calibration Curve
 
-```{r}
+```{r, eval=FALSE}
 
 cure_calibration(fit, prediction_time = 1000)
 ```

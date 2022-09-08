@@ -169,7 +169,9 @@ tidy.cureit <- function(x,
     }
   }
   
-  list(df_cure=df_logit,
-       df_surv=df_surv)
+  # list(df_cure=df_logit,
+  #      df_surv=df_surv)
+  
+  bind_rows(df_logit, df_surv)
   
 }

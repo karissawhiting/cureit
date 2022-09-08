@@ -12,15 +12,17 @@
 #' @return a tibble
 #' @family cureit() functions
 #' @examples
-#' cureit <- cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
+#' c <- cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
+#' cure_formula = ~ age + grade,  data = trial)
 #'
 
-#' nomogram(cureit,time=300)
+#' nomogram.cureit(x = c,time=300)
 
 NULL
 
 # nomogram
 #' @rdname nomogram_methods_cureit
+#' 
 #' @export
 #' @family cureit
 nomogram.cureit <- function(x,
@@ -29,6 +31,7 @@ nomogram.cureit <- function(x,
                             time = NULL,
                             ...) {
   
+  # Data checks -------
   if (is.null(time)) {
     stop("Must specify at least one time point via `time=`.", call. = FALSE)
   }
@@ -39,8 +42,9 @@ nomogram.cureit <- function(x,
     stop("`time=` cannot be a vector.", call. = FALSE)
   }
   
+  # get processed data & linear predictor
   processed <- cureit_mold(x$surv_formula, x$cure_formula, x$data)
-  predicted_lp <- predict(x,times=time,method="lp")
+  predicted_lp <- predict(x, times=time,method="lp")
   
   if (survival){
     
@@ -49,6 +53,7 @@ nomogram.cureit <- function(x,
     surv.continuous <- setdiff(surv.covnames,surv.factors)
     num.levels <- sapply(x$surv_xlevels,length)
     
+    # both continuous and categorical 
     if (length(surv.factors) > 0 & length(surv.continuous) > 0){
       surv_nmmat <- data.frame(variables=c(unlist(mapply(rep,surv.factors,num.levels)),
                                            unlist(mapply(rep,surv.continuous,10))),
@@ -58,6 +63,8 @@ nomogram.cureit <- function(x,
                                type=c(unlist(mapply(rep,rep("factor",length(surv.factors)),num.levels)),
                                       unlist(mapply(rep,rep("continuous",length(surv.continuous)),10)))
       )
+      
+    # categorical only 
     }else if(length(surv.factors) > 0 & length(surv.continuous) == 0){
       surv_nmmat <- data.frame(variables=c(unlist(mapply(rep,surv.factors,num.levels))),
                                levels=c(unlist(x$surv_xlevels)),
@@ -65,6 +72,7 @@ nomogram.cureit <- function(x,
                                lpscale=0,
                                type=c(unlist(mapply(rep,rep("factor",length(surv.factors)),num.levels)))
       )
+    # continuous only 
     }else if (length(surv.factors) == 0 & length(surv.continuous) > 0){
       surv_nmmat <- data.frame(variables=c(unlist(mapply(rep,surv.continuous,10))),
                                levels=c(rep(NA,length(surv.continuous)*10)),
@@ -77,19 +85,28 @@ nomogram.cureit <- function(x,
     surv_nmmat$levels <- gsub(" ", "_", surv_nmmat$levels)
     surv_nmmat$combined <- ifelse(is.na(surv_nmmat$levels),
                                   surv_nmmat$variables,
-                                  paste0(surv_nmmat$variables,surv_nmmat$levels))
+                                  janitor::make_clean_names(
+                                    paste0(surv_nmmat$variables,surv_nmmat$levels)))
     
-    covmin <- apply(processed$surv_processed$predictors,2,min)
-    covmax <- apply(processed$surv_processed$predictors,2,max)
+    # scaling constant -------
+    covmin <- apply(processed$surv_processed$predictors,2,min, na.rm = TRUE)
+    covmax <- apply(processed$surv_processed$predictors,2,max, na.rm = TRUE)
+    
+    # variable range * survival coefficients 
     lpdiff <- (covmax-covmin)*x$surv_coefs
+    
+    # largest lp value needed among all
     nm_scale <- 100/max(abs(lpdiff))
     lpscale <- lpdiff * nm_scale
+    
     
     for (i in 1:length(lpdiff)){
       type <- unique(surv_nmmat$type[surv_nmmat$combined == names(lpdiff)[i]])
       if (type=="factor"){
         surv_nmmat$lp[surv_nmmat$combined == names(lpdiff)[i]] = lpdiff[i]
         surv_nmmat$lpscale[surv_nmmat$combined == names(lpdiff)[i]] = lpscale[i]
+        
+      # continuous- create breakpoints 
       }else if(type=="continuous"){
         surv_nmmat$lp[surv_nmmat$combined == names(lpdiff)[i]] = lpdiff[i]
         surv_nmmat$lpscale[surv_nmmat$combined == names(lpdiff)[i]] = seq(0,lpscale[i],length.out=10)
@@ -104,7 +121,7 @@ nomogram.cureit <- function(x,
       }
     }
     
-    surv.lp <- pretty(range(predicted_lp$lp_surv_model), n = 10)
+    surv.lp <- pretty(range(predicted_lp$lp_surv_model, na.rm = TRUE), n = 10)
     surv.lp.scaled <- (surv.lp-min(surv.lp)) * nm_scale
     
     points = pretty(0:100, 10)
@@ -113,9 +130,9 @@ nomogram.cureit <- function(x,
                 levels = as.character(points), 
                 y = "Points")
     
-    upper_range <-  max(surv.lp.scaled, 100)
+    upper_range <-  max(surv.lp.scaled, 100, na.rm = TRUE)
     total_points <- pretty(c(0, upper_range), n=10)
-    upper_range_pretty <- max(total_points)
+    upper_range_pretty <- max(total_points, na.rm = TRUE)
     
     df_lp_surv <- as.data.frame(surv.lp) %>%
       transmute(x = surv.lp.scaled, 
@@ -181,10 +198,10 @@ nomogram.cureit <- function(x,
     cure_nmmat$levels <- gsub(" ", "_", cure_nmmat$levels)
     cure_nmmat$combined <- ifelse(is.na(cure_nmmat$levels),
                                   cure_nmmat$variables,
-                                  paste0(cure_nmmat$variables,cure_nmmat$levels))
+                                  janitor::make_clean_names(paste0(cure_nmmat$variables,cure_nmmat$levels)))
     
-    covmin <- apply(processed$cure_processed$predictors,2,min)
-    covmax <- apply(processed$cure_processed$predictors,2,max)
+    covmin <- apply(processed$cure_processed$predictors,2,min, na.rm = TRUE)
+    covmax <- apply(processed$cure_processed$predictors,2,max, na.rm = TRUE)
     lpdiff <- (covmax-covmin)*x$cure_coefs[-1]
     nm_scale <- 100/max(abs(lpdiff))
     lpscale <- lpdiff * nm_scale
@@ -208,8 +225,8 @@ nomogram.cureit <- function(x,
       }
     }
     
-    cure.lp <- pretty(range(predicted_lp$lp_cure_model), n = 10)
-    cure.lp.scaled <- (cure.lp-min(cure.lp)) * nm_scale
+    cure.lp <- pretty(range(predicted_lp$lp_cure_model, na.rm = TRUE), n = 10)
+    cure.lp.scaled <- (cure.lp-min(cure.lp, na.rm = TRUE)) * nm_scale
     
     # points = pretty(0:100, 10)
     # df_points <- as.data.frame(points) %>%
@@ -217,9 +234,9 @@ nomogram.cureit <- function(x,
     #             levels = as.character(points), 
     #             y = "Cured probability: \nPoints")
     
-    upper_range <-  max(cure.lp.scaled, 100)
+    upper_range <-  max(cure.lp.scaled, 100, na.rm = TRUE)
     total_points <- pretty(c(0, upper_range), n=10)
-    upper_range_pretty <- max(total_points)
+    upper_range_pretty <- max(total_points, na.rm = TRUE)
     
     df_lp_cure <- as.data.frame(cure.lp) %>%
       transmute(x = cure.lp.scaled, 
@@ -250,9 +267,9 @@ nomogram.cureit <- function(x,
   all <- bind_rows(df_points, all_cure, all_surv)
   
   all <- all %>%
-    mutate(y = fct_relevel(y, unique(all$y))) %>%
-    mutate(y = fct_rev(y)) %>% 
-    mutate(model = fct_relevel(model, unique(all$model)))
+    mutate(y = forcats::fct_relevel(y, unique(all$y))) %>%
+    mutate(y = forcats::fct_rev(y)) %>% 
+    mutate(model = forcats::fct_relevel(model, unique(all$model)))
   
   p1 <- all %>%
     ggplot(aes(x = x, y = y)) + geom_line(aes(color=model)) +
