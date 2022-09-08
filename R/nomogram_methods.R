@@ -29,7 +29,7 @@ nomogram.cureit <- function(x,
                             survival = TRUE, 
                             cure = TRUE,
                             time = NULL,
-                            angle = 0
+                            angle = 0,
                             ...) {
   
   # Data checks -------
