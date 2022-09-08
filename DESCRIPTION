@@ -19,20 +19,20 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     dplyr,
-    tibble,
     ggplot2,
     broom,
     scales,
-    magrittr,
     purrr,
     survival,
     smcure,
     gtsummary,
-    tidyr,
     stringr,
     rlang,
     cli,
-    stats
+    stats,
+    hardhat,
+    janitor,
+    forcats
 Suggests: 
     knitr,
     rmarkdown

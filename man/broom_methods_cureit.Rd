@@ -8,11 +8,17 @@
 \method{tidy}{cureit}(x, exponentiate = FALSE, conf.int = FALSE, conf.level = 0.95, ...)
 }
 \arguments{
+\item{x}{An smcure object created by smcure::smcure()}
+
 \item{exponentiate}{Logical indicating whether or not to exponentiate the
 coefficient estimates. Defaults to \code{FALSE}.}
 
+\item{conf.int}{A Logical indicating whether or not to include a confidence interval in the tidied output. Defaults to FALSE.}
+
 \item{conf.level}{Level of the confidence interval. Default matches that in
 \code{smcure(conf.level=)} (typically, 0.95)}
+
+\item{...}{Additional arguments passed to other methods.}
 }
 \value{
 a tibble
@@ -21,7 +27,8 @@ a tibble
 Broom methods for cureit objects
 }
 \examples{
-cureit <- cureit(Surv(ttdeath, death_cr) ~ age + grade, trial)
+cureit <- cureit(surv_formula = Surv(ttdeath, death) ~ marker, cure_formula = ~marker,
+ data = trial)
 
 tidy(cureit)
 }

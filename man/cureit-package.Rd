@@ -2,8 +2,7 @@
 % Please edit documentation in R/cureit-package.R
 \docType{package}
 \name{cureit-package}
-\alias{cureit}
-\alias{cureit-package}
+\alias{{pkgname}-package}
 \title{cureit: A package to build and evaluate cure models}
 \description{
 What the package does (one paragraph).
