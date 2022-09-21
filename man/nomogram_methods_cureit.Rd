@@ -5,7 +5,7 @@
 \alias{nomogram.cureit}
 \title{Nomogram methods for cureit objects}
 \usage{
-nomogram.cureit(x, survival = TRUE, cure = TRUE, time = NULL, ...)
+nomogram.cureit(x, survival = TRUE, cure = TRUE, time = NULL, angle = 0, ...)
 }
 \arguments{
 \item{survival}{Logical indicating whether or not to output the nomogram

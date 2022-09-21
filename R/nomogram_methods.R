@@ -273,7 +273,8 @@ nomogram.cureit <- function(x,
     mutate(model = forcats::fct_relevel(model, unique(all$model)))
   
   p1 <- all %>%
-    ggplot(aes(x = x, y = y)) + geom_line(aes(color=model)) +
+    ggplot(aes(x = x, y = y)) + 
+    geom_line(aes(color=model)) +
     geom_point(aes(color=model)) + 
     geom_text(aes(label = levels), vjust = 1.5, angle=angle)  + ylab(" ") + xlab(" ") +
     # ggtitle("Estimated cureival for Uncured") +

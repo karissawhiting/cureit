@@ -34,6 +34,7 @@ library(survminer)
 library(gt)
 library(purrr)
 library(cureit)
+library(forcats)
 
 ```
 
@@ -88,7 +89,7 @@ fit %>% ggsurvplot()
 
 # Fitting the Cure Model
 
-The `cureit()` function is a wrapper for `smcure::smcure()`. 
+The `cureit()` function is a wrapper for `smcure::smcure()`. Here we include ulceration status, sex and tumor thickness as variables of interest in both cure and survival portions. 
 
 
 ```{r }
@@ -108,6 +109,11 @@ tidy_df <- left_join(fit$tidy$df_cure, fit$tidy$df_surv)
 ```
 
 
+# Nomogram
+
+```{r}
+nomogram.cureit(fit, time = 3)
+```
 
 # K-Index
 
