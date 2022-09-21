@@ -59,71 +59,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="cure-model-pipeline">Cure Model Pipeline<a class="anchor" aria-label="anchor" href="#cure-model-pipeline"></a>
 </h1></div>
-<!-- badges: start --><!-- badges: end --><p>The goal of this package is to provide an easy way to build, evaluate and visualize mixture cure models (<a href="https://docs.google.com/document/d/1Lhom9H7Hxb8_C6d55Trs9JHSfJCn1i6yuu_xsDyYqZQ/edit?usp=sharing" class="external-link">link to paper draft</a>)</p>
-<div class="section level2">
-<h2 id="available-functions">Available Functions<a class="anchor" aria-label="anchor" href="#available-functions"></a>
-</h2>
-<ul>
-<li>
-<code>fit_cure()</code> - wrapper for <code><a href="https://rdrr.io/pkg/smcure/man/smcure.html" class="external-link">smcure::smcure()</a></code> function that allows you to pass multilevel variables as factors directly (instead of first creating dummy codes). It also saves outputs necessary to create nomogram.</li>
-<li>
-<code>nomogram()-</code> - accepts an object created by <code>fit_cure()</code> and creates graphical nomogram based on model fit</li>
-<li>
-<code>cure_calibration()</code> - accepts an object created by <code>fit_cure()</code> and creates a calibration curve for uncured patients</li>
-<li>
-<code>multiple_mod_runs()</code>- allows you to check stability of models but running them multiple times and viewing distributions of variables and p-values.</li>
-<li>Coming soon:<ul>
-<li>k-index and C-index wrapper functions</li>
-<li>tidyr function to better clean/view coefficients from cure model</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
-</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">smcure</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ISwR</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ddsjoberg/gtsummary" class="external-link">gtsummary</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Prepare Data --------------------------</span></span>
-<span><span class="va">mel</span> <span class="op">&lt;-</span> <span class="fu">ISwR</span><span class="fu">::</span><span class="va">melanom</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>status <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">status</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>, </span>
-<span>                            <span class="cn">TRUE</span> <span class="op">~</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>thick_cat <span class="op">=</span> </span>
-<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">thick</span> <span class="op">&lt;=</span> <span class="fl">129</span> <span class="op">~</span> <span class="st">"≤ 129"</span>, </span>
-<span>                        <span class="va">thick</span> <span class="op">&lt;=</span> <span class="fl">322</span> <span class="op">~</span> <span class="st">"less equal 322"</span>, </span>
-<span>                        <span class="va">thick</span> <span class="op">&gt;</span> <span class="fl">322</span> <span class="op">~</span> <span class="st">"greater 322"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>thick_cat <span class="op">=</span> <span class="fu">fct_relevel</span><span class="op">(</span><span class="va">thick_cat</span>, <span class="st">"≤ 129"</span>, <span class="st">"≤ 322"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">~</span> <span class="st">"male"</span>, </span>
-<span>                         <span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">~</span> <span class="st">"female"</span><span class="op">)</span>,</span>
-<span>         ulc <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="va">ulc</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">~</span> <span class="st">"present"</span>, </span>
-<span>                         <span class="va">ulc</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">~</span> <span class="st">"absent"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Run Pipeline --------------------------</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">fit_cure</span><span class="op">(</span>formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulc</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">thick_cat</span> <span class="op">+</span> <span class="va">thick</span> ,</span>
-<span>                data <span class="op">=</span> <span class="va">mel</span><span class="op">)</span></span>
-<span><span class="fu">cure_nomogram</span><span class="op">(</span><span class="va">fit</span>, prediction_time <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
-<span><span class="fu">cure_calibration</span><span class="op">(</span><span class="va">fit</span>, prediction_time <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="co"># Check Stability ---- Defunct</span></span>
-<span><span class="co"># formula &lt;- Surv(days, status) ~ ulc + sex</span></span>
-<span><span class="co"># x &lt;- multiple_mod_runs(formula,</span></span>
-<span><span class="co">#                               nboot = 200,</span></span>
-<span><span class="co">#                               eps = 0.0001,</span></span>
-<span><span class="co">#                               num_repeats = 3,</span></span>
-<span><span class="co">#                               data = mel)</span></span>
-<span><span class="co"># x$model_results</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># x$var_surv_stab</span></span>
-<span><span class="co"># x$p_surv_stab</span></span>
-<span><span class="co"># </span></span>
-<span><span class="co"># x$var_cure_stab</span></span>
-<span><span class="co"># x$p_cure_stab</span></span></code></pre></div>
-</div>
+<!-- badges: start --><!-- badges: end --><p>The goal of this package is to provide an easy way to build, evaluate and visualize mixture cure models.</p>
 </div>
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
