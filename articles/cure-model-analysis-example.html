@@ -110,7 +110,7 @@
 <div class="section level2">
 <h2 id="fitting-the-cure-model">Fitting the Cure Model<a class="anchor" aria-label="anchor" href="#fitting-the-cure-model"></a>
 </h2>
-<p>The <code><a href="../reference/cureit.html">cureit()</a></code> function is a wrapper for <code><a href="https://rdrr.io/pkg/smcure/man/smcure.html" class="external-link">smcure::smcure()</a></code>.</p>
+<p>The <code><a href="../reference/cureit.html">cureit()</a></code> function is a wrapper for <code><a href="https://rdrr.io/pkg/smcure/man/smcure.html" class="external-link">smcure::smcure()</a></code>. Here we include ulceration status, sex and tumor thickness as variables of interest in both cure and survival portions.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulc</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">thick_cat</span>,</span>
@@ -124,10 +124,16 @@
 <span><span class="va">tidy_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_cure</span>, <span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_surv</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="nomogram">Nomogram<a class="anchor" aria-label="anchor" href="#nomogram"></a>
+</h2>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/nomogram_methods_cureit.html">nomogram.cureit</a></span><span class="op">(</span><span class="va">fit</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="k-index">K-Index<a class="anchor" aria-label="anchor" href="#k-index"></a>
 </h2>
 <p>Below we calculate the K and C indicies for this model</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://ipa-tys.github.io/ROCR/" class="external-link">ROCR</a></span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="va">mod_data</span> <span class="op">&lt;-</span> <span class="va">mel</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -153,7 +159,7 @@
 <span>      nboot <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>      Var <span class="op">=</span> <span class="cn">T</span></span>
 <span>      <span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">k_index</span> <span class="op">&lt;-</span> <span class="va">k_fit</span><span class="op">$</span><span class="va">eva</span><span class="op">[</span><span class="st">"K"</span><span class="op">]</span></span>
 <span><span class="va">c_index</span> <span class="op">&lt;-</span> <span class="va">k_fit</span><span class="op">$</span><span class="va">eva</span><span class="op">[</span><span class="st">"C"</span><span class="op">]</span></span>
@@ -176,7 +182,7 @@
 <div class="section level2">
 <h2 id="calibration-curve">Calibration Curve<a class="anchor" aria-label="anchor" href="#calibration-curve"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">cure_calibration</span><span class="op">(</span><span class="va">fit</span>, prediction_time <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 </div>
