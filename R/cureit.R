@@ -6,6 +6,7 @@
 #' @param data data frame
 #' @param conf.level confidence level. Default is 0.95.
 #' @param nboot number of bootstrap samples used for inference.
+#' @param eps convergence criterion for the EM algorithm.
 #' @param ... passed to methods
 #'
 #' @return cureit object
@@ -19,7 +20,7 @@ NULL
 # Formula method
 #' @rdname cureit
 #' @export
-cureit.formula <- function(surv_formula, cure_formula, data, conf.level = 0.95, nboot = 100, ...) {
+cureit.formula <- function(surv_formula, cure_formula, data, conf.level = 0.95, nboot = 100, eps = 1e-7,...) {
   
   # checking inputs  -------------------------
   checking(surv_formula = surv_formula, cure_formula = cure_formula, data = data)
@@ -28,7 +29,7 @@ cureit.formula <- function(surv_formula, cure_formula, data, conf.level = 0.95, 
   processed <- cureit_mold(surv_formula, cure_formula, data)
   
   # building model -------------------------------------------------------------
-  cureit_bridge(processed, surv_formula, cure_formula, data, conf.level = conf.level, nboot = nboot)
+  cureit_bridge(processed, surv_formula, cure_formula, data, conf.level = conf.level, nboot = nboot, eps = eps)
 }
 
 cureit_mold <- function(surv_formula, cure_formula, data) {
@@ -75,7 +76,7 @@ checking <- function(surv_formula, cure_formula, data, keep_all = FALSE) {
       !identical(attr(surv_formula_lhs, "type"), "right")) {
     paste(
       "The LHS of the formula must be of class 'Surv' and type 'right'.",
-      "Please review ex pected syntax in the help file.",
+      "Please review expected syntax in the help file.",
       "The status variable must be a factor, where the first level indicates",
       "the observation was censored, and subsequent levels are the",
       "competing events. Cannot use `Surv(time2=)` argument."
@@ -88,7 +89,7 @@ checking <- function(surv_formula, cure_formula, data, keep_all = FALSE) {
 new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names, 
                        surv_formula_input, cure_formula_input, surv_formula_smcure,
                        cure_formula_smcure, tidy, smcure, data,
-                       blueprint, conf.level, nboot) {
+                       blueprint, conf.level, nboot, eps) {
   
   # function to create an object
   
@@ -124,6 +125,7 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
     data = data,
     conf.level = conf.level,
     nboot = nboot,
+    eps = eps,
     surv_xlevels =
       stats::model.frame(surv_formula_input, data = data)[, -1, drop = FALSE] %>%
       purrr::map(
@@ -139,9 +141,9 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
       ) %>%
       purrr::compact(),
     cure_xlevels =
-
+      
       stats::model.frame(cure_formula_input, data = data)[, , drop = FALSE] %>%
-
+      
       purrr::map(
         function(.x) {
           if (inherits(.x, "factor")) {
@@ -161,7 +163,7 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
   )
 }
 
-cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot) {
+cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot, eps=eps) {
   
   # function to run cureit and summarize with tidy (implementation)
   cureit_fit <-
@@ -169,7 +171,8 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
                    cureform=cure_formula,
                    data=newdata,
                    model="ph",
-                   nboot=nboot
+                   nboot=nboot,
+                   eps=eps
     )
   
   # broom method can be constructed later 
@@ -190,7 +193,7 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
   )
 }
 
-cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, conf.level, nboot) {
+cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, conf.level, nboot, eps) {
   
   # function to connect object and implementation
   
@@ -210,7 +213,7 @@ cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, c
   comb.data <- comb.data[,!duplicated(t(comb.data))]
   newdata <- data.frame(comb.data)
   
-  fit <- cureit_impl(surv_formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot)
+  fit <- cureit_impl(surv_formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot, eps = eps)
   
   output <-
     new_cureit(
@@ -227,7 +230,8 @@ cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, c
       data = data,
       blueprint = processed$surv_processed$blueprint,
       conf.level = conf.level,
-      nboot=nboot
+      nboot=nboot,
+      eps=eps
     )
   
   output
