@@ -1,28 +1,23 @@
-#' Nomogram methods for cureit objects
+#' Nomogram methods for cure models
 #'
+#' @param x a cure model fit
 #' @param survival Logical indicating whether or not to output the nomogram
 #' based on the survival submodel. Defaults to `TRUE`.
 #' @param cure Logical indicating whether or not to output the nomogram
 #' based on the cured probability submodel. Defaults to `TRUE`.
+#' @param time Numeric vector of times at which to obtain survival probability estimates
+#' @param angle Angle to shift labels
+#' @param ... Additional arguments passed to other methods.
+#' @keywords internal
+#' @seealso [nomogram.cureit]
+#' @export
+nomogram <- function(x, ...) {
+  UseMethod("nomogram")
+}
 
-#' @param time Numeric vector of times to obtain survival probability estimates at
 
-#'
-#' @name nomogram_methods_cureit
-#' @return a tibble
-#' @family cureit() functions
-#' @examples
-#' c <- cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
-#' cure_formula = ~ age + grade,  data = trial)
-#'
-
-#' nomogram.cureit(x = c,time=300)
-
-NULL
-
-# nomogram
-#' @rdname nomogram_methods_cureit
-#' 
+#' Nomogram
+#' @inheritParams nomogram
 #' @export
 #' @family cureit
 nomogram.cureit <- function(x,
@@ -139,17 +134,17 @@ nomogram.cureit <- function(x,
       transmute(x = surv.lp.scaled, 
                 levels = as.character(surv.lp), 
                 y = "Linear Predictor") %>%
-      mutate(x = (x/upper_range_pretty)*100)
+      mutate(x = (.data$x/upper_range_pretty)*100)
     
     df_tp_surv <- as.data.frame(total_points) %>%
-      mutate(levels = as.character(round(total_points, 0)), 
-             x = scales::rescale(total_points, to = c(0, 100)), 
+      mutate(levels = as.character(round(.data$total_points, 0)), 
+             x = scales::rescale(.data$total_points, to = c(0, 100)), 
              y = "Uncured survival: \nTotal Points") %>%
-      select(-total_points)
+      select(-.data$total_points)
     
     baseline <- cbind.data.frame(s = x$smcure$s, times = x$smcure$Time) %>%
-      mutate(diff = abs(times-time)) %>%
-      filter(diff == min(abs(diff)))
+      mutate(diff = abs(.data$times-time)) %>%
+      filter(diff == min(abs(.data$diff)))
     s0 <- baseline$s[1]
     
     df_pred_surv <- as.data.frame(surv.lp.scaled) %>%
@@ -243,13 +238,13 @@ nomogram.cureit <- function(x,
       transmute(x = cure.lp.scaled, 
                 levels = as.character(cure.lp), 
                 y = "Linear Predictor") %>%
-      mutate(x = (x/upper_range_pretty)*100)
+      mutate(x = (.data$x/upper_range_pretty)*100)
     
     df_tp_cure <- as.data.frame(total_points) %>%
-      mutate(levels = as.character(round(total_points, 0)), 
-             x = scales::rescale(total_points, to = c(0, 100)), 
+      mutate(levels = as.character(round(.data$total_points, 0)), 
+             x = scales::rescale(.data$total_points, to = c(0, 100)), 
              y = "Cured probability: \nTotal Points") %>%
-      select(-total_points)
+      select(-.data$total_points)
     
     df_pred_cure <- as.data.frame(cure.lp.scaled) %>%
       transmute(x = (cure.lp.scaled/upper_range_pretty)*100, 
@@ -268,15 +263,17 @@ nomogram.cureit <- function(x,
   all <- bind_rows(df_points, all_cure, all_surv)
   
   all <- all %>%
-    mutate(y = forcats::fct_relevel(y, unique(all$y))) %>%
-    mutate(y = forcats::fct_rev(y)) %>% 
-    mutate(model = forcats::fct_relevel(model, unique(all$model)))
+    mutate(y = forcats::fct_relevel(.data$y, unique(all$y))) %>%
+    mutate(y = forcats::fct_rev(.data$y)) %>% 
+    mutate(model = forcats::fct_relevel(.data$model, unique(all$model)))
   
   p1 <- all %>%
-    ggplot(aes(x = x, y = y)) + 
-    geom_line(aes(color=model)) +
-    geom_point(aes(color=model)) + 
-    geom_text(aes(label = levels), vjust = 1.5, angle=angle)  + ylab(" ") + xlab(" ") +
+    ggplot(aes(x = .data$x, y = .data$y)) + 
+    geom_line(aes(color = .data$model)) +
+    geom_point(aes(color = .data$model)) + 
+    geom_text(aes(label = .data$levels), vjust = 1.5, angle=angle)  + 
+    ylab(" ") + 
+    xlab(" ") +
     # ggtitle("Estimated cureival for Uncured") +
     theme_minimal() +
     theme(panel.border = element_blank(),

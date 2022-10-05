@@ -43,7 +43,6 @@ p <- cureit(surv_formula = Surv(ttdeath, death) ~ age,
 \seealso{
 Other cureit() functions: 
 \code{\link{broom_methods_cureit}},
-\code{\link{cureit}()},
-\code{\link{nomogram_methods_cureit}}
+\code{\link{cureit}()}
 }
 \concept{cureit() functions}
