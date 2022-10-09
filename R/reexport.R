@@ -8,6 +8,10 @@ dplyr::`%>%`
 #' @importFrom survival Surv
 survival::Surv
 
+#' @export
+#' @importFrom survival survfit
+survival::survfit
+
 # ggplot2 ----------------------------------------------------------------------
 #' @export
 #' @importFrom ggplot2 autoplot
