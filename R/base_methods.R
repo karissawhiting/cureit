@@ -5,7 +5,8 @@
 #' @param newdata A `base::data.frame()` or `tibble::tibble()` containing all
 #' the original predictors used to create x. Defaults to `NULL`.
 #' @param method Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).
-#' @param brier Boolean indicator of calculating the Brier scores at specified times.
+#' @param brier Boolean indicator of calculating the Brier scores at specified `times`.
+#' @param cox Boolean indicator of fitting the Cox model for the training data and calculating the Brier scores at specified `times` for `newdata`.
 #' @inheritParams cureit
 #' @return named list of prediction estimates
 #' @family cureit() functions
@@ -16,7 +17,7 @@
 #'    data = trial) %>%
 #'    predict(times = 12, newdata = trial[1:10, ])
 #'   
-predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", brier = FALSE, ...) {
+predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", brier = FALSE, cox = FALSE, ...) {
   # checking inputs ------------------------------------------------------------
   if (is.null(times) + is.null(probs) != 1L) {
     stop("Must specify one and only one of `times=` and `probs=`.", call. = FALSE)
@@ -35,6 +36,9 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
   }
   if (brier & is.null(times)){
     stop("Must specify one or more times to calculate the Brier scores.")
+  }
+  if (!brier & cox){
+    stop("Must let `brier=TRUE` to perform Cox regression and corresponding Brier scores.")
   }
   
   # getting predictions on the original model fit ------------------------------
@@ -79,6 +83,21 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
     cens_fit <- survfit(cens_formula,data.frame(s.outcomes))
     cens_prd <- cbind(cens_fit$time,cens_fit$surv)
     s.outcomes[,"status"] <- 1 - s.outcomes[,"status"] # transform it back to event indicator
+    
+    if (cox){
+      newdat <- newdata %||% object$data
+      coxdat <- object$data
+      coxformula <- object$surv_formula
+      coxfit <- coxph(coxformula,coxdat)
+      s0 <- survfit(coxfit)$surv
+      scox = array(0, dim = c(length(s0), nrow(newX)))
+      coxlp <- predict(coxfit,newdata=newdat,type="lp")
+      for (i in 1:nrow(newX)){
+        scox[,i] <- s0^exp(coxlp[i])
+      }
+      scox_prd <- cbind(survfit(coxfit)$time,scox)
+    }
+    
   }
   
   if (method == "prob"){
@@ -99,17 +118,35 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
         ipw <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, unlist(probs_at_times(cens_prd,x)), cens_prd[,2]))
         surv_marginal = probs_at_times(spop_prd,times)
         obs <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, 1, 0))
+        cox_marginal = probs_at_times(scox_prd,times)
         
         brier <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),
                                 count,ipw,surv_marginal,obs))/nrow(s.outcomes)
         names(brier) <- paste0("T = ",times)
+        
+        if (cox){
           
-        return(list(cured = cure_prd,
-                    surv_uncured = probs_at_times(scure_prd,times),
-                    surv_marginal = probs_at_times(spop_prd,times),
-                    brier = brier
-        )
-        )
+          brier_cox <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),
+                                      count,ipw,cox_marginal,obs))/nrow(s.outcomes)
+          names(brier_cox) <- paste0("T = ",times)
+          
+          return(list(cured = cure_prd,
+                      surv_uncured = probs_at_times(scure_prd,times),
+                      surv_marginal = probs_at_times(spop_prd,times),
+                      brier = brier,
+                      brier_cox = brier_cox
+          ))
+          
+        }else{
+          
+          return(list(cured = cure_prd,
+                      surv_uncured = probs_at_times(scure_prd,times),
+                      surv_marginal = probs_at_times(spop_prd,times),
+                      brier = brier
+          ))
+          
+        }
+        
       }
       
     }

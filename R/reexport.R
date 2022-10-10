@@ -12,6 +12,10 @@ survival::Surv
 #' @importFrom survival survfit
 survival::survfit
 
+#' @export
+#' @importFrom survival coxph
+survival::coxph
+
 # ggplot2 ----------------------------------------------------------------------
 #' @export
 #' @importFrom ggplot2 autoplot
