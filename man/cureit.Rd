@@ -6,7 +6,15 @@
 \alias{cureit.default}
 \title{Cure Model Regression}
 \usage{
-\method{cureit}{formula}(surv_formula, cure_formula, data, conf.level = 0.95, nboot = 100, ...)
+\method{cureit}{formula}(
+  surv_formula,
+  cure_formula,
+  data,
+  conf.level = 0.95,
+  nboot = 100,
+  eps = 1e-07,
+  ...
+)
 
 cureit(object, ...)
 
@@ -22,6 +30,8 @@ cureit(object, ...)
 \item{conf.level}{confidence level. Default is 0.95.}
 
 \item{nboot}{number of bootstrap samples used for inference.}
+
+\item{eps}{convergence criterion for the EM algorithm.}
 
 \item{...}{passed to methods}
 
@@ -40,7 +50,7 @@ cure_formula = ~ age + grade,  data = trial)
 \seealso{
 Other cureit() functions: 
 \code{\link{broom_methods_cureit}},
-\code{\link{nomogram_methods_cureit}},
+\code{\link{nomogram}()},
 \code{\link{predict.cureit}()}
 }
 \concept{cureit() functions}

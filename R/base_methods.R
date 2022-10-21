@@ -14,8 +14,9 @@
 #' @examples
 #' p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
 #'    cure_formula = ~ age,
-#'    data = trial) %>%
-#'    predict(times = 12, newdata = trial[1:10, ])
+#'    data = trial) 
+#'    
+#' predict(p, times = 12, newdata = trial[1:10, ])
 #'   
 predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", brier = FALSE, cox = FALSE, ...) {
   # checking inputs ------------------------------------------------------------

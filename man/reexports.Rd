@@ -5,6 +5,8 @@
 \alias{reexports}
 \alias{\%>\%}
 \alias{Surv}
+\alias{survfit}
+\alias{coxph}
 \alias{autoplot}
 \alias{tidy}
 \alias{glance}
@@ -28,6 +30,6 @@ below to see their documentation.
 
   \item{gtsummary}{\code{\link[gtsummary]{add_n}}, \code{\link[gtsummary]{add_nevent}}, \code{\link[gtsummary]{add_p}}, \code{\link[gtsummary]{inline_text}}}
 
-  \item{survival}{\code{\link[survival]{Surv}}}
+  \item{survival}{\code{\link[survival]{coxph}}, \code{\link[survival]{Surv}}, \code{\link[survival]{survfit}}}
 }}
 

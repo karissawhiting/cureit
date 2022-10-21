@@ -10,6 +10,8 @@
   probs = NULL,
   newdata = NULL,
   method = "prob",
+  brier = FALSE,
+  cox = FALSE,
   ...
 )
 }
@@ -25,6 +27,10 @@ the original predictors used to create x. Defaults to \code{NULL}.}
 
 \item{method}{Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).}
 
+\item{brier}{Boolean indicator of calculating the Brier scores at specified \code{times}.}
+
+\item{cox}{Boolean indicator of fitting the Cox model for the training data and calculating the Brier scores at specified \code{times} for \code{newdata}.}
+
 \item{...}{passed to methods}
 }
 \value{
@@ -36,14 +42,15 @@ Predicted survival probability by cure model
 \examples{
 p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
    cure_formula = ~ age,
-   data = trial) \%>\%
-   predict(times = 12, newdata = trial[1:10, ])
+   data = trial) 
+   
+predict(p, times = 12, newdata = trial[1:10, ])
   
 }
 \seealso{
 Other cureit() functions: 
 \code{\link{broom_methods_cureit}},
 \code{\link{cureit}()},
-\code{\link{nomogram_methods_cureit}}
+\code{\link{nomogram}()}
 }
 \concept{cureit() functions}
