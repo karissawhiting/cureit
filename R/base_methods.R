@@ -16,7 +16,12 @@
 #'    cure_formula = ~ age,
 #'    data = trial) 
 #'    
-#' predict(p, times = 12, newdata = trial[1:10, ])
+#' pred <- predict(p, times = seq(5,24,0.5), newdata = trial[complete.cases(trial), ], brier=TRUE,cox=TRUE)
+#' 
+#' plot(seq(5,24,0.5),pred$brier,type="b",pch=1)
+#' lines(seq(5,24,0.5),pred$brier_cox,type="b",col="red",pch=3)
+#' legend("topright",c("Cure model","Cox model"),col=c("black","red"),lty=1,pch=c(1,3))
+#' 
 #'   
 predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", brier = FALSE, cox = FALSE, ...) {
   # checking inputs ------------------------------------------------------------
@@ -52,7 +57,7 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
   newZ = cbind(1, newZ)
   if (is.vector(newX)) 
     newX = as.matrix(newX)
-  s0 = as.matrix(object$smcure$s, ncol = 1)
+  s0 = as.matrix(object$smcure$s[order(object$smcure$Time)], ncol = 1)
   n = nrow(s0)
   uncureprob = exp(object$smcure$b %*% t(newZ))/(1 + exp(object$smcure$b %*% t(newZ)))
   
@@ -87,13 +92,13 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
     
     if (cox){
       newdat <- newdata %||% object$data
-      coxdat <- object$data
+      coxdat <<- object$data
       coxformula <- object$surv_formula
       coxfit <- coxph(coxformula,coxdat)
       s0 <- survfit(coxfit)$surv
-      scox = array(0, dim = c(length(s0), nrow(newX)))
+      scox = array(0, dim = c(length(s0), nrow(newdat)))
       coxlp <- predict(coxfit,newdata=newdat,type="lp")
-      for (i in 1:nrow(newX)){
+      for (i in 1:nrow(newdat)){
         scox[,i] <- s0^exp(coxlp[i])
       }
       scox_prd <- cbind(survfit(coxfit)$time,scox)
@@ -119,13 +124,13 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
         ipw <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, unlist(probs_at_times(cens_prd,x)), cens_prd[,2]))
         surv_marginal = probs_at_times(spop_prd,times)
         obs <- lapply(times, function(x) ifelse(s.outcomes[,"time"] > x, 1, 0))
-        cox_marginal = probs_at_times(scox_prd,times)
         
         brier <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),
                                 count,ipw,surv_marginal,obs))/nrow(s.outcomes)
         names(brier) <- paste0("T = ",times)
         
         if (cox){
+          cox_marginal = probs_at_times(scox_prd,times)
           
           brier_cox <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),
                                       count,ipw,cox_marginal,obs))/nrow(s.outcomes)
