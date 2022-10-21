@@ -103,7 +103,7 @@
 <span>  <span class="fu">bold_labels</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>To calculate overall survival, we will only consider death from melanoma as an event. Patients who died from other cause or were lost to follow-up are censored.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">survfit</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span><span class="op">/</span><span class="fl">365</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulc</span>, data <span class="op">=</span> <span class="va">mel</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span><span class="op">/</span><span class="fl">365</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulc</span>, data <span class="op">=</span> <span class="va">mel</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">ggsurvplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -127,7 +127,7 @@
 <h2 id="nomogram">Nomogram<a class="anchor" aria-label="anchor" href="#nomogram"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/nomogram_methods_cureit.html">nomogram.cureit</a></span><span class="op">(</span><span class="va">fit</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">nomogram.cureit</span><span class="op">(</span><span class="va">fit</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="k-index">K-Index<a class="anchor" aria-label="anchor" href="#k-index"></a>

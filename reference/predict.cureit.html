@@ -55,6 +55,8 @@
 <span>  probs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  newdata <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"prob"</span>,</span>
+<span>  brier <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cox <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -82,6 +84,14 @@ the original predictors used to create x. Defaults to <code>NULL</code>.</p></dd
 <dd><p>Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).</p></dd>
 
 
+<dt>brier</dt>
+<dd><p>Boolean indicator of calculating the Brier scores at specified <code>times</code>.</p></dd>
+
+
+<dt>cox</dt>
+<dd><p>Boolean indicator of fitting the Cox model for the training data and calculating the Brier scores at specified <code>times</code> for <code>newdata</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>passed to methods</p></dd>
 
@@ -97,18 +107,20 @@ the original predictors used to create x. Defaults to <code>NULL</code>.</p></dd
     <div class="dont-index"><p>Other cureit() functions: 
 <code><a href="broom_methods_cureit.html">broom_methods_cureit</a></code>,
 <code><a href="cureit.html">cureit</a>()</code>,
-<code><a href="nomogram_methods_cureit.html">nomogram_methods_cureit</a></code></p></div>
+<code><a href="nomogram_methods_cureit.html">nomogram</a>()</code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">ttdeath</span>, <span class="va">death</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span>, </span></span>
 <span class="r-in"><span>   cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">age</span>,</span></span>
-<span class="r-in"><span>   data <span class="op">=</span> <span class="va">trial</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span>times <span class="op">=</span> <span class="fl">12</span>, newdata <span class="op">=</span> <span class="va">trial</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   data <span class="op">=</span> <span class="va">trial</span><span class="op">)</span> </span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> There was an error evaluating the LHS of the formula.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>additional arguments ignored in stop()</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in rlang::eval_tidy(., data = data):</span> object 'trial' not found</span>
+<span class="r-in"><span>   </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">p</span>, times <span class="op">=</span> <span class="fl">12</span>, newdata <span class="op">=</span> <span class="va">trial</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in predict(p, times = 12, newdata = trial[1:10, ]):</span> object 'p' not found</span>
 <span class="r-in"><span>  </span></span>
 </code></pre></div>
     </div>
