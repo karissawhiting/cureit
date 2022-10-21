@@ -1,31 +1,23 @@
-#' Nomogram methods for cureit objects
-#'
+#' Nomogram for cureit objects
+#' @rdname nomogram_methods_cureit
 #' @param survival Logical indicating whether or not to output the nomogram
 #' based on the survival submodel. Defaults to `TRUE`.
 #' @param cure Logical indicating whether or not to output the nomogram
 #' based on the cured probability submodel. Defaults to `TRUE`.
-
 #' @param time Numeric vector of times to obtain survival probability estimates at
-
-#'
-#' @name nomogram_methods_cureit
+#' @param angle angle of text labels
+#' @param x cureit object
+#' @param ... Additional arguments passed to other methods.
 #' @return a tibble
 #' @family cureit() functions
+#' @export
 #' @examples
 #' c <- cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
 #' cure_formula = ~ age + grade,  data = trial)
 #'
+#' nomogram(x = c,time=300)
 
-#' nomogram.cureit(x = c,time=300)
-
-NULL
-
-# nomogram
-#' @rdname nomogram_methods_cureit
-#' 
-#' @export
-#' @family cureit
-nomogram.cureit <- function(x,
+nomogram <- function(x,
                             survival = TRUE, 
                             cure = TRUE,
                             time = NULL,
@@ -148,7 +140,7 @@ nomogram.cureit <- function(x,
       select(-total_points)
     
     baseline <- cbind.data.frame(s = x$smcure$s, times = x$smcure$Time) %>%
-      mutate(diff = abs(times-time)) %>%
+      mutate(diff = abs(.data$times-time)) %>%
       filter(diff == min(abs(diff)))
     s0 <- baseline$s[1]
     
@@ -268,15 +260,15 @@ nomogram.cureit <- function(x,
   all <- bind_rows(df_points, all_cure, all_surv)
   
   all <- all %>%
-    mutate(y = forcats::fct_relevel(y, unique(all$y))) %>%
-    mutate(y = forcats::fct_rev(y)) %>% 
-    mutate(model = forcats::fct_relevel(model, unique(all$model)))
+    mutate(y = forcats::fct_relevel(.data$y, unique(all$y))) %>%
+    mutate(y = forcats::fct_rev(.data$y)) %>% 
+    mutate(model = forcats::fct_relevel(.data$model, unique(all$model)))
   
   p1 <- all %>%
-    ggplot(aes(x = x, y = y)) + 
-    geom_line(aes(color=model)) +
-    geom_point(aes(color=model)) + 
-    geom_text(aes(label = levels), vjust = 1.5, angle=angle)  + ylab(" ") + xlab(" ") +
+    ggplot(aes(x = .data$x, y = .data$y)) + 
+    geom_line(aes(color = .data$model)) +
+    geom_point(aes(color = .data$model)) + 
+    geom_text(aes(label = levels), vjust = 1.5, angle = angle)  + ylab(" ") + xlab(" ") +
     # ggtitle("Estimated cureival for Uncured") +
     theme_minimal() +
     theme(panel.border = element_blank(),

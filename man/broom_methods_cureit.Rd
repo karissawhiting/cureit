@@ -35,7 +35,7 @@ tidy(cureit)
 \seealso{
 Other cureit() functions: 
 \code{\link{cureit}()},
-\code{\link{nomogram_methods_cureit}},
+\code{\link{nomogram}()},
 \code{\link{predict.cureit}()}
 }
 \concept{cureit tidiers}
