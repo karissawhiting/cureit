@@ -175,3 +175,5 @@ tidy.cureit <- function(x,
   bind_rows(df_logit, df_surv)
   
 }
+
+

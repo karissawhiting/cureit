@@ -166,14 +166,18 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
 cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot, eps=eps) {
   
   # function to run cureit and summarize with tidy (implementation)
+  quiet_smcure <- purrr::quietly(smcure::smcure)
+  
   cureit_fit <-
-    smcure::smcure(formula=surv_formula,
+    quiet_smcure(formula=surv_formula,
                    cureform=cure_formula,
                    data=newdata,
                    model="ph",
                    nboot=nboot,
                    eps=eps
     )
+  
+  cureit_fit <- cureit_fit$result
   
   # broom method can be constructed later 
   tidy <- broom::tidy(cureit_fit, conf.int = TRUE, conf.level = conf.level)
@@ -251,3 +255,8 @@ cureit <- function(object, ...) {
 cureit.default <- function(object, ...) {
   stop("`cureit()` is not defined for a '", class(object)[1], "'.", call. = FALSE)
 }
+
+
+
+
+
