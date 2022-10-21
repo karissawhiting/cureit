@@ -16,7 +16,12 @@
 #'    cure_formula = ~ age,
 #'    data = trial) 
 #'    
-#' predict(p, times = 12, newdata = trial[1:10, ])
+#' pred <- predict(p, times = seq(5,24,0.5), newdata = trial[complete.cases(trial), ], brier=TRUE,cox=TRUE)
+#' 
+#' plot(seq(5,24,0.5),pred$brier,type="b",pch=1)
+#' lines(seq(5,24,0.5),pred$brier_cox,type="b",col="red",pch=3)
+#' legend("topright",c("Cure model","Cox model"),col=c("black","red"),lty=1,pch=c(1,3))
+#' 
 #'   
 predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", brier = FALSE, cox = FALSE, ...) {
   # checking inputs ------------------------------------------------------------
@@ -52,7 +57,7 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
   newZ = cbind(1, newZ)
   if (is.vector(newX)) 
     newX = as.matrix(newX)
-  s0 = as.matrix(object$smcure$s, ncol = 1)
+  s0 = as.matrix(object$smcure$s[order(object$smcure$Time)], ncol = 1)
   n = nrow(s0)
   uncureprob = exp(object$smcure$b %*% t(newZ))/(1 + exp(object$smcure$b %*% t(newZ)))
   
