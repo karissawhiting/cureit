@@ -115,10 +115,10 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
         
         # atrisk <- lapply(times,function(x) s.outcomes[,"time"] > x)
         # event <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, 1, s.outcomes[,"status"]))
-        count <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, 1, s.outcomes[,"status"]))
+        count <- lapply(times, function(x) ifelse(s.outcomes[,"time"] > x, 1, s.outcomes[,"status"]))
         ipw <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, unlist(probs_at_times(cens_prd,x)), cens_prd[,2]))
         surv_marginal = probs_at_times(spop_prd,times)
-        obs <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, 1, 0))
+        obs <- lapply(times, function(x) ifelse(s.outcomes[,"time"] > x, 1, 0))
         cox_marginal = probs_at_times(scox_prd,times)
         
         brier <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),

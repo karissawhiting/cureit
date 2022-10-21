@@ -34,6 +34,7 @@ library(survminer)
 library(gt)
 library(purrr)
 library(cureit)
+library(ggsurvfit)
 library(forcats)
 
 ```
@@ -45,33 +46,19 @@ This package allows you to easily build and report cure mixture models. The mode
 
 # Example data set
 
-We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The data is available in the {ISwR} package (Dalgaard, 2008). 
+We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The original data is available in the {ISwR} package (Dalgaard, 2008). A version of this data in available in the package `cureit::melanoma`
 
 Variables include:
 - `ulc` - ulceration status
 - `thick` - tumor thickness in mm
 - `sex` - sex
 
-We created categorized version of tumor thickness
+A summary of the main available variables is below:
 
 ```{r}
-df <- ISwR::melanom
 
-mel <- ISwR::melanom %>%
-  mutate(status = case_when(status %in% c(1) ~ 1, 
-                            status %in% c(2, 3) ~ 0)) %>%
-  mutate(thick_cat = 
-              case_when(thick <= 129 ~ "≤ 129", 
-                        thick <= 322 ~ "less equal 322", 
-                        thick > 322 ~ "greater 322")) %>%
-  mutate(thick_cat = fct_relevel(thick_cat, "≤ 129", "≤ 322")) %>%
-  mutate(sex = case_when(sex == 2 ~ "male", 
-                         sex == 1 ~ "female"),
-         ulc = case_when(ulc == 1 ~ "present", 
-                         ulc == 2 ~ "absent"))
-
-mel %>%
-  select(thick_cat, sex, ulc) %>%
+melanoma %>%
+  select(tumor_thickness, sex, ulceration) %>%
   tbl_summary() %>%
   bold_labels()
 
@@ -80,30 +67,56 @@ mel %>%
 
 To calculate overall survival, we will only consider death from melanoma as an event. Patients who died from other cause or were lost to follow-up are censored. 
 
-```{r}
-fit <- survfit(Surv(days/365, status) ~ ulc, data = mel)
+Disease death outcome data is plotted and summarized below using the {ggsurvfit} package and {gtsummary}:
 
-fit %>% ggsurvplot()
+```{r}
+fit <- survfit(Surv(years, status) ~ 1, data = melanoma)
+
+fit %>% 
+  ggsurvfit::ggsurvfit() + 
+  ylab("Disease-related Death Probability")+
+  xlab("Years") + 
+  ylim(0, 1) +
+  theme_classic()
 
 ```
 
+From the Kaplan-meier curves we can see the disease death rate plateaus around .7, indicating that not all patients may experience disease-realted death. The patients that do experience this event, may be different from those who do not in a way that would be useful to categorize.
+
+Cure models can help tease apart the contribution of clinical variables to these potentially heterogeneous sub cohorts. 
+
 # Fitting the Cure Model
 
-The `cureit()` function is a wrapper for `smcure::smcure()`. Here we include ulceration status, sex and tumor thickness as variables of interest in both cure and survival portions. 
+The `cureit()` function is a wrapper for `smcure::smcure()` that allows you to code cure models using a tidy framework. Below, we will fit a model using ulceration status, sex and tumor thickness as variables of interest in both cure and survival portions. 
+
+Note: You can optionally provide different sets of covariates to the survival portion and the cure portion:
 
 
 ```{r }
 
-fit <- cureit(surv_formula = Surv(days, status) ~ ulc + sex + thick_cat,
-              cure_formula = ~ ulc + sex + thick_cat, data = mel)
+fit <- cureit(surv_formula = Surv(days, status) ~ ulceration + sex + tumor_thickness,
+              cure_formula = ~ ulceration + sex + tumor_thickness, data = melanoma)
+
+
 ```
 
-You ca
+
+```{r}
+p <- cureit(Surv(days, status) ~ ulceration + sex + tumor_thickness,
+  cure_formula = ~ ulceration + sex + tumor_thickness,
+  data = melanoma)
+
+x <- predict(p, times = seq(100, 5000, 100), newdata = melanoma, brier = TRUE)
+
+x$
+```
+
 
 ```{r}
 tidy_mods <- tidy(fit)
 
-tbl_regression(fit, tidy_fun = tidy.cureit) %>% bold_labels()
+tbl_regression(fit, tidy_fun = tidy.cureit) %>% 
+  bold_labels()
 
 tidy_df <- left_join(fit$tidy$df_cure, fit$tidy$df_surv)
 ```
@@ -173,6 +186,13 @@ tribble(
 
 ```{r, eval=FALSE}
 
-cure_calibration(fit, prediction_time = 1000)
+cureit(fit, prediction_time = 1000)
+
+
+```
+
+
+```{r}
+
 ```
 
