@@ -1,5 +1,6 @@
 #' Predicted survival probability by cure model
 #'
+#' @param object A cureit object.
 #' @param times Numeric vector of times to obtain survival probability estimates at
 #' @param probs Numeric vector of quantiles to obtain estimates at
 #' @param newdata A `base::data.frame()` or `tibble::tibble()` containing all

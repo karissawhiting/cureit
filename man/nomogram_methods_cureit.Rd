@@ -35,6 +35,7 @@ nomogram(x = c,time=300)
 }
 \seealso{
 Other cureit() functions: 
+\code{\link{Brier_inference}()},
 \code{\link{broom_methods_cureit}},
 \code{\link{cureit}()},
 \code{\link{predict.cureit}()}

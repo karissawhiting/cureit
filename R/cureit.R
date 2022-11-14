@@ -168,33 +168,73 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
   # function to run cureit and summarize with tidy (implementation)
   quiet_smcure <- purrr::quietly(smcure::smcure)
   
-  cureit_fit <-
-    quiet_smcure(formula=surv_formula,
+  if (nboot == 0){
+    
+    cureit_fit <-
+      quiet_smcure(formula=surv_formula,
+                   cureform=cure_formula,
+                   data=newdata,
+                   model="ph",
+                   eps=eps,
+                   Var = FALSE
+      )
+    
+    cureit_fit <- cureit_fit$result
+    cureit_fit$b_sd <- cureit_fit$b_zvalue <- cureit_fit$b_pvalue <- NA
+    cureit_fit$beta_sd <- cureit_fit$beta_zvalue <- cureit_fit$beta_pvalue <- NA
+    
+    # broom method can be constructed later 
+    tidy <- broom::tidy(cureit_fit, conf.int = FALSE)
+    
+    s.coefs <- tidy$df_surv$estimate
+    s.coef_names <- tidy$df_surv$term
+    c.coefs <- tidy$df_cure$estimate
+    c.coef_names <- tidy$df_cure$term
+    
+    list(
+      surv_coefs = s.coefs,
+      surv_coef_names = s.coef_names,
+      cure_coefs = c.coefs,
+      cure_coef_names = c.coef_names,
+      tidy = tidy,
+      smcure = cureit_fit
+    )
+    
+    
+  }else if (nboot > 0){
+    cureit_fit <-
+      quiet_smcure(formula=surv_formula,
                    cureform=cure_formula,
                    data=newdata,
                    model="ph",
                    nboot=nboot,
                    eps=eps
+      )
+    
+    cureit_fit <- cureit_fit$result
+    
+    # broom method can be constructed later 
+    tidy <- broom::tidy(cureit_fit, conf.int = TRUE, conf.level = conf.level)
+    
+    s.coefs <- tidy$df_surv$estimate
+    s.coef_names <- tidy$df_surv$term
+    c.coefs <- tidy$df_cure$estimate
+    c.coef_names <- tidy$df_cure$term
+    
+    list(
+      surv_coefs = s.coefs,
+      surv_coef_names = s.coef_names,
+      cure_coefs = c.coefs,
+      cure_coef_names = c.coef_names,
+      tidy = tidy,
+      smcure = cureit_fit
     )
+    
+  }
   
-  cureit_fit <- cureit_fit$result
   
-  # broom method can be constructed later 
-  tidy <- broom::tidy(cureit_fit, conf.int = TRUE, conf.level = conf.level)
   
-  s.coefs <- tidy$df_surv$estimate
-  s.coef_names <- tidy$df_surv$term
-  c.coefs <- tidy$df_cure$estimate
-  c.coef_names <- tidy$df_cure$term
   
-  list(
-    surv_coefs = s.coefs,
-    surv_coef_names = s.coef_names,
-    cure_coefs = c.coefs,
-    cure_coef_names = c.coef_names,
-    tidy = tidy,
-    smcure = cureit_fit
-  )
 }
 
 cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, conf.level, nboot, eps) {

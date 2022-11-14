@@ -16,7 +16,7 @@
 )
 }
 \arguments{
-\item{object}{input object}
+\item{object}{A cureit object.}
 
 \item{times}{Numeric vector of times to obtain survival probability estimates at}
 
@@ -54,6 +54,7 @@ legend("topright",c("Cure model","Cox model"),col=c("black","red"),lty=1,pch=c(1
 }
 \seealso{
 Other cureit() functions: 
+\code{\link{Brier_inference}()},
 \code{\link{broom_methods_cureit}},
 \code{\link{cureit}()},
 \code{\link{nomogram}()}
