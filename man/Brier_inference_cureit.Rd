@@ -25,10 +25,19 @@ a tibble
 Inference for Brier score for cureit objects
 }
 \examples{
-c <- cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
-cure_formula = ~ age + grade,  data = trial)
-
-Brier.Inference(x = c,time=300)
+p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
+   cure_formula = ~ age,
+   data = trial) 
+   
+times = seq(5,24,0.5)
+bootbrier <- Brier_inference(p,times=times)
+plot(times,bootbrier$brier,type="s",xlab="Time",ylab="Brier score")
+lines(times,bootbrier$brier_2.5,type="s",lty=2)
+lines(times,bootbrier$brier_97.5,type="s",lty=2)
+lines(times,bootbrier$brier_cox,type="s",col="red")
+lines(times,bootbrier$brier_cox_2.5,type="s",lty=2,col="red")
+lines(times,bootbrier$brier_cox_97.5,type="s",lty=2,col="red")
+legend("topleft",c("Cure model","Cox model"),col=c("black","red"),lty=1)
 }
 \seealso{
 Other cureit() functions: 
