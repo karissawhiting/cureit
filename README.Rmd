@@ -13,9 +13,47 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Cure Model Pipeline
+# Cureit
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of this package is to provide an easy way to build, evaluate and visualize mixture cure models. 
+This package allows you to easily fit and report results from cure mixture models using a tidy framework. The package includes functions to:
+
+- Fit mixture cure models 
+- Summarize coefficients using tidiers and gtsummary
+- Vizualize the data using nomograms
+- Assess model results with Brier scores and K-indicies
+
+## Installation
+
+You can install {cureit} with the following code:
+
+```{r ,eval=F}
+remotes::install_github("karissawhiting/cureit")
+```
+
+Load the package:
+
+```{r}
+library(cureit)
+```
+
+# Fit Mixture Cure Models
+
+Functions to fit the models are wrappers for the `smcure()` function from the {smcure} package with the additional capability of passing a formula and directly passing categortical variables without first creating a model matrix:
+
+```{r}
+p <- cureit(surv_formula = Surv(ttdeath, death) ~ age,
+   cure_formula = ~ age,
+   data = trial)
+
+p$surv_coefs
+
+p$cure_coefs
+```
+
+
+
+
+

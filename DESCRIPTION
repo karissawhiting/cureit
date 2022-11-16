@@ -37,7 +37,8 @@ Suggests:
     knitr,
     rmarkdown,
     survminer, 
-    gt
+    gt, 
+    ggsurvfit
 VignetteBuilder: knitr
 URL: http://www.karissawhiting.com/cureit/
 Depends: 
