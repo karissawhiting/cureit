@@ -34,6 +34,7 @@ tidy(cureit)
 }
 \seealso{
 Other cureit() functions: 
+\code{\link{Brier_inference}()},
 \code{\link{cureit}()},
 \code{\link{nomogram}()},
 \code{\link{predict.cureit}()}

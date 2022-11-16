@@ -1,5 +1,6 @@
 #' Predicted survival probability by cure model
 #'
+#' @param object A cureit object.
 #' @param times Numeric vector of times to obtain survival probability estimates at
 #' @param probs Numeric vector of quantiles to obtain estimates at
 #' @param newdata A `base::data.frame()` or `tibble::tibble()` containing all
@@ -18,8 +19,8 @@
 #'    
 #' pred <- predict(p, times = seq(5,24,0.5), newdata = trial[complete.cases(trial), ], brier=TRUE,cox=TRUE)
 #' 
-#' plot(seq(5,24,0.5),pred$brier,type="b",pch=1)
-#' lines(seq(5,24,0.5),pred$brier_cox,type="b",col="red",pch=3)
+#' plot(seq(5,24,0.5),pred$brier,type="S",pch=1)
+#' lines(seq(5,24,0.5),pred$brier_cox,type="S",col="red",pch=3)
 #' legend("topright",c("Cure model","Cox model"),col=c("black","red"),lty=1,pch=c(1,3))
 #' 
 #'   

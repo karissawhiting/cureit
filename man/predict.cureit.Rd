@@ -16,7 +16,7 @@
 )
 }
 \arguments{
-\item{object}{input object}
+\item{object}{A cureit object.}
 
 \item{times}{Numeric vector of times to obtain survival probability estimates at}
 
@@ -46,14 +46,15 @@ p <- cureit(surv_formula = Surv(ttdeath, death) ~ age,
    
 pred <- predict(p, times = seq(5,24,0.5), newdata = trial[complete.cases(trial), ], brier=TRUE,cox=TRUE)
 
-plot(seq(5,24,0.5),pred$brier,type="b",pch=1)
-lines(seq(5,24,0.5),pred$brier_cox,type="b",col="red",pch=3)
+plot(seq(5,24,0.5),pred$brier,type="S",pch=1)
+lines(seq(5,24,0.5),pred$brier_cox,type="S",col="red",pch=3)
 legend("topright",c("Cure model","Cox model"),col=c("black","red"),lty=1,pch=c(1,3))
 
   
 }
 \seealso{
 Other cureit() functions: 
+\code{\link{Brier_inference}()},
 \code{\link{broom_methods_cureit}},
 \code{\link{cureit}()},
 \code{\link{nomogram}()}

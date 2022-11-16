@@ -49,6 +49,7 @@ cure_formula = ~ age + grade,  data = trial)
 }
 \seealso{
 Other cureit() functions: 
+\code{\link{Brier_inference}()},
 \code{\link{broom_methods_cureit}},
 \code{\link{nomogram}()},
 \code{\link{predict.cureit}()}
