@@ -2,3 +2,24 @@ url: http://www.karissawhiting.com/cureit/
 template:
   bootstrap: 5
 
+template:
+  bootstrap: 5
+  bootswatch: simplex
+  bslib:
+    primary: "#7F3BF5"
+    base_font: {google: "Atkinson Hyperlegible"}
+    heading_font: {google: "Atkinson Hyperlegible"}
+    text-muted: "#FFFFFF"
+
+authors:
+  Karissa Whiting:
+    href: "https://www.karissawhiting.com/"
+  Teng Fei:
+    href: "https://www.mskcc.org/profile/teng-fei"
+    
+    
+navbar:
+  bg: primary
+  structure:
+    left:  [reference, articles, news]
+    right: [search, github]

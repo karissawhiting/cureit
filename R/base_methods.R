@@ -17,11 +17,13 @@
 #'    cure_formula = ~ age,
 #'    data = trial) 
 #'    
-#' pred <- predict(p, times = seq(5,24,0.5), newdata = trial[complete.cases(trial), ], brier=TRUE,cox=TRUE)
+#' pred <- predict(p, times = seq(5,24,0.5),
+#'  newdata = trial[complete.cases(trial), ], brier=TRUE,cox=TRUE)
 #' 
 #' plot(seq(5,24,0.5),pred$brier,type="S",pch=1)
 #' lines(seq(5,24,0.5),pred$brier_cox,type="S",col="red",pch=3)
-#' legend("topright",c("Cure model","Cox model"),col=c("black","red"),lty=1,pch=c(1,3))
+#' legend("topright",c("Cure model","Cox model"),
+#' col=c("black","red"),lty=1,pch=c(1,3))
 #' 
 #'   
 predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", brier = FALSE, cox = FALSE, ...) {
