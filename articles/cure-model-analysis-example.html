@@ -9,7 +9,8 @@
 <title>Cure Model Analysis Example • cureit</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Atkinson_Hyperlegible-0.4.2/font.css" rel="stylesheet">
+<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Cure Model Analysis Example">
 <meta property="og:description" content="cureit">
@@ -22,7 +23,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">cureit</a>
 
@@ -73,67 +74,91 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This package allows you to easily build and report cure mixture models. The modeling functions are wrappers for the <code>smcure()</code> function from the {smcure} package and several functions are available to diagnose and visualize your cure model results.</p>
+<p>This package allows you to easily build and report cure mixture
+models. The modeling functions are wrappers for the
+<code>smcure()</code> function from the {smcure} package and several
+functions are available to diagnose and visualize your cure model
+results.</p>
 </div>
 <div class="section level2">
 <h2 id="example-data-set">Example data set<a class="anchor" aria-label="anchor" href="#example-data-set"></a>
 </h2>
-<p>We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The data is available in the {ISwR} package (Dalgaard, 2008).</p>
-<p>Variables include: - <code>ulc</code> - ulceration status - <code>thick</code> - tumor thickness in mm - <code>sex</code> - sex</p>
-<p>We created categorized version of tumor thickness</p>
+<p>We will be using publicly available data on 205 stage I melanoma
+patients at the Department of Plastic Surgery, University Hospital of
+Odense, Denmark from 1962 to 1977. The original data is available in the
+{ISwR} package (Dalgaard, 2008). A version of this data in available in
+the package <code><a href="../reference/melanoma.html">cureit::melanoma</a></code></p>
+<p>Variables include: - <code>ulc</code> - ulceration status -
+<code>thick</code> - tumor thickness in mm - <code>sex</code> - sex</p>
+<p>A summary of the main available variables is below:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">ISwR</span><span class="fu">::</span><span class="va">melanom</span></span>
-<span></span>
-<span><span class="va">mel</span> <span class="op">&lt;-</span> <span class="fu">ISwR</span><span class="fu">::</span><span class="va">melanom</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>status <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span><span class="va">status</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>, </span>
-<span>                            <span class="va">status</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span> <span class="op">~</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>thick_cat <span class="op">=</span> </span>
-<span>              <span class="fu">case_when</span><span class="op">(</span><span class="va">thick</span> <span class="op">&lt;=</span> <span class="fl">129</span> <span class="op">~</span> <span class="st">"≤ 129"</span>, </span>
-<span>                        <span class="va">thick</span> <span class="op">&lt;=</span> <span class="fl">322</span> <span class="op">~</span> <span class="st">"less equal 322"</span>, </span>
-<span>                        <span class="va">thick</span> <span class="op">&gt;</span> <span class="fl">322</span> <span class="op">~</span> <span class="st">"greater 322"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>thick_cat <span class="op">=</span> <span class="fu">fct_relevel</span><span class="op">(</span><span class="va">thick_cat</span>, <span class="st">"≤ 129"</span>, <span class="st">"≤ 322"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>sex <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">~</span> <span class="st">"male"</span>, </span>
-<span>                         <span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">~</span> <span class="st">"female"</span><span class="op">)</span>,</span>
-<span>         ulc <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span><span class="va">ulc</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">~</span> <span class="st">"present"</span>, </span>
-<span>                         <span class="va">ulc</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">~</span> <span class="st">"absent"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">mel</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">thick_cat</span>, <span class="va">sex</span>, <span class="va">ulc</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="va">melanoma</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">tumor_thickness</span>, <span class="va">sex</span>, <span class="va">ulceration</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">tbl_summary</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">bold_labels</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>To calculate overall survival, we will only consider death from melanoma as an event. Patients who died from other cause or were lost to follow-up are censored.</p>
+<p>To calculate overall survival, we will only consider death from
+melanoma as an event. Patients who died from other cause or were lost to
+follow-up are censored.</p>
+<p>Disease death outcome data is plotted and summarized below using the
+{ggsurvfit} package and {gtsummary}:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span><span class="op">/</span><span class="fl">365</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulc</span>, data <span class="op">=</span> <span class="va">mel</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">years</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">melanoma</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">fit</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">ggsurvplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">fit</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">ggsurvfit</span><span class="fu">::</span><span class="fu"><a href="http://www.danieldsjoberg.com/ggsurvfit/reference/ggsurvfit.html" class="external-link">ggsurvfit</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Disease-related Death Probability"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">xlab</span><span class="op">(</span><span class="st">"Years"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">ylim</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>From the Kaplan-meier curves we can see the disease death rate
+plateaus around .7, indicating that not all patients may experience
+disease-realted death. The patients that do experience this event, may
+be different from those who do not in a way that would be useful to
+categorize.</p>
+<p>Cure models can help tease apart the contribution of clinical
+variables to these potentially heterogeneous sub cohorts.</p>
 </div>
 <div class="section level2">
 <h2 id="fitting-the-cure-model">Fitting the Cure Model<a class="anchor" aria-label="anchor" href="#fitting-the-cure-model"></a>
 </h2>
-<p>The <code><a href="../reference/cureit.html">cureit()</a></code> function is a wrapper for <code><a href="https://rdrr.io/pkg/smcure/man/smcure.html" class="external-link">smcure::smcure()</a></code>. Here we include ulceration status, sex and tumor thickness as variables of interest in both cure and survival portions.</p>
+<p>The <code><a href="../reference/cureit.html">cureit()</a></code> function is a wrapper for
+<code><a href="https://rdrr.io/pkg/smcure/man/smcure.html" class="external-link">smcure::smcure()</a></code> that allows you to code cure models using
+a tidy framework. Below, we will fit a model using ulceration status,
+sex and tumor thickness as variables of interest in both cure and
+survival portions.</p>
+<p>Note: You can optionally provide different sets of covariates to the
+survival portion and the cure portion:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulc</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">thick_cat</span>,</span>
-<span>              cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">ulc</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">thick_cat</span>, data <span class="op">=</span> <span class="va">mel</span><span class="op">)</span></span></code></pre></div>
-<p>You ca</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>,</span>
+<span>              cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>, data <span class="op">=</span> <span class="va">melanoma</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">cureit</span>(<span class="fu">Surv</span>(days, status) <span class="sc">~</span> ulceration <span class="sc">+</span> sex <span class="sc">+</span> tumor_thickness,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">cure_formula =</span> <span class="sc">~</span> ulceration <span class="sc">+</span> sex <span class="sc">+</span> tumor_thickness,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> melanoma)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">predict</span>(p, <span class="at">times =</span> <span class="fu">seq</span>(<span class="dv">100</span>, <span class="dv">5000</span>, <span class="dv">100</span>), <span class="at">newdata =</span> melanoma, <span class="at">brier =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>x<span class="sc">$</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tidy_mods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">tbl_regression</span><span class="op">(</span><span class="va">fit</span>, tidy_fun <span class="op">=</span> <span class="va">tidy.cureit</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">bold_labels</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">tbl_regression</span><span class="op">(</span><span class="va">fit</span>, tidy_fun <span class="op">=</span> <span class="va">tidy.cureit</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">bold_labels</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tidy_df</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_cure</span>, <span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_surv</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="nomogram">Nomogram<a class="anchor" aria-label="anchor" href="#nomogram"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nomogram.cureit</span><span class="op">(</span><span class="va">fit</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="k-index">K-Index<a class="anchor" aria-label="anchor" href="#k-index"></a>
 </h2>
 <p>Below we calculate the K and C indicies for this model</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://ipa-tys.github.io/ROCR/" class="external-link">ROCR</a></span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="va">mod_data</span> <span class="op">&lt;-</span> <span class="va">mel</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -159,7 +184,7 @@
 <span>      nboot <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>      Var <span class="op">=</span> <span class="cn">T</span></span>
 <span>      <span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">k_index</span> <span class="op">&lt;-</span> <span class="va">k_fit</span><span class="op">$</span><span class="va">eva</span><span class="op">[</span><span class="st">"K"</span><span class="op">]</span></span>
 <span><span class="va">c_index</span> <span class="op">&lt;-</span> <span class="va">k_fit</span><span class="op">$</span><span class="va">eva</span><span class="op">[</span><span class="st">"C"</span><span class="op">]</span></span>
@@ -182,9 +207,9 @@
 <div class="section level2">
 <h2 id="calibration-curve">Calibration Curve<a class="anchor" aria-label="anchor" href="#calibration-curve"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu">cure_calibration</span><span class="op">(</span><span class="va">fit</span>, prediction_time <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span><span class="va">fit</span>, prediction_time <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -194,7 +219,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Karissa Whiting, Teng Fei.</p>
+<p>Developed by <a href="https://www.karissawhiting.com/" class="external-link">Karissa Whiting</a>, <a href="https://www.mskcc.org/profile/teng-fei" class="external-link">Teng Fei</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
