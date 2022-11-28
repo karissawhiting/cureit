@@ -49,7 +49,8 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
   }
   
   # getting predictions on the original model fit ------------------------------
-  processed <- cureit_mold(object$surv_formula, object$cure_formula, newdata %||% object$data)
+  processed <- cureit_mold(object$surv_formula, object$cure_formula, newdata %||% object$data,
+                           surv_blueprint = object$surv_blueprint, cure_blueprint = object$cure_blueprint)
   
   newX=processed$surv_processed$predictors
   newZ=processed$cure_processed$predictors

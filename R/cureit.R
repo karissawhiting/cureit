@@ -32,21 +32,27 @@ cureit.formula <- function(surv_formula, cure_formula, data, conf.level = 0.95, 
   cureit_bridge(processed, surv_formula, cure_formula, data, conf.level = conf.level, nboot = nboot, eps = eps)
 }
 
-cureit_mold <- function(surv_formula, cure_formula, data) {
+cureit_mold <- function(surv_formula, cure_formula, data, surv_blueprint = NULL, cure_blueprint = NULL) {
+  
+  if (is.null(surv_blueprint)) surv_blueprint = hardhat::default_formula_blueprint(intercept = TRUE)
+  
   surv_processed <-
     hardhat::mold(
       surv_formula, data,
-      blueprint = hardhat::default_formula_blueprint(intercept = TRUE)
+      blueprint = surv_blueprint
     )
   # remove intercept
   surv_processed$predictors <- surv_processed$predictors[, -1]
   surv_processed$predictors <- surv_processed$predictors %>% janitor::clean_names()
   surv_processed$outcomes <- surv_processed$outcomes %>% janitor::clean_names()
   
+  
+  if (is.null(cure_blueprint)) cure_blueprint = hardhat::default_formula_blueprint(intercept = TRUE)
+  
   cure_processed <-
     hardhat::mold(
       cure_formula, data,
-      blueprint = hardhat::default_formula_blueprint(intercept = TRUE)
+      blueprint = cure_blueprint
     )
   # remove intercept
   cure_processed$predictors <- cure_processed$predictors[, -1]
@@ -89,7 +95,7 @@ checking <- function(surv_formula, cure_formula, data, keep_all = FALSE) {
 new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names, 
                        surv_formula_input, cure_formula_input, surv_formula_smcure,
                        cure_formula_smcure, tidy, smcure, data,
-                       blueprint, conf.level, nboot, eps) {
+                       surv_blueprint, cure_blueprint, conf.level, nboot, eps) {
   
   # function to create an object
   
@@ -158,7 +164,8 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
       purrr::compact(),
     tidy = tidy,
     smcure = smcure,
-    blueprint = blueprint,
+    surv_blueprint = surv_blueprint,
+    cure_blueprint = cure_blueprint,
     class = "cureit"
   )
 }
@@ -272,7 +279,8 @@ cureit_bridge <- function(processed, surv_formula_old, cure_formula_old, data, c
       tidy = fit$tidy,
       smcure = fit$smcure,
       data = data,
-      blueprint = processed$surv_processed$blueprint,
+      surv_blueprint = processed$surv_processed$blueprint,
+      cure_blueprint = processed$cure_processed$blueprint,
       conf.level = conf.level,
       nboot=nboot,
       eps=eps

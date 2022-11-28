@@ -15,6 +15,7 @@
 \alias{add_nevent}
 \alias{add_p}
 \alias{inline_text}
+\alias{createFolds}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -23,6 +24,8 @@ below to see their documentation.
 
 \describe{
   \item{broom}{\code{\link[broom:reexports]{augment}}, \code{\link[broom:reexports]{glance}}, \code{\link[broom:reexports]{tidy}}}
+
+  \item{caret}{\code{\link[caret:createDataPartition]{createFolds}}}
 
   \item{dplyr}{\code{\link[dplyr:reexports]{\%>\%}}}
 
