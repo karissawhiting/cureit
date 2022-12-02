@@ -10,6 +10,8 @@
 #' @family cureit() functions
 #' @export
 #' @examples
+
+#' trial <- na.omit(trial)
 #' p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
 #'    cure_formula = ~ age,
 #'    data = trial) 
@@ -30,53 +32,59 @@ Brier_inference_bootstrap <- function(object,
                                       times,
                                       ...) {
   
+
   # Data checks -------
-  if (nboot <= 0){
+  if (nboot <= 0) {
     stop("`nboot=` cannot be less than 1", call. = FALSE)
   }
   if (!is.null(times) && any(times < 0)) {
     stop("`times=` must be non-negative.", call. = FALSE)
   }
-  
-  Brier_original <- predict(object=object,newdata=newdata,method="prob",times=times,brier=TRUE,cox=TRUE)
-  
+
+  Brier_original <- predict(
+    object = object,
+    newdata = newdata, method = "prob", times = times, brier = TRUE, cox = TRUE
+  )
+
   newdata <- newdata %||% object$data
   processed <- cureit_mold(object$surv_formula, object$cure_formula, newdata %||% object$data,
                            surv_blueprint = object$surv_blueprint, cure_blueprint = object$cure_blueprint)
   s.outcomes <- as.matrix(processed$surv_processed$outcomes[, 1, drop = TRUE])
-  status <- s.outcomes[,"status"]
-  
+  status <- s.outcomes[, "status"]
+
   data1 <- subset(newdata, status == 1)
   data0 <- subset(newdata, status == 0)
   n1 <- nrow(data1)
   n0 <- nrow(data0)
-  
-  boot_brier <- boot_brier_cox <- matrix(NA,nrow=nboot,ncol=length(times))
-  
+
+  boot_brier <- boot_brier_cox <- matrix(NA, nrow = nboot, ncol = length(times))
+
   # Start bootstrapping
-  
+
   i <- 1
-  
-  while(i <= nboot){
-    
+
+  while (i <= nboot) {
+
     # print(i)
-    
+
     id1 <- sample(1:n1, n1, replace = TRUE)
     id0 <- sample(1:n0, n0, replace = TRUE)
     bootdata <- rbind(data1[id1, ], data0[id0, ])
-    
-    bootfit <- cureit(surv_formula = object$surv_formula,
-                      cure_formula = object$cure_formula,
-                      data = bootdata,
-                      nboot = 0,
-                      eps = object$eps)
-    
-    pred_bootfit <- predict(bootfit,method="prob",times=times,brier=TRUE,cox=TRUE)
-    
-    boot_brier[i,] <- pred_bootfit$brier
-    boot_brier_cox[i,] <- pred_bootfit$brier_cox
-    
-    i = i+1
+
+    bootfit <- cureit(
+      surv_formula = object$surv_formula,
+      cure_formula = object$cure_formula,
+      data = bootdata,
+      nboot = 0,
+      eps = object$eps
+    )
+
+    pred_bootfit <- predict(bootfit, method = "prob", times = times, brier = TRUE, cox = TRUE)
+
+    boot_brier[i, ] <- pred_bootfit$brier
+    boot_brier_cox[i, ] <- pred_bootfit$brier_cox
+
+    i <- i + 1
   }
   
   brier_sd <- apply(boot_brier,2,sd)
