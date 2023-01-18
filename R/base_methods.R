@@ -74,6 +74,7 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
   for (i in 1:nrow(newZ)) {
     scure[, i] = s0^ebetaX[i]
   }
+  
   for (i in 1:n) {
     for (j in 1:nrow(newX)) {
       spop[i, j] = uncureprob[j] * scure[i, j] + (1 - 

@@ -30,7 +30,7 @@ a tibble
 Inference for Brier score for cureit objects
 }
 \examples{
-
+trial <- na.omit(trial)
 p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
    cure_formula = ~ age,
    data = trial) 
@@ -52,7 +52,6 @@ times = seq(5,24,0.5)
 cvbrier <- Brier_inference_cv(p,times=times)
 plot(times,cvbrier$cv_brier_cure_mean,type="s",xlab="Time",ylab="Brier score")
 lines(times,cvbrier$cv_brier_cox_mean,type="s",lty=2,col="red")
-
 }
 \seealso{
 Other cureit() functions: 
