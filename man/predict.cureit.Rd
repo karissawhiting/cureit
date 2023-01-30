@@ -56,7 +56,7 @@ col=c("black","red"),lty=1,pch=c(1,3))
 }
 \seealso{
 Other cureit() functions: 
-\code{\link{Brier_inference}()},
+\code{\link{Brier_inference_bootstrap}()},
 \code{\link{broom_methods_cureit}},
 \code{\link{cureit}()},
 \code{\link{nomogram}()}

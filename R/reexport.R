@@ -51,3 +51,8 @@ gtsummary::add_p
 #' @importFrom gtsummary inline_text
 gtsummary::inline_text
 
+# caret --------------------------------------------------------------------
+#' @export
+#' @importFrom caret createFolds
+caret::createFolds
+

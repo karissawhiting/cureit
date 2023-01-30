@@ -32,7 +32,8 @@ Imports:
     stats,
     hardhat,
     janitor,
-    forcats
+    forcats,
+    caret
 Suggests: 
     knitr,
     rmarkdown,
