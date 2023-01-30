@@ -1,9 +1,6 @@
 #' Inference for Brier score for cureit objects
 #' @rdname Brier_inference_cureit
 #' @param object A cureit object.
-#' @param newdata A `base::data.frame()` or `tibble::tibble()` containing all
-#' the original predictors used to create x. Defaults to `NULL`. 
-#' @param nboot Number of bootstrap resamples to be generated.
 #' @param times Numeric vector of times to obtain survival probability estimates at
 #' @param ... Additional arguments passed to other methods.
 #' @return a tibble
@@ -27,15 +24,13 @@
 #' legend("topleft",c("Cure model","Cox model"),col=c("black","red"),lty=1)
 
 Brier_inference_bootstrap <- function(object,
-                                      newdata = NULL,
-                                      nboot = 100,
                                       times,
                                       ...) {
   
 
   # Data checks -------
-  if (nboot <= 0) {
-    stop("`nboot=` cannot be less than 1", call. = FALSE)
+  if (object$nboot <= 0) {
+    stop("`nboot=` cannot be less than 1. Please rerun `cureit` with `nboot` > 0", call. = FALSE)
   }
   if (!is.null(times) && any(times < 0)) {
     stop("`times=` must be non-negative.", call. = FALSE)
@@ -43,58 +38,15 @@ Brier_inference_bootstrap <- function(object,
 
   Brier_original <- predict(
     object = object,
-    newdata = newdata,
+    newdata = object$data,
     method = "prob",
     times = times, 
     brier = TRUE, cox = TRUE
   )
 
-  # newdata <- newdata %||% object$data
-  # processed <- cureit_mold(object$surv_formula, object$cure_formula, newdata %||% object$data,
-  #                          surv_blueprint = object$surv_blueprint, cure_blueprint = object$cure_blueprint)
-  # s.outcomes <- as.matrix(processed$surv_processed$outcomes[, 1, drop = TRUE])
-  # status <- s.outcomes[, "status"]
-  # 
-  # data1 <- subset(newdata, status == 1)
-  # data0 <- subset(newdata, status == 0)
-  # n1 <- nrow(data1)
-  # n0 <- nrow(data0)
-  
-# 
-#   boot_brier <- boot_brier_cox <- matrix(NA, nrow = nboot, ncol = length(times))
-# 
-#   # Start bootstrapping
-# 
-#   i <- 1
-# 
-#   while (i <= nboot) {
-# 
-#     # print(i)
-# 
-#     id1 <- sample(1:n1, n1, replace = TRUE)
-#     id0 <- sample(1:n0, n0, replace = TRUE)
-#     bootdata <- rbind(data1[id1, ], data0[id0, ])
-# 
-#     bootfit <- cureit(
-#       surv_formula = object$surv_formula,
-#       cure_formula = object$cure_formula,
-#       data = bootdata,
-#       nboot = 0,
-#       eps = object$eps
-#     )
 
-  # returns list of fits 
-  bootfit <- boot_cure(surv_formula = object$surv_formula,
-                       cure_formula = object$cure_formula,
-                       data = object$data,
-                       newdata = newdata,
-    # surv_formula = object$surv_formula,
-    #                    cure_formula = object$cure_formula,
-    #                    data = bootdata,
-    #                    
-                       nboot = nboot,
-                       eps = object$eps, 
-    brier = TRUE)
+  nboot <- object$nboot
+  bootfit <- object$smcure$bootstrap_fit
   
   i <- 1
   
@@ -130,7 +82,6 @@ Brier_inference_bootstrap <- function(object,
               brier_cox_97.5 = brier_cox_97.5,
               boot_brier = boot_brier,
               boot_brier_cox = boot_brier_cox))
-  
 }
 
 
