@@ -1,9 +1,9 @@
 pandoc: 2.19.2
-pkgdown: 2.0.6
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   cure-model-analysis-example: cure-model-analysis-example.html
-last_built: 2022-11-16T14:48Z
+last_built: 2023-01-30T02:03Z
 urls:
   reference: http://www.karissawhiting.com/cureit/reference
   article: http://www.karissawhiting.com/cureit/articles
