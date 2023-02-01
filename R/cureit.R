@@ -220,7 +220,7 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
     
     ### Bootstrap section ###
     
-    # subset data by endpont status
+    # subset data by endpoint status
     data1 <- subset(newdata, status == 1)
     data0 <- subset(newdata, status == 0)
     n1 <- nrow(data1)

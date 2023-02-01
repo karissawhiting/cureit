@@ -5,17 +5,12 @@
 \alias{Brier_inference_cv}
 \title{Inference for Brier score for cureit objects}
 \usage{
-Brier_inference_bootstrap(object, newdata = NULL, nboot = 100, times, ...)
+Brier_inference_bootstrap(object, times, ...)
 
 Brier_inference_cv(object, ncv = 10, times, ...)
 }
 \arguments{
 \item{object}{A cureit object.}
-
-\item{newdata}{A \code{base::data.frame()} or \code{tibble::tibble()} containing all
-the original predictors used to create x. Defaults to \code{NULL}.}
-
-\item{nboot}{Number of bootstrap resamples to be generated.}
 
 \item{times}{Numeric vector of times to obtain survival probability estimates at}
 
@@ -36,7 +31,7 @@ p <- cureit(surv_formula = Surv(ttdeath, death) ~ age,
    data = trial) 
    
 times = seq(5,24,0.5)
-bootbrier <- Brier_inference_bootstrap(p,times=times)
+bootbrier <- Brier_inference_bootstrap(p,times=times, nboot = 10)
 plot(times,bootbrier$brier,type="s",xlab="Time",ylab="Brier score")
 lines(times,bootbrier$brier_2.5,type="s",lty=2)
 lines(times,bootbrier$brier_97.5,type="s",lty=2)

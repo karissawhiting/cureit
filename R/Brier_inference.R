@@ -23,9 +23,7 @@
 #' lines(times,bootbrier$brier_cox_97.5,type="s",lty=2,col="red")
 #' legend("topleft",c("Cure model","Cox model"),col=c("black","red"),lty=1)
 
-Brier_inference_bootstrap <- function(object,
-                                      times,
-                                      ...) {
+Brier_inference_bootstrap <- function(object, times,...) {
   
 
   # Data checks -------
