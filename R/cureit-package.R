@@ -31,6 +31,11 @@ utils::globalVariables(".")
 #' @importFrom rlang %||%
 #' @importFrom rlang abort
 #' @importFrom stats as.formula
+#' @importFrom stats median
+#' @importFrom stats pnorm
 #' @importFrom stats predict
+#' @importFrom stats quantile
+#' @importFrom stats sd
+#' @importFrom stats var
 ## usethis namespace: end
 NULL

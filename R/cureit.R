@@ -214,11 +214,82 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
                    cureform=cure_formula,
                    data=newdata,
                    model="ph",
-                   nboot=nboot,
+                   nboot=1,
                    eps=eps
-      )
+      )$result
     
-    cureit_fit <- cureit_fit$result
+    ### Bootstrap section ###
+    
+    # subset data by endpoint status
+    data1 <- subset(newdata, status == 1)
+    data0 <- subset(newdata, status == 0)
+    n1 <- nrow(data1)
+    n0 <- nrow(data0)
+    
+    # Start bootstrapping ----------
+    boot_fit_results <- vector("list", nboot)
+    best_boot <- matrix(NA,nrow=nboot,ncol=length(cureit_fit$b))
+    betaest_boot <- matrix(NA,nrow=nboot,ncol=length(cureit_fit$beta))
+    
+    i <- 1
+    
+    while (i <= nboot) {
+      
+      id1 <- sample(1:n1, n1, replace = TRUE)
+      id0 <- sample(1:n0, n0, replace = TRUE)
+      bootdata <- rbind(data1[id1, ], data0[id0, ])
+      
+      bootfit <- quiet_smcure(
+        formula=surv_formula,
+        cureform=cure_formula,
+        data=bootdata,
+        model="ph",
+        nboot=1,
+        eps=eps
+      )$result
+      
+      best_boot[i,] <- bootfit$b
+      betaest_boot[i,] <- bootfit$beta
+      boottidy <- broom::tidy(bootfit,conf.int=FALSE)
+      
+      boot_fit_results[[i]] <-
+        new_cureit(
+          surv_coefs = boottidy$df_surv$estimate,
+          surv_coef_names = boottidy$df_surv$term,
+          cure_coefs = boottidy$df_cure$estimate,
+          cure_coef_names = boottidy$df_cure$term,
+          surv_formula_input = surv_formula,
+          cure_formula_input = cure_formula,
+          surv_formula_smcure = NULL,
+          cure_formula_smcure = NULL,
+          tidy = boottidy,
+          smcure = bootfit,
+          data = bootdata,
+          surv_blueprint = NULL,
+          cure_blueprint = NULL,
+          conf.level = conf.level,
+          nboot=nboot,
+          eps=eps
+        )
+      
+      i <- i + 1
+    }
+    
+    cureit_fit$b_var <- apply(best_boot,2,var)
+    cureit_fit$b_sd <- sqrt(cureit_fit$b_var)
+    cureit_fit$b_zvalue <- cureit_fit$b/cureit_fit$b_sd
+    cureit_fit$b_pvalue <- ifelse(pnorm(cureit_fit$b_zvalue) > 0.5,
+                                  1-pnorm(cureit_fit$b_zvalue), 
+                                  pnorm(cureit_fit$b_zvalue))*2
+    
+    cureit_fit$beta_var <- apply(betaest_boot,2,var)
+    cureit_fit$beta_sd <- sqrt(cureit_fit$beta_var)
+    cureit_fit$beta_zvalue <- cureit_fit$beta/cureit_fit$beta_sd
+    cureit_fit$beta_pvalue <- ifelse(pnorm(cureit_fit$beta_zvalue) > 0.5,
+                                     1-pnorm(cureit_fit$beta_zvalue), 
+                                     pnorm(cureit_fit$beta_zvalue))*2
+    
+    cureit_fit$bootstrap_fit = boot_fit_results # TBD: depending on utility features, this can be fitted models for bootstrapped data or bootstrap samples.
     
     # broom method can be constructed later 
     tidy <- broom::tidy(cureit_fit, conf.int = TRUE, conf.level = conf.level)
@@ -238,9 +309,6 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
     )
     
   }
-  
-  
-  
   
 }
 
