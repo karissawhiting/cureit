@@ -64,7 +64,7 @@
          "coxph" = {
            
            lp_surv_model = predict(object, type = "risk") 
-           # set cure probablity always be 1
+           # set cure probablity to always be 1 in the case of a coxmodel (source: evacure package)
            logit_inv_cure  <- rep(1, object$n)        
            
            lp_surv_model <- as.numeric(lp_surv_model)
