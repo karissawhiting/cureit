@@ -61,6 +61,7 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
   newZ = cbind(1, newZ)
   if (is.vector(newX)) 
     newX = as.matrix(newX)
+  
   s0 = as.matrix(object$smcure$s[order(object$smcure$Time)], ncol = 1)
   n = nrow(s0)
   uncureprob = exp(object$smcure$b %*% t(newZ))/(1 + exp(object$smcure$b %*% t(newZ)))
