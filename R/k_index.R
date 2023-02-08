@@ -3,6 +3,18 @@
 #'
 #' @export
 #' @param object a cureit model object or a coxph model object
+#' @examples 
+#' 
+#' p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
+#'    cure_formula = ~ age,
+#'    data = trial) 
+#' .calc_k_index(p)
+#' 
+#' cox_p <- survival::coxph(Surv(ttdeath, death) ~ age,
+#'    data = trial)
+#'    
+#' .calc_k_index(cox_p)
+#' 
 .calc_k_index <- function(object){
   
   model_class <- if(inherits(object, "cureit")) {
@@ -41,12 +53,12 @@
           lp_surv_model <- as.numeric(lp_surv_model)
           logit_inv_cure <- as.numeric(logit_inv_cure)
           
-          N <- sum(logit_inv_cure)
+          N <- sum(logit_inv_cure, na.rm = TRUE)
           comp_risk_cox <- outer(lp_surv_model, lp_surv_model, .kernel_fun)
           diag(comp_risk_cox) <- 0
           
           # Based on definition
-          sum(comp_risk_cox * outer(logit_inv_cure, logit_inv_cure, "*")  ) * 2  / ( N^2 - sum(logit_inv_cure^2)) 
+          sum(comp_risk_cox * outer(logit_inv_cure, logit_inv_cure, "*"), na.rm = TRUE  ) * 2  / ( N^2 - sum(logit_inv_cure^2, na.rm = TRUE)) 
 
          },
          "coxph" = {
@@ -73,10 +85,16 @@
 #'
 #' @export
 #' @param object a cureit model object
+#' @examples 
+#' p <- cureit(surv_formula = Surv(ttdeath, death) ~ age, 
+#'    cure_formula = ~ age,
+#'    data = trial) 
+#' k_index(p)
 k_index <- function(object){
   
 # Bootstrap CIs -----------------------------------------------------------
 
+  k = .calc_k_index(object)
   nboot <- object$nboot
   
   if(nboot > 1) {
@@ -92,25 +110,9 @@ k_index <- function(object){
     }
   
   boot_kindex_sd <- apply(boot_kindex, 2, sd)
-  boot_kindex_2.5 <- apply(boot_kindex,2,function(x) quantile(x,probs=0.025))
-  boot_kindex_97.5 <- apply(boot_kindex,2,function(x) quantile(x,probs=0.975))
+  boot_kindex_2.5 <- apply(boot_kindex,2,function(x) quantile(x,probs=0.025, na.rm = TRUE))
+  boot_kindex_97.5 <- apply(boot_kindex,2,function(x) quantile(x,probs=0.975, na.rm = TRUE))
   boot_kindex_mean <- apply(boot_kindex,2,function(x) mean(x, na.rm = TRUE))
-
-  # compare to cox model ------------------
-  if (compare_cox){
-    cox_marginal = probs_at_times(scox_prd,times)
-    
-    brier_cox <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),
-                                count,ipw,cox_marginal,obs))/nrow(s.outcomes)
-    
-    names(brier_cox) <- paste0("T = ",times)
-    
-    return(list(cured = cure_prd,
-                surv_uncured = probs_at_times(scure_prd,times),
-                surv_marginal = probs_at_times(spop_prd,times),
-                brier = brier,
-                brier_cox = brier_cox
-    ))
     
   return(list(k_index = k,
               boot_sd = boot_kindex_sd,
@@ -119,10 +121,10 @@ k_index <- function(object){
               boot_kindex_mean = boot_kindex_mean,
               boot_kindex = boot_kindex))  
   } else {
-    .calc_k_index(object)
+    return(k)
   }
-
 }
+
 
 
 
