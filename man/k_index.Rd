@@ -4,10 +4,16 @@
 \alias{k_index}
 \title{K-index estimation}
 \usage{
-k_index(object)
+k_index(object, newdata = NULL, ncv = NULL)
 }
 \arguments{
 \item{object}{a cureit model object}
+
+\item{newdata}{A \code{base::data.frame()} or \code{tibble::tibble()} containing all
+the original predictors used to create object. Defaults to \code{NULL}.}
+
+\item{ncv}{number of folds for cross validation. Defaults to \code{NULL}.
+If specified, \code{newdata} will be ignored and cross-validated k-index will be reported.}
 }
 \description{
 K-index estimation

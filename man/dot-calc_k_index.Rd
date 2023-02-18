@@ -4,10 +4,13 @@
 \alias{.calc_k_index}
 \title{K-index estimation}
 \usage{
-.calc_k_index(object)
+.calc_k_index(object, newdata = NULL)
 }
 \arguments{
 \item{object}{a cureit model object or a coxph model object}
+
+\item{newdata}{A \code{base::data.frame()} or \code{tibble::tibble()} containing all
+the original predictors used to create object. Defaults to \code{NULL}.}
 }
 \description{
 K-index estimation
