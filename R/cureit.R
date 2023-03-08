@@ -13,17 +13,24 @@
 #' @family cureit() functions
 #' @name cureit
 #' @examples
-#' cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
+#' cureit(formula = Surv(ttdeath, death) ~ age + grade, 
 #' cure_formula = ~ age + grade,  data = trial)
 NULL
 
 # Formula method
 #' @rdname cureit
 #' @export
-cureit.formula <- function(surv_formula, cure_formula, data, conf.level = 0.95, nboot = 100, eps = 1e-7,...) {
+cureit.formula <- function(formula, cure_formula = NULL, data, conf.level = 0.95, nboot = 100, eps = 1e-7,...) {
   
+  surv_formula = formula
+
   # checking inputs  -------------------------
-  checking(surv_formula = surv_formula, cure_formula = cure_formula, data = data)
+  checking(formula = surv_formula, cure_formula = cure_formula, data = data)
+  
+  if(is.null(cure_formula)) {
+    cure_formula <- rlang::new_formula(NULL, rlang::f_rhs(surv_formula))
+  }
+  
   
   # process model variables ----------------------------------------------------
   processed <- cureit_mold(surv_formula, cure_formula, data)
@@ -32,7 +39,9 @@ cureit.formula <- function(surv_formula, cure_formula, data, conf.level = 0.95, 
   cureit_bridge(processed, surv_formula, cure_formula, data, conf.level = conf.level, nboot = nboot, eps = eps)
 }
 
-cureit_mold <- function(surv_formula, cure_formula, data, surv_blueprint = NULL, cure_blueprint = NULL) {
+cureit_mold <- function(formula, cure_formula, data, surv_blueprint = NULL, cure_blueprint = NULL) {
+  
+  surv_formula <- formula
   
   if (is.null(surv_blueprint)) surv_blueprint = hardhat::default_formula_blueprint(intercept = TRUE)
   
@@ -61,7 +70,10 @@ cureit_mold <- function(surv_formula, cure_formula, data, surv_blueprint = NULL,
   list(surv_processed=surv_processed,cure_processed=cure_processed)
 }
 
-checking <- function(surv_formula, cure_formula, data, keep_all = FALSE) {
+checking <- function(formula, cure_formula, data, keep_all = FALSE) {
+  
+  surv_formula <- formula
+  
   # evaluating LHS of formula --------------------------------------------------
   surv_formula_lhs <-
     tryCatch(
@@ -170,8 +182,9 @@ new_cureit <- function(surv_coefs, surv_coef_names, cure_coefs, cure_coef_names,
   )
 }
 
-cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot, eps=eps) {
+cureit_impl <- function(formula, cure_formula, newdata, conf.level = conf.level, nboot = nboot, eps=eps) {
   
+  surv_formula <- formula
   # function to run cureit and summarize with tidy (implementation)
   quiet_smcure <- purrr::quietly(smcure::smcure)
   

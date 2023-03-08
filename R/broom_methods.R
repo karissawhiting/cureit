@@ -131,38 +131,47 @@ tidy.cureit <- function(x,
   # df_logit$term <- paste0(x$bnm,", Cure model")
   
   if (conf.int){
-    df_logit <- data.frame(term = paste0(x$smcure$bnm,", Cure model"),
+    df_logit <- data.frame(term = x$smcure$bnm,
+                 
                            estimate=x$smcure$b,
                            std.error=x$smcure$b_sd,
                            statistic=x$smcure$b_zvalue,
                            conf.low=x$smcure$b-1.96*x$smcure$b_sd,
                            conf.high=x$smcure$b+1.96*x$smcure$b_sd,
-                           p.value=x$smcure$b_pvalue) %>% as_tibble()
+                           p.value=x$smcure$b_pvalue) %>% as_tibble() %>%
+      mutate(y.level = "Cure model")
     
-    df_surv <- data.frame(term=paste0(x$smcure$betanm,", Survival model"),
+    df_surv <- data.frame(term= x$smcure$betanm,
+                 
                           estimate=x$smcure$beta,
                           std.error=x$smcure$beta_sd,
                           statistic=x$smcure$beta_zvalue,
                           conf.low=x$smcure$beta-1.96*x$smcure$beta_sd,
                           conf.high=x$smcure$beta+1.96*x$smcure$beta_sd,
                           p.value=x$smcure$beta_pvalue
-    ) %>% as_tibble() 
+    ) %>% as_tibble() %>%
+      mutate(y.level = "Survival model")
+    
     if (exponentiate){
       df_logit[,c(2,5,6)] <- exp(df_logit[,c(2,5,6)])
       df_surv[,c(2,5,6)] <- exp(df_surv[,c(2,5,6)])
     }
   }else{
-    df_logit <- data.frame(term = paste0(x$smcure$bnm,", Cure model"),
+    df_logit <- data.frame(term = x$smcure$bnm,
+              
                            estimate=x$smcure$b,
                            std.error=x$smcure$b_sd,
                            statistic=x$smcure$b_zvalue,
-                           p.value=x$smcure$b_pvalue) %>% as_tibble()
+                           p.value=x$smcure$b_pvalue) %>% as_tibble() %>%
+      mutate(y.level = "Cure model")
     
-    df_surv <- data.frame(term=paste0(x$smcure$betanm,", Survival model"),
+    df_surv <- data.frame(term = x$smcure$betanm,
+              
                           estimate=x$smcure$beta,
                           std.error=x$smcure$beta_sd,
                           statistic=x$smcure$beta_zvalue,
-                          p.value=x$smcure$beta_pvalue) %>% as_tibble() 
+                          p.value=x$smcure$beta_pvalue) %>% as_tibble() %>%
+      mutate(y.level = "Survival model")
     if (exponentiate){
       df_logit[,2] <- exp(df_logit[,2])
       df_surv[,2] <- exp(df_surv[,2])
