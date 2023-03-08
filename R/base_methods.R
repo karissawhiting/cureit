@@ -4,7 +4,7 @@
 #' @param times Numeric vector of times to obtain survival probability estimates at
 #' @param probs Numeric vector of quantiles to obtain estimates at
 #' @param newdata A `base::data.frame()` or `tibble::tibble()` containing all
-#' the original predictors used to create x. Defaults to `NULL`.
+#' the original predictors used to create object. Defaults to `NULL`.
 #' @param method Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).
 #' @param brier Boolean indicator of calculating the Brier scores at specified `times`.
 #' @param cox Boolean indicator of fitting the Cox model for the training data and calculating the Brier scores at specified `times` for `newdata`.
@@ -61,6 +61,7 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
   newZ = cbind(1, newZ)
   if (is.vector(newX)) 
     newX = as.matrix(newX)
+  
   s0 = as.matrix(object$smcure$s[order(object$smcure$Time)], ncol = 1)
   n = nrow(s0)
   uncureprob = exp(object$smcure$b %*% t(newZ))/(1 + exp(object$smcure$b %*% t(newZ)))

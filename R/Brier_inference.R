@@ -31,11 +31,12 @@ Brier_inference_bootstrap <- function(object,
                                       nboot = 100,
                                       times,
                                       ...) {
+Brier_inference_bootstrap <- function(object, times,...) {
   
 
   # Data checks -------
-  if (nboot <= 0) {
-    stop("`nboot=` cannot be less than 1", call. = FALSE)
+  if (object$nboot <= 0) {
+    stop("`nboot=` cannot be less than 1. Please rerun `cureit` with `nboot` > 0", call. = FALSE)
   }
   if (!is.null(times) && any(times < 0)) {
     stop("`times=` must be non-negative.", call. = FALSE)
@@ -43,7 +44,7 @@ Brier_inference_bootstrap <- function(object,
 
   Brier_original <- predict(
     object = object,
-    newdata = newdata,
+    newdata = object$data,
     method = "prob",
     times = times, 
     brier = TRUE, cox = TRUE
@@ -95,6 +96,7 @@ Brier_inference_bootstrap <- function(object,
                        nboot = nboot,
                        eps = object$eps, 
     brier = TRUE)
+
   
   i <- 1
   
@@ -130,7 +132,7 @@ Brier_inference_bootstrap <- function(object,
               brier_cox_97.5 = brier_cox_97.5,
               boot_brier = boot_brier,
               boot_brier_cox = boot_brier_cox))
-  
+
 }
 
 

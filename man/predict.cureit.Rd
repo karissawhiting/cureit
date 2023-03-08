@@ -23,7 +23,7 @@
 \item{probs}{Numeric vector of quantiles to obtain estimates at}
 
 \item{newdata}{A \code{base::data.frame()} or \code{tibble::tibble()} containing all
-the original predictors used to create x. Defaults to \code{NULL}.}
+the original predictors used to create object. Defaults to \code{NULL}.}
 
 \item{method}{Output format of predicted values: "lp" (linear predictor) or "prob" (predicted probabilities).}
 

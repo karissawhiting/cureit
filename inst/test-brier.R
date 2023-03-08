@@ -1,7 +1,9 @@
 library(cureit)
 library(ggsurvfit)
 
-load(here::here("inst", "deid_data_2022-09-02.RData"))
+
+load(here::here("inst", "deid_data_2022-09-02[1526].RData"))
+
 
 # Summary ------
 fit <- survfit(Surv(os_months, dod) ~ 1, data = df_sel)
@@ -22,6 +24,7 @@ p <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify,
 
 times <- seq(5, 24, 0.5)
 bootbrier <- Brier_inference(p, times = times, nboot = 50)
+
 plot(times, bootbrier$brier, type = "s", xlab = "Time", ylab = "Brier score")
 lines(times, bootbrier$brier_2.5, type = "s", lty = 2)
 lines(times, bootbrier$brier_97.5, type = "s", lty = 2)
