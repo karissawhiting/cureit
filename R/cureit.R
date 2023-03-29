@@ -284,7 +284,7 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
     
     cli::cli_inform("{error_results} were not able to fit")
     
-    cureit_fit$b_var <- apply(best_boot,2,var)
+    cureit_fit$b_var <- apply(best_boot,2,var, na.rm = TRUE)
     cureit_fit$b_sd <- sqrt(cureit_fit$b_var)
     cureit_fit$b_zvalue <- cureit_fit$b/cureit_fit$b_sd
     cureit_fit$b_pvalue <- ifelse(pnorm(cureit_fit$b_zvalue) > 0.5,
