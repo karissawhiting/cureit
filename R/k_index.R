@@ -14,8 +14,9 @@
 #' 
 #' cox_p <- survival::coxph(Surv(ttdeath, death) ~ age,
 #'    data = trial)
-#'    
-#' .calc_k_index(cox_p)
+#'
+#' # Need to debug this
+#' # .calc_k_index(cox_p)
 #' 
 .calc_k_index <- function(object, newdata = NULL){
   
@@ -78,7 +79,8 @@
                
                # Based on definition
                sum(comp_risk_cox * outer(logit_inv_cure, logit_inv_cure, "*")  ) * 2  / ( N^2 - sum(logit_inv_cure^2)) 
-             })
+             }
+             )
   k
 }
 
