@@ -81,6 +81,7 @@
                sum(comp_risk_cox * outer(logit_inv_cure, logit_inv_cure, "*")  ) * 2  / ( N^2 - sum(logit_inv_cure^2)) 
              }
              )
+
   k
 }
 
