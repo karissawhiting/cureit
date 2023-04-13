@@ -4,6 +4,7 @@
 .Ruserdata
 .DS_Store
 inst/doc
+inst/model-fits
 docs/
 revdep/
 data-raw/~$gtsummary_translated.xlsx
@@ -19,5 +20,4 @@ delete.docx
 delete.rtf
 Thumbs.db
 .DS_Store
-
 docs
