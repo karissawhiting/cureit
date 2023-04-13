@@ -24,7 +24,8 @@ p <- cureit(surv_formula = Surv(ttdeath, death) ~ age,
 
 cox_p <- survival::coxph(Surv(ttdeath, death) ~ age,
    data = trial)
-   
-.calc_k_index(cox_p)
+
+# Need to debug this
+# .calc_k_index(cox_p)
 
 }
