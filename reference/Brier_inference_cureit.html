@@ -92,6 +92,7 @@
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">ttdeath</span>, <span class="va">death</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span>, </span></span>
 <span class="r-in"><span>   cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">age</span>,</span></span>
 <span class="r-in"><span>   data <span class="op">=</span> <span class="va">trial</span><span class="op">)</span> </span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0 were not able to fit</span>
 <span class="r-in"><span>   </span></span>
 <span class="r-in"><span><span class="va">times</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">24</span>,<span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">bootbrier</span> <span class="op">&lt;-</span> <span class="fu">Brier_inference_bootstrap</span><span class="op">(</span><span class="va">p</span>,times<span class="op">=</span><span class="va">times</span>, nboot <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
@@ -106,6 +107,7 @@
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">ttdeath</span>, <span class="va">death</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span>, </span></span>
 <span class="r-in"><span>   cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">age</span>,</span></span>
 <span class="r-in"><span>   data <span class="op">=</span> <span class="va">trial</span><span class="op">)</span> </span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0 were not able to fit</span>
 <span class="r-in"><span>   </span></span>
 <span class="r-in"><span><span class="va">times</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">24</span>,<span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cvbrier</span> <span class="op">&lt;-</span> <span class="fu">Brier_inference_cv</span><span class="op">(</span><span class="va">p</span>,times<span class="op">=</span><span class="va">times</span><span class="op">)</span></span></span>

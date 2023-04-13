@@ -95,14 +95,15 @@ coefficient estimates. Defaults to <code>FALSE</code>.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">cureit</span> <span class="op">&lt;-</span> <span class="fu"><a href="cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">ttdeath</span>, <span class="va">death</span><span class="op">)</span> <span class="op">~</span> <span class="va">marker</span>, cure_formula <span class="op">=</span> <span class="op">~</span><span class="va">marker</span>,</span></span>
 <span class="r-in"><span> data <span class="op">=</span> <span class="va">trial</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 0 were not able to fit</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">cureit</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   term                    estimate std.error statistic p.value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> (Intercept), Cure model   0.293      0.173     1.69   0.090<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> marker, Cure model       -<span style="color: #BB0000;">0.112</span>      0.182    -<span style="color: #BB0000;">0.616</span>  0.538 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> marker, Survival model    0.013<span style="text-decoration: underline;">2</span>     0.112     0.118  0.906 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> (Intercept), Cure model   0.293      0.135     2.18   0.029<span style="text-decoration: underline;">2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> marker, Cure model       -<span style="color: #BB0000;">0.112</span>      0.145    -<span style="color: #BB0000;">0.777</span>  0.437 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> marker, Survival model    0.013<span style="text-decoration: underline;">2</span>     0.109     0.121  0.904 </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -94,27 +94,27 @@ coefficient estimates. Defaults to <code>FALSE</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cure probability model:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                Estimate Std.Error    Z value  Pr(&gt;|Z|)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.17534830 0.1505371  1.1648176 0.2440928</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> marker      -0.07737471 0.1662065 -0.4655336 0.6415494</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  0.17534830 0.1523413  1.1510226 0.2497230</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> marker      -0.07737471 0.1691987 -0.4573008 0.6474548</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Failure time distribution model:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate Std.Error   Z value  Pr(&gt;|Z|)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> marker 0.02216145 0.1393747 0.1590063 0.8736639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> marker 0.02216145 0.1145207 0.1935148 0.8465558</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">smcure</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $df_cure</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   term                    estimate std.error statistic p.value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> (Intercept), Cure model   0.175      0.151     1.16    0.244</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> marker, Cure model       -<span style="color: #BB0000;">0.077</span><span style="color: #BB0000; text-decoration: underline;">4</span>     0.166    -<span style="color: #BB0000;">0.466</span>   0.642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> (Intercept), Cure model   0.175      0.152     1.15    0.250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> marker, Cure model       -<span style="color: #BB0000;">0.077</span><span style="color: #BB0000; text-decoration: underline;">4</span>     0.169    -<span style="color: #BB0000;">0.457</span>   0.647</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $df_surv</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   term                   estimate std.error statistic p.value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> marker, Survival model   0.022<span style="text-decoration: underline;">2</span>     0.139     0.159   0.874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> marker, Survival model   0.022<span style="text-decoration: underline;">2</span>     0.115     0.194   0.847</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
