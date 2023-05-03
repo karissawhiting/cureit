@@ -108,6 +108,16 @@ df %>%
   bold_p()
 ```
 
+# Median Follow-up
+
+```{r}
+table(df$death)
+
+x <- df %>%
+  filter(death == 0)
+median(x$os_months)/12
+```
+
 # Endpoints 
 
 
@@ -138,7 +148,47 @@ df %>%
 
 <br>
 
+```{r}
 
+object <- survfit2(Surv(os_months/12, dod) ~ variant_name_specify,
+                 data = df) 
+
+ggsurvfit(object) + 
+  ggsurvfit::add_pvalue(location = c("annotation")) +
+  add_risktable(risktable_stats = "n.risk") + 
+  add_risktable_strata_symbol() + 
+  add_confidence_interval() + 
+  ylab("Disease-related Death \nProbability") + 
+  xlab("Years") +
+  xlim(c(0, 20)) +
+  theme_classic() +
+  theme(legend.position = "bottom") 
+
+```
+
+<br>
+
+```{r}
+
+
+object %>% tbl_survfit(times = 5)
+```
+
+```{r}
+
+object <- survfit2(Surv(os_months/12, dod) ~ 1,
+                 data = df) 
+
+ggsurvfit(object) + 
+  add_risktable(risktable_stats = "n.risk") + 
+  add_confidence_interval() + 
+  ylab("Disease-related Death \nProbability") + 
+  xlab("Years") +
+  xlim(c(0, 20)) +
+  ylim(c(0, 1)) +
+  theme_classic()
+
+```
 
 # Univariable Cure Model
 

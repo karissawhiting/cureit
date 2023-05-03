@@ -24,6 +24,7 @@ NULL
 #' @export
 #' @family smcure tidiers
 tidy.smcure <- function(x,
+                        component = c("cure", "survival"),
                         exponentiate = FALSE,
                         conf.int = FALSE,
                         conf.level = 0.95, ...) {
@@ -115,65 +116,47 @@ tidy.cureit <- function(x,
                         conf.int = FALSE,
                         conf.level = 0.95, ...) {
   
-  # df_logit <- broom::tidy(
-  #   x$logistfit,
-  #   exponentiate = exponentiate,
-  #   conf.int = conf.int,
-  #   conf.level = conf.level, ...
-  # )
-  # 
-  # if (isTRUE(conf.int)) {
-  #   df_logit <-
-  #     df_logit %>%
-  #     dplyr::relocate(.data$conf.low, .data$conf.high, .before = .data$p.value)
-  # }
-  # 
-  # df_logit$term <- paste0(x$bnm,", Cure model")
+  df_logit <- data.frame(term = x$smcure$bnm,
+                         component = "cure",
+                         estimate = x$smcure$b,
+                         std.error = x$smcure$b_sd,
+                         statistic = x$smcure$b_zvalue,
+                         p.value = x$smcure$b_pvalue) %>% 
+    as_tibble()
+  
+  df_surv <- data.frame(term = x$smcure$betanm,
+                        component = "survival",
+                        estimate = x$smcure$beta,
+                        std.error = x$smcure$beta_sd,
+                        statistic = x$smcure$beta_zvalue,
+                        p.value = x$smcure$beta_pvalue) %>% 
+    as_tibble() 
   
   if (conf.int){
-    df_logit <- data.frame(term = paste0(x$smcure$bnm,", Cure model"),
-                           estimate=x$smcure$b,
-                           std.error=x$smcure$b_sd,
-                           statistic=x$smcure$b_zvalue,
-                           conf.low=x$smcure$b-1.96*x$smcure$b_sd,
-                           conf.high=x$smcure$b+1.96*x$smcure$b_sd,
-                           p.value=x$smcure$b_pvalue) %>% as_tibble()
     
-    df_surv <- data.frame(term=paste0(x$smcure$betanm,", Survival model"),
-                          estimate=x$smcure$beta,
-                          std.error=x$smcure$beta_sd,
-                          statistic=x$smcure$beta_zvalue,
-                          conf.low=x$smcure$beta-1.96*x$smcure$beta_sd,
-                          conf.high=x$smcure$beta+1.96*x$smcure$beta_sd,
-                          p.value=x$smcure$beta_pvalue
-    ) %>% as_tibble() 
-    if (exponentiate){
-      df_logit[,c(2,5,6)] <- exp(df_logit[,c(2,5,6)])
-      df_surv[,c(2,5,6)] <- exp(df_surv[,c(2,5,6)])
-    }
-  }else{
-    df_logit <- data.frame(term = paste0(x$smcure$bnm,", Cure model"),
-                           estimate=x$smcure$b,
-                           std.error=x$smcure$b_sd,
-                           statistic=x$smcure$b_zvalue,
-                           p.value=x$smcure$b_pvalue) %>% as_tibble()
+     ci_info_logit <- data.frame(conf.low=x$smcure$b-1.96*x$smcure$b_sd,
+                           conf.high=x$smcure$b+1.96*x$smcure$b_sd) %>% as_tibble()
+
+    df_logit <- dplyr::bind_cols(df_logit, ci_info_logit)
     
-    df_surv <- data.frame(term=paste0(x$smcure$betanm,", Survival model"),
-                          estimate=x$smcure$beta,
-                          std.error=x$smcure$beta_sd,
-                          statistic=x$smcure$beta_zvalue,
-                          p.value=x$smcure$beta_pvalue) %>% as_tibble() 
-    if (exponentiate){
-      df_logit[,2] <- exp(df_logit[,2])
-      df_surv[,2] <- exp(df_surv[,2])
-    }
+    ci_info_surv <- data.frame(conf.low=x$smcure$beta-1.96*x$smcure$beta_sd,
+                          conf.high=x$smcure$beta+1.96*x$smcure$beta_sd) %>% as_tibble() 
+    
+    df_surv <- dplyr::bind_cols(df_surv, ci_info_surv)
   }
   
-  # list(df_cure=df_logit,
-  #      df_surv=df_surv)
+  tidy_df <- dplyr::bind_rows(df_logit, df_surv)
   
-  bind_rows(df_logit, df_surv)
+  if (exponentiate){
+    
+      
+    tidy_df <- tidy_df %>%
+      mutate(across(any_of(c("estimate", "conf.low", "conf.high")), exp))
+
+  }
   
-}
+  tidy_df 
+  }
+
 
 

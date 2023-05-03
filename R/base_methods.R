@@ -240,3 +240,30 @@ probs_at_times <- function(matrix_pred, times) {
   lst_risk_time[as.character(times_obs)] %>%
     stats::setNames(paste("time", times))
 }
+
+
+
+#' @export
+#' @rdname base_methods_cureit
+model.matrix.cureit <- function(object, ...) {
+  # by default there is no intercept term in F&G's model
+  surv_mm <- stats::model.matrix(object$surv_formula, object$data)[, -1, drop = FALSE]
+  cure_mm <- stats::model.matrix(object$cure_formula, object$data)[, -1, drop = FALSE] 
+  
+  cure_cols <- setdiff(colnames(cure_mm), colnames(surv_mm))
+  if(length(cure_cols > 0)) {
+    cure_mm <- cure_mm[, cure_cols, drop = FALSE] 
+    all_mm <- bind_cols(surv_mm, cure_mm)
+  }
+  all_mm <- surv_mm
+  
+  all_mm
+}
+
+
+#' #' @export
+#' #' @rdname base_methods_cureit
+#' terms.tidycrr <- function(x, ...) {
+#'   stats::terms(x = x$formula, data = x$data)
+#' }
+#' 
