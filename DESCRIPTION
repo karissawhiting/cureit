@@ -35,8 +35,7 @@ Imports:
     hardhat,
     janitor,
     forcats,
-    caret,
-    generics
+    caret
 Suggests: 
     knitr,
     rmarkdown,
