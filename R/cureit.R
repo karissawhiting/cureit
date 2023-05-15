@@ -240,7 +240,7 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
       id1 <- sample(1:n1, n1, replace = TRUE)
       id0 <- sample(1:n0, n0, replace = TRUE)
       bootdata <- rbind(data1[id1, ], data0[id0, ])
-      
+
       tryCatch({
         bootfit <- quiet_smcure(
           formula=surv_formula,
@@ -272,19 +272,21 @@ cureit_impl <- function(surv_formula, cure_formula, newdata, conf.level = conf.l
             cure_blueprint = NULL,
             conf.level = conf.level,
             nboot=nboot,
-            eps=eps
-          ) },
+            eps=eps)
+        },
         error = function(e) {
-          error_results = error_results + 1
-        }
-        )
+          NULL
+        })
         
       i <- i + 1
     }
     
-    cli::cli_inform("{error_results} were not able to fit")
+    null_index <- purrr::map_lgl(boot_fit_results, is.null)
+    error_count <- sum(null_index)
+    boot_fit_results <- boot_fit_results[!null_index]
+    cli::cli_warn("{error_count} of {nboot} did not converge.")
     
-    cureit_fit$b_var <- apply(best_boot,2,var, na.rm = TRUE)
+    cureit_fit$b_var <- apply(best_boot, 2,var, na.rm = TRUE)
     cureit_fit$b_sd <- sqrt(cureit_fit$b_var)
     cureit_fit$b_zvalue <- cureit_fit$b/cureit_fit$b_sd
     cureit_fit$b_pvalue <- ifelse(pnorm(cureit_fit$b_zvalue) > 0.5,

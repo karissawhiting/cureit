@@ -26,7 +26,9 @@
 #' col=c("black","red"),lty=1,pch=c(1,3))
 #' 
 #'   
-predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, method="prob", brier = FALSE, cox = FALSE, ...) {
+predict.cureit <- function(object, times = NULL, probs = NULL,
+                           newdata = NULL, method="prob",
+                           brier = FALSE, cox = FALSE, ...) {
   # checking inputs ------------------------------------------------------------
   if (is.null(times) + is.null(probs) != 1L) {
     stop("Must specify one and only one of `times=` and `probs=`.", call. = FALSE)
@@ -124,22 +126,52 @@ predict.cureit <- function(object, times = NULL, probs = NULL, newdata = NULL, m
         )
       }else if(brier){
         
+        # CHECK THIS -----
+        
         # atrisk <- lapply(times,function(x) s.outcomes[,"time"] > x)
         # event <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, 1, s.outcomes[,"status"]))
-        count <- lapply(times, function(x) ifelse(s.outcomes[,"time"] > x, 1, s.outcomes[,"status"]))
-        ipw <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, unlist(probs_at_times(cens_prd,x)), cens_prd[,2]))
         surv_marginal = probs_at_times(spop_prd,times)
-        obs <- lapply(times, function(x) ifelse(s.outcomes[,"time"] > x, 1, 0))
+        na <- map(surv_marginal, ~which(is.na(.x)))
+        na_index <- na[[1]]
+        
+        surv_marginal <- lapply(surv_marginal, function(x) {
+          if(length(na_index) > 0 ) {
+            x <- x[-na_index]
+          }
+          x
+        })
+        
+        count <- lapply(times, function(x) { 
+          r <- ifelse(s.outcomes[,"time"] > x, 1, s.outcomes[,"status"])
+          if(length(na_index) > 0 ) {
+            r <- r[-na_index]
+          }
+          r
+        })
+        ipw <- lapply(times,function(x) {
+          r <- ifelse(s.outcomes[,"time"] > x, unlist(probs_at_times(cens_prd,x)), cens_prd[,2])
+          if(length(na_index) > 0 ) {
+            r <- r[-na_index]
+          }
+          r
+        })
+        obs <- lapply(times, function(x) {
+          r <- ifelse(s.outcomes[,"time"] > x, 1, 0)
+          if(length(na_index) > 0 ) {
+            r <- r[-na_index]
+          }
+          r
+        })
         
         brier <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),
-                                count,ipw,surv_marginal,obs))/nrow(s.outcomes)
+                                count,ipw,surv_marginal,obs), na.rm = TRUE)/nrow(s.outcomes)
         names(brier) <- paste0("T = ",times)
         
         if (cox){
           cox_marginal = probs_at_times(scox_prd,times)
           
           brier_cox <- colSums(mapply(function(count,ipw,surv_marginal,obs) count*(obs-surv_marginal)^2/(ipw+1e-4),
-                                      count,ipw,cox_marginal,obs))/nrow(s.outcomes)
+                                      count,ipw,cox_marginal,obs), na.rm = TRUE)/nrow(s.outcomes)
           names(brier_cox) <- paste0("T = ",times)
           
           return(list(cured = cure_prd,
@@ -210,6 +242,7 @@ times_at_probs <- function(matrix_pred, probs) {
 
 probs_at_times <- function(matrix_pred, times) {
   # defining times for predictions ---------------------------------------------
+  # CHECK- here should this be warning?
   all_times <- union(0, matrix_pred[, 1]) %>% sort()
   if (isTRUE(max(times) > max(all_times))) {
     stringr::str_glue("`times=` cannot be larger than {max(all_times)}") %>%

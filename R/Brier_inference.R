@@ -45,30 +45,40 @@ Brier_inference_bootstrap <- function(object, times,...) {
 
   nboot <- object$nboot
   bootfit <- object$smcure$bootstrap_fit
+  nboot_success <- length(bootfit)
+  
+  # only keep non NULL
+  null_index <- purrr::map_lgl(bootfit, is.null)
   
   i <- 1
   
-  boot_brier <- boot_brier_cox <- matrix(NA, nrow = nboot, ncol = length(times))
+  boot_brier <- boot_brier_cox <- matrix(NA, nrow = nboot_success, ncol = length(times))
   
-  while (i <= nboot) {
-    pred_bootfit <- predict(bootfit[[i]],
-                            method = "prob",
-                            times = times,
-                            brier = TRUE,
-                            cox = TRUE)
+  # i cannot be larger than min time of any run. maybe make this a try catch?
+  while (i <= nboot_success) {
+    if(!is.null(bootfit[[i]])) {
+      pred_bootfit <- predict(bootfit[[i]],
+                              method = "prob",
+                              times = times,
+                              brier = TRUE,
+                              cox = TRUE)
 
-    boot_brier[i, ] <- pred_bootfit$brier
-    boot_brier_cox[i, ] <- pred_bootfit$brier_cox
+      boot_brier[i, ] <- pred_bootfit$brier
+      boot_brier_cox[i, ] <- pred_bootfit$brier_cox
+    } else {
+      boot_brier[i, ] <- NA
+      boot_brier_cox[i, ] <- NA
+    }
 
     i <- i + 1
   }
   
-  brier_sd <- apply(boot_brier,2,sd)
-  brier_cox_sd <- apply(boot_brier_cox,2,sd)
-  brier_2.5 <- apply(boot_brier,2,function(x) quantile(x,probs=0.025))
-  brier_97.5 <- apply(boot_brier,2,function(x) quantile(x,probs=0.975))
-  brier_cox_2.5 <- apply(boot_brier_cox,2,function(x) quantile(x,probs=0.025))
-  brier_cox_97.5 <- apply(boot_brier_cox,2,function(x) quantile(x,probs=0.975))
+  brier_sd <- apply(boot_brier,2,sd, na.rm = TRUE)
+  brier_cox_sd <- apply(boot_brier_cox,2, sd, na.rm = TRUE)
+  brier_2.5 <- apply(boot_brier,2,function(x) quantile(x,probs=0.025, na.rm = TRUE))
+  brier_97.5 <- apply(boot_brier,2,function(x) quantile(x,probs=0.975, na.rm = TRUE))
+  brier_cox_2.5 <- apply(boot_brier_cox,2,function(x) quantile(x,probs=0.025, na.rm = TRUE))
+  brier_cox_97.5 <- apply(boot_brier_cox,2,function(x) quantile(x,probs=0.975, na.rm = TRUE))
   
   return(list(brier = Brier_original$brier,
               brier_cox = Brier_original$brier_cox,
