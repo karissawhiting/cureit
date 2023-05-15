@@ -5,6 +5,8 @@
 .DS_Store
 inst/doc
 inst/model-fits
+inst/cure-model-fits
+inst/archive
 docs/
 revdep/
 data-raw/~$gtsummary_translated.xlsx

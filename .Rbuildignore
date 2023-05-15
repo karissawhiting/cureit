@@ -9,3 +9,8 @@
 ^\.github$
 ^data-raw$
 ^inst$
+^inst
+^.*[.]Rproj.*$
+^\.Rproj\.user$
+^.Rhistory$
+[~]

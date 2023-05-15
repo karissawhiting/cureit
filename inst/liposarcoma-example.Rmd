@@ -20,6 +20,15 @@ load(here::here("inst", "deid_data_2022-09-02[1526].RData"))
 df <- df_sel
 # Summary ------
 fit <- survfit(Surv(os_months, dod) ~ 1, data = df_sel)
+
+m <- median(df$age_presentation)
+
+df <- df %>%
+  mutate(age_cat = case_when(
+    age_presentation <= m ~ glue::glue("age <= {m}"), 
+    age_presentation > m ~ glue::glue("age > {m}"), 
+    TRUE ~ NA_character_
+  ))
 ```
 
 ```{r }
@@ -172,43 +181,53 @@ nboot = 500
 age_uni <- uni_func("age_presentation", df,
                     nboot = 500)
 save(age_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "age_uni_2023"))
 age_uni$tidy
+
+age_cat_uni <- uni_func("age_cat", df,
+                    nboot = 100)
+save(age_cat_uni, file = here::here("inst",
+                         "cure-model-fits",
+                         "age_uni_2023"))
+age_cat_uni$tidy
+
+
+
 
 v_uni <- uni_func("variant_name_specify", df,
                   nboot = 500)
 save(v_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "v_uni_2023"))
 v_uni$tidy
 
 sex_uni <- uni_func("sex_dscrp", df,
                     nboot = 500)
 save(sex_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "sex_uni_2023"))
 
 site_uni <- uni_func("site1_name", df,
                     nboot = 500)
 save(site_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "site_uni_2023"))
 
 maxsize_uni <- uni_func("max_tumor_size", df,
                     nboot = 500)
 save(maxsize_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "maxsize_uni_2023"))
 
 dep_uni <- uni_func("depth_dscrp", df,
                     nboot = 500)
 save(dep_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "dep_uni_uni_2023"))
 
 load(here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "dep_uni_uni_2023"))
 
 df2 <- df %>%
@@ -216,7 +235,7 @@ df2 <- df %>%
 res_uni <- uni_func("resection_category", df2,
                     nboot = 500)
 save(res_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "res_uni_2023"))
 
 
@@ -224,10 +243,10 @@ df2 <- df %>%
   mutate(log_tumor_size = log(max_tumor_size, 2))
 
 logsize_uni <- uni_func("log_tumor_size", df2,
-                    nboot = 500)
+                    nboot = 100)
 
 save(logsize_uni, file = here::here("inst",
-                         "model-fits",
+                         "cure-model-fits",
                          "logsize_uni_2023"))
 
 ```
@@ -235,7 +254,7 @@ save(logsize_uni, file = here::here("inst",
 ```{r}
 
 model_fits <- list.files(
-  here::here("inst", "model-fits"), full.names = TRUE)
+  here::here("inst", "cure-model-fits"), full.names = TRUE)
 
 for(i in 1:length(model_fits)) load(model_fits[[i]]) 
 ```
@@ -298,8 +317,8 @@ multi1  <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify +
                   cure_formula = ~ variant_name_specify + 
                   log(max_tumor_size, 2),
                 data = df_cure,
-                nboot = 500)
-save(multi1, file =  here::here("inst", "model-fits", "multi1.Rd"))
+                nboot = 50)
+#save(multi1, file =  here::here("inst", "cure-model-fits", "multi1.Rd"))
 
 multi20  <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify + 
                   max_tumor_size,
@@ -312,14 +331,15 @@ multi50 %>%
   tbl_regression(tidy_fun = tidy, exponentiate = TRUE) %>%
   process_reg_table()
 
-save(multi20, file =  here::here("inst", "model-fits", "multi20.Rd"))
+save(multi20, file =  here::here("inst", "cure-model-fits", "multi20.Rd"))
 ```
 
 ```{r }
-load(here::here("inst", "model-fits", "multi1.Rd"))
+load(here::here("inst", "cure-model-fits", "multi1.Rd"))
 
 z <- multi1 %>% 
-  tbl_regression(tidy_fun = cureit::tidy, exponentiate = TRUE)
+  tbl_regression(tidy_fun = cureit::tidy,
+                 exponentiate = TRUE)
 
 process_reg_table(z)
 ```
@@ -360,23 +380,84 @@ tbl_merge(list(cure, surv),
 ### Brier
 
 ```{r}
-pred <- predict(multi1,
-                method="prob",
-                times=seq(0,380,10),
-                brier=TRUE,
-                cox=TRUE)
 
+null_index <- purrr::map_lgl(multi1$smcure$bootstrap_fit, is.null)
+error_count <- sum(null_index)
+multi1$smcure$bootstrap_fit <- multi1$smcure$bootstrap_fit[!null_index]
+    
+pred <- predict(object = multi1,
+                method = "prob",
+                times = seq(0,380,10),
+                brier = TRUE,
+                cox = TRUE)
+
+pred 
 plot(seq(10,390,10), pred$brier,type="s",xlab="Time",ylab="Brier score",ylim=c(0,0.15))
 lines(seq(10,390,10), pred$brier_cox,type="s",col="red")
-legend("topleft",c("Cure model","Cox model"),col=c("black","red"),lty=1)
+legend("topleft", c("Cure model","Cox model"),col=c("black","red"),lty=1)
 
 pred1 <- pred
 
 ```
 
 ```{r}
-times <- seq(5, 24, 0.5)
-bootbrier <- Brier_inference_bootstrap(multi1, times = times, nboot = 2)
+times <- seq(1,340,10)
+bootbrier2 <- Brier_inference_bootstrap(object = multi1, times = times)
+save(bootbrier2, file = here::here("inst", "cure-model-fits", "brierboot.Rd"))
+times <- times
+
+plot.new()
+plot(times,bootbrier2$brier,type="s",xlab="Time",ylab="Brier score")
+lines(times,bootbrier2$brier_2.5,type="s",lty=2)
+lines(times,bootbrier2$brier_97.5,type="s",lty=2)
+lines(times,bootbrier2$brier_cox,type="s",col="red")
+lines(times,bootbrier2$brier_cox_2.5,type="s",lty=2,col="red")
+lines(times,bootbrier2$brier_cox_97.5,type="s",lty=2,col="red")
+legend("topleft",c("Cure model","Cox model"),col=c("black","red"),lty=1)
+```
+
+
+```{r}
+
+bb <- bootbrier2[c(1:8)] %>%
+  bind_cols() %>%
+  mutate(times = times)
+
+
+bb_s <- bb %>%
+  select(times, brier, brier_cox) %>%
+  pivot_longer(-times)
+
+bb_ci_min <- bb %>%
+  select(times, "brier" = brier_2.5, "brier_cox" = brier_cox_2.5) %>%
+  pivot_longer(-times)
+
+bb_ci_max <- bb %>%
+  select(times, "brier" = brier_97.5, "brier_cox" = brier_cox_97.5) %>%
+  pivot_longer(-times)
+
+
+bb_l <- bb_s %>%
+  left_join(bb_ci_min, by = c("times", "name"), suffix = c("_score", "_ci_min")) %>%
+  left_join(bb_ci_max, by =  c("times", "name")) %>%
+  rename("value_ci_max" = value) %>%
+  mutate(Model =
+           case_when(
+             name == "brier" ~ "Brier: Cure Model", 
+             name == "brier_cox" ~ "Brier: Cox Model"))
+ 
+bb_l %>%
+  ggplot() + 
+  geom_step(aes(x = times/12, y = value_score, color = Model)) +
+  geom_ribbon(aes(x = times/12, ymin = value_ci_min,
+                  ymax = value_ci_max, fill = Model), alpha = .3) +
+  theme_classic() + 
+  ylab("Brier Score") +
+  xlab("Time (Years)") + 
+  xlim(c(0, 300/12)) + ylim(0, .15) 
+
+
+
 ```
 
 ## Subtype, Size, Depth
@@ -393,7 +474,7 @@ multi2  <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify +
 
 multi2 %>% tbl_regression(tidy_fun = tidy, exponentiate = TRUE)
 
-save(multi2, file =  here::here("inst", "model-fits", "multi2.Rd"))
+save(multi2, file =  here::here("inst", "cure-model-fits", "multi2.Rd"))
 ```
 
 
@@ -417,6 +498,187 @@ multi3  <- cureit(surv_formula = Surv(os_months, dod) ~
 multi3 %>% tbl_regression(tidy_fun = tidy, exponentiate = TRUE) %>%
   process_reg_table()
 
-save(multi3, file =  here::here("inst", "model-fits", "multi3.Rd"))
+save(multi3, file =  here::here("inst", "cure-model-fits", "multi3.Rd"))
 ```
+
+
+
+## Subtype, Size, Age Cat
+
+
+```{r}
+multi4  <- cureit(surv_formula = Surv(os_months, dod) ~
+                    variant_name_specify + 
+                  log(max_tumor_size, 2) + 
+                    age_cat,
+                  
+                  cure_formula = ~ variant_name_specify +
+                    depth_dscrp +
+                  log(max_tumor_size, 2) +
+                    age_cat,
+                data = df_cure,
+                nboot = 100)
+
+multi4 %>% tbl_regression(tidy_fun = tidy, exponentiate = TRUE) %>%
+  process_reg_table()
+
+save(multi3, file =  here::here("inst", "cure-model-fits", "multi3.Rd"))
+```
+
+## Nomogram
+```{r}
+# # This causes error
+# df_up <- df_cure %>%
+#   mutate(`Log Tumor Size` =  log(max_tumor_size, 2), 
+#          `Subtype` = variant_name_specify)
+#   
+# multi1_nomo  <- cureit(surv_formula = Surv(os_months, dod) ~ `Subtype` + 
+#                   `Log Tumor Size`,
+#                   cure_formula = ~ `Subtype` + 
+#                   `Log Tumor Size`,
+#                 data = df_up,
+#                 nboot = 0)
+# 
+# cureit::nomogram(x = multi1_nomo, time = 12*5)
+
+df_up <- df_cure %>%
+  mutate(log_tumor_size =  log(max_tumor_size, 2),
+         subtype = variant_name_specify)
+
+multi1_nomo  <- cureit(surv_formula = Surv(os_months, dod) ~ subtype +
+                 log_tumor_size,
+                  cure_formula = ~ subtype +
+                  log_tumor_size,
+                data = df_up,
+                nboot = 0)
+
+cureit::nomogram(x = multi1_nomo, time = 12*5, angle = 45, size = .1)
+
+
+
+```
+
+
+# Local Recurrence
+
+```{r}
+df_lr <- df_cure %>%
+  filter(!(resection_category %in% c("R2"))) %>%
+  filter(is.na(rt_sequence))
+
+omit <- df_cure %>%
+  filter(resection_category %in% c("R2") | !is.na(rt_sequence))
+
+df_lr <- df_lr %>%
+  mutate(lr_y_n = case_when(lr_y_n == "Yes" ~ 1 , 
+                           lr_y_n == "No" ~ 0))
+```
+
+```{r}
+df_lr %>% 
+  select(death, lr_y_n) %>% 
+  tbl_cross()
+```
+
+
+<br>
+
+```{r}
+fit <- survfit2(Surv(lrfs_months/12, lr_y_n) ~ variant_name_specify, 
+                data = df_lr)
+
+ggsurvfit(fit) + ylim(0, 1) + 
+  add_risktable(risktable_stats = "n.risk") +
+  theme_classic() + 
+  xlab("Years") + 
+  ylab("Local Recurrence-free\n Survival") +
+  add_confidence_interval() + 
+  add_pvalue(location = "annotation") +
+  theme(legend.position = "top")
+```
+
+```{r}
+
+lr_uni_func <- function(var, df_input, nboot) {
+  df <- df_input %>% 
+    select("lrfs_months",
+           "lr_y_n",
+           var) %>%
+  na.omit()
+  
+
+  f_surv <- as.formula(paste0("Surv(lrfs_months, lr_y_n) ~ ", var))
+  f_cure <- as.formula(paste0("~ ", var))
+  
+  
+  p <- cureit(surv_formula = f_surv,
+            cure_formula = f_cure,
+            data = df,
+            nboot = nboot)
+  p
+
+}
+```
+
+```{r}
+lr_v_uni <- lr_uni_func("variant_name_specify", df_lr,
+                  nboot = 500)
+
+save(lr_v_uni, file = here::here("inst",
+                         "cure-model-fits",
+                         "lr_v_uni_2023"))
+
+```
+
+```{r}
+# 
+# model_fits <- list.files(
+#   here::here("inst", "cure-model-fits"), full.names = TRUE)
+# 
+# for(i in 1:length(model_fits)) load(model_fits[[i]]) 
+```
+
+```{r }
+reg_tbl <- map(list(lr_v_uni),
+               ~tbl_regression(.x, 
+                               exponentiate = TRUE, 
+                               tidy_fun = cureit::tidy))
+
+x <- tbl_stack(reg_tbl) %>%
+  bold_labels() %>%
+  bold_p()
+
+x$table_body <- x$table_body %>%
+  separate_wider_delim(
+    label,
+    names = c("label", "label2"), 
+           delim = ",")%>%
+  separate_wider_delim(
+    variable,
+    names = c("variable", "variable2"), 
+           delim = ",")
+
+cure <- x
+
+cure$table_body <- cure$table_body%>%
+  filter(label2 == " Cure model") %>%
+  filter(label != "(Intercept)")
+
+cure
+
+surv <- x
+
+surv$table_body <- surv$table_body%>%
+  filter(label2 == " Survival model")
+
+surv
+
+tbl_merge(list(cure, surv), 
+          tab_spanner = c("Cure Model",
+                          "Survival Model"))
+
+
+
+```
+
 
