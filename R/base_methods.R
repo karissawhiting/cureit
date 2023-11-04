@@ -131,7 +131,7 @@ predict.cureit <- function(object, times = NULL, probs = NULL,
         # atrisk <- lapply(times,function(x) s.outcomes[,"time"] > x)
         # event <- lapply(times,function(x) ifelse(s.outcomes[,"time"] > x, 1, s.outcomes[,"status"]))
         surv_marginal = probs_at_times(spop_prd,times)
-        na <- map(surv_marginal, ~which(is.na(.x)))
+        na <- purrr::map(surv_marginal, ~which(is.na(.x)))
         na_index <- na[[1]]
         
         surv_marginal <- lapply(surv_marginal, function(x) {
