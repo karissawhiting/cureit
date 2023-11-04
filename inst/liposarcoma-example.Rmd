@@ -149,6 +149,69 @@ df %>%
 
 
 
+```{r }
+fit <- survfit2(Surv(os_months/12, dod)  ~ variant_name_specify, 
+                data = df)
+
+ggsurvfit(fit, type = "risk") + ylim(0, 1) + 
+  add_risktable(risktable_stats = "n.risk") +
+  theme_classic() + 
+  xlab("Years") + 
+  ylab("Cumulative Incidence of Disease Death") +
+  add_confidence_interval() + 
+  add_pvalue(location = "annotation") +
+  theme(legend.position = "top") + 
+  xlim(c(0, 20))+
+  guides(color = guide_legend(nrow = 2))
+```
+
+```{r}
+x <- df_cure %>% 
+  filter(dod == 1)
+
+x <- x %>%
+  mutate(gr_8 = os_months > 8*12)
+
+x %>%
+  select(variant_name_specify, gr_8) %>%
+  table()
+```
+
+```{r}
+df_cure$size_category_dscrp %>% table(useNA = "always")
+
+df_cure <- df_cure %>%
+  mutate(size_cat = case_when(
+    max_tumor_size <= 8 ~ "<= 8",
+    max_tumor_size > 8 ~ "> 8"))
+
+
+survfit2(Surv(os_months, dod) ~ size_cat, 
+                data = df_cure) %>%
+  ggsurvfit() + 
+  add_confidence_interval()
+
+size_test <- uni_func("size_cat", df_cure,
+                    nboot = 100)
+
+x <- df_cure %>%
+  filter(dod == 1)
+
+x %>% 
+  select(size_cat, os_months) %>%
+  tbl_summary(by = size_cat) %>%
+  add_p()
+
+
+x %>%
+  ggplot(aes(x = os_months, fill = size_cat)) + 
+  geom_histogram(position = "dodge")
+
+x %>%
+  ggplot(aes(x = os_months, fill = size_cat)) + 
+  geom_density(alpha = .8)
+```
+
 # Univariable Cure Model
 
 
@@ -222,9 +285,21 @@ save(maxsize_uni, file = here::here("inst",
 
 dep_uni <- uni_func("depth_dscrp", df,
                     nboot = 500)
+
 save(dep_uni, file = here::here("inst",
                          "cure-model-fits",
                          "dep_uni_uni_2023"))
+
+df <- df %>%
+  mutate(depth_dscrp = fct_relevel(depth_dscrp, "Superficial Depth"))
+
+dep_uni_v2 <- uni_func("depth_dscrp", df,
+                    nboot = 500)
+
+
+save(dep_uni_v2, file = here::here("inst",
+                         "cure-model-fits",
+                         "dep_uni_v2_2023"))
 
 load(here::here("inst",
                          "cure-model-fits",
@@ -312,12 +387,16 @@ tbl_merge(list(cure, surv),
 
 
 ```{r, eval=FALSE}
+
+df_cure <- df_cure %>%
+  mutate(depth_dscrp = fct_relevel(depth_dscrp, "Superficial Depth"))
+
 multi1  <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify + 
                   log(max_tumor_size, 2),
                   cure_formula = ~ variant_name_specify + 
                   log(max_tumor_size, 2),
                 data = df_cure,
-                nboot = 50)
+                nboot = 500)
 #save(multi1, file =  here::here("inst", "cure-model-fits", "multi1.Rd"))
 
 multi20  <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify + 
@@ -454,16 +533,50 @@ bb_l %>%
   theme_classic() + 
   ylab("Brier Score") +
   xlab("Time (Years)") + 
-  xlim(c(0, 300/12)) + ylim(0, .15) 
+  xlim(c(0, 15)) + ylim(0, .15) + 
+  theme(legend.position = "top")
 
 
 
+```
+
+```{r}
+
+
+df_cure_mm1 <- df_cure %>%
+  select(os_months, dod, variant_name_specify, max_tumor_size) %>%
+  na.omit()
+
+df_cure_mm <- model.matrix(Surv(os_months, dod) ~
+                              variant_name_specify + log(max_tumor_size, 2), 
+                           data = df_cure_mm1)
+df_cure_mm <- df_cure_mm[,-1]
+
+df_cure_mm <- cbind.data.frame(df_cure_mm, df_cure_mm1[,1:2])
+
+library(evacure)
+library(ROCR)
+fit_k <- smcure1(Surv(os_months, dod) ~ `variant_name_specifyRound Cell` + 
+                 variant_name_specifyPleomorphic + 
+                 variant_name_specifyDedifferentiated +
+                 `log(max_tumor_size, 2)`,
+                 cureform = ~ `variant_name_specifyRound Cell` + 
+                 variant_name_specifyPleomorphic + 
+                 variant_name_specifyDedifferentiated +
+                 `log(max_tumor_size, 2)`,
+               model = "ph",Var = T, em = "smcure", data = df_cure_mm)
+
+printsmcure(fit2) 
 ```
 
 ## Subtype, Size, Depth
 
 
 ```{r}
+df_cure <- df_cure %>%
+  mutate(depth_dscrp = fct_relevel(depth_dscrp, "Superficial Depth"))
+
+
 multi2  <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify + 
                     depth_dscrp +
                   log(max_tumor_size, 2),
@@ -475,6 +588,9 @@ multi2  <- cureit(surv_formula = Surv(os_months, dod) ~ variant_name_specify +
 multi2 %>% tbl_regression(tidy_fun = tidy, exponentiate = TRUE)
 
 save(multi2, file =  here::here("inst", "cure-model-fits", "multi2.Rd"))
+
+# switched depth factor level
+save(multi2_v2, file =  here::here("inst", "cure-model-fits", "multi2_v2.Rd"))
 ```
 
 
@@ -482,6 +598,10 @@ save(multi2, file =  here::here("inst", "cure-model-fits", "multi2.Rd"))
 
 
 ```{r}
+
+df_cure <- df_cure %>%
+  mutate(depth_dscrp = fct_relevel(depth_dscrp, "Superficial Depth"))
+
 multi3  <- cureit(surv_formula = Surv(os_months, dod) ~
                     variant_name_specify + 
                     depth_dscrp +
@@ -499,6 +619,10 @@ multi3 %>% tbl_regression(tidy_fun = tidy, exponentiate = TRUE) %>%
   process_reg_table()
 
 save(multi3, file =  here::here("inst", "cure-model-fits", "multi3.Rd"))
+
+multi3_v2 <- multi3
+
+save(multi3_v2, file =  here::here("inst", "cure-model-fits", "multi3_v2.Rd"))
 ```
 
 
@@ -513,7 +637,6 @@ multi4  <- cureit(surv_formula = Surv(os_months, dod) ~
                     age_cat,
                   
                   cure_formula = ~ variant_name_specify +
-                    depth_dscrp +
                   log(max_tumor_size, 2) +
                     age_cat,
                 data = df_cure,
@@ -523,6 +646,27 @@ multi4 %>% tbl_regression(tidy_fun = tidy, exponentiate = TRUE) %>%
   process_reg_table()
 
 save(multi3, file =  here::here("inst", "cure-model-fits", "multi3.Rd"))
+```
+
+## Subtype, Size, Age 
+
+```{r}
+multi5  <- cureit(surv_formula = Surv(os_months, dod) ~
+                    variant_name_specify + 
+                  log(max_tumor_size, 2) + 
+                    age_presentation,
+                  
+                  cure_formula = ~ variant_name_specify +
+                  log(max_tumor_size, 2) +
+                    age_presentation,
+                data = df_cure,
+                nboot = 100)
+
+multi5 %>% 
+  tbl_regression(tidy_fun = tidy, exponentiate = TRUE) %>%
+  process_reg_table()
+
+save(multi5, file =  here::here("inst", "cure-model-fits", "multi5.Rd"))
 ```
 
 ## Nomogram
