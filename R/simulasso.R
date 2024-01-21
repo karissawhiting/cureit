@@ -11,11 +11,11 @@ simulasso <- function(n=100,
   t <- rep(NA,length=n)
   d <- rep(NA,length=n)
   
-  if(is.null(id_cure)) id_cure = sample(p,size=10)
-  if(is.null(id_cox)) id_cox = sample(p,size=10)
+  if(is.null(id_cure)) id_cure = sample(p,size=3)
+  if(is.null(id_cox)) id_cox = sample(p,size=3)
   
-  if(is.null(coefs_cure)) coefs_cure = runif(length(id_cure)+1,min=0,max=3)
-  if(is.null(coefs_cox)) coefs_cox = runif(length(id_cox),min=0,max=3)
+  if(is.null(coefs_cure)) coefs_cure = runif(length(id_cure)+1,min=2,max=3)
+  if(is.null(coefs_cox)) coefs_cox = runif(length(id_cox),min=2,max=3)
   
   x <- mvtnorm::rmvnorm(n,mean=rep(0,p))
   puncure <- exp(cbind(1,x[,id_cure]) %*% coefs_cure)/(1+exp(cbind(1,x[,id_cure]) %*% coefs_cure))
