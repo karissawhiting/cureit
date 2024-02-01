@@ -3,6 +3,7 @@ cv.cureitlasso <- function(t,
                            x,
                            minmu.ratio=0.05, # minimum penalty value in the logistic model
                            minlambda.ratio=0.05, # minimum penalty value in the cox model
+                           adaptive=FALSE,
                            length.grid=10,
                            nfolds=5,
                            tol=1e-2,
@@ -17,13 +18,21 @@ cv.cureitlasso <- function(t,
   require(foreach)
   require(parallel)
   require(doParallel)
+  require(doSNOW)
   require(survcomp)
+  require(pracma)
+  
+  order_idx <- order(t)
+  t <- t[order_idx]
+  d <- d[order_idx]
+  x <- x[order_idx,]
   
   if (progress) print("Fitting by EM algorithm ...")
   
   fit <- cureitlasso(t,d,x,
                      minmu.ratio,
                      minlambda.ratio,
+                     adaptive,
                      length.grid,
                      mus=NULL,
                      lambdas=NULL,
@@ -37,7 +46,7 @@ cv.cureitlasso <- function(t,
   
   # Fold split
   foldid <- coxsplit(as.matrix(Surv(t,d)), nfolds)
-  cv_cidx <- array(NA,dim=c(length.grid,length.grid,nfolds))
+  cv_brier <- array(NA,dim=c(length.grid,length.grid,nfolds))
   
   # Run CVs
   if (ncore == 1){
@@ -53,6 +62,7 @@ cv.cureitlasso <- function(t,
                                  x[foldid != i,],
                                  minmu.ratio,
                                  minlambda.ratio,
+                                 adaptive,
                                  length.grid,
                                  mus=fit$mus,
                                  lambdas=fit$lambdas,
@@ -75,16 +85,36 @@ cv.cureitlasso <- function(t,
           predsurvexp <- predict(fitcox,newx=x[foldid==i,],s=min(fitcox$lambda),type="response")
           haz <- cv.fit[[i]]$fit[[j]][[k]]$haz
           cumhaz <- cv.fit[[i]]$fit[[j]][[k]]$cumhaz
-          predsurv <- rep(1,length(ti))
-          for (l in 1:length(ti)){
-            if (t[l] >= min(tj)){
-              ids <- which(tj == max(tj[tj <= t[l]]))
-              predsurv[l] <- exp(-cumhaz[ids]*predsurvexp[l])
+          
+          predcens <- survfit(Surv(ti,1-di)~1)$surv
+          tcens <- survfit(Surv(ti,1-di)~1)$time
+          
+          tbrier <- sort(ti)
+          brier <- rep(NA,length(tbrier))
+          
+          for (l in 1:length(tbrier)){
+            
+            predsurv <- rep(NA,length(ti)) # Conditional survival prob for all patients at tbrier[l]
+            
+            if (tbrier[l] >= min(tj)){
+              
+              ids <- which(tj == max(tj[tj <= tbrier[l]]))
+              predsurv <- exp(-cumhaz[ids]*predsurvexp)
+              ipw <- as.numeric(ti > tbrier[l])*predcens[l] + as.numeric(ti <= tbrier[l])*predcens
+              
+            }else if (tbrier[l] < min(tj)){
+              
+              predsurv <- rep(1,length(ti))
+              ipw <- 1
+              
             }
+            
+            preds <- 1 - predcure + predcure*predsurv
+            brier[l] <- mean(I(di==0)*(1 - preds)^2/(ipw+0.001) + I(di==1)*(0 - preds)^2/(ipw+0.001))
+            
           }
           
-          preds <- 1 - predcure + predcure*predsurv
-          cv_cidx[j,k,i] <- concordance.index(x=preds,surv.time=ti,surv.event=di)$c.index
+          cv_brier[j,k,i] <- trapz(tbrier,brier)
           
           
         }
@@ -100,11 +130,14 @@ cv.cureitlasso <- function(t,
     
     cv.fit <- foreach(i = 1:nfolds) %dopar% {
       
+      source("~/Projects/Whiting-Qin-cureit/cureit/R/cureitlasso.R")
+      
       cureitlasso(t[foldid != i],
                   d[foldid != i],
                   x[foldid != i,],
                   minmu.ratio,
                   minlambda.ratio,
+                  adaptive,
                   length.grid,
                   mus=fit$mus,
                   lambdas=fit$lambdas,
@@ -133,16 +166,37 @@ cv.cureitlasso <- function(t,
           predsurvexp <- predict(fitcox,newx=x[foldid==i,],s=min(fitcox$lambda),type="response")
           haz <- cv.fit[[i]]$fit[[j]][[k]]$haz
           cumhaz <- cv.fit[[i]]$fit[[j]][[k]]$cumhaz
-          predsurv <- rep(1,length(ti))
-          for (l in 1:length(ti)){
-            if (t[l] >= min(tj)){
-              ids <- which(tj == max(tj[tj <= t[l]]))
-              predsurv[l] <- exp(-cumhaz[ids]*predsurvexp[l])
+          
+          predcens <- survfit(Surv(ti,1-di)~1)$surv
+          tcens <- survfit(Surv(ti,1-di)~1)$time
+          
+          tbrier <- sort(ti)
+          brier <- rep(NA,length(tbrier))
+          
+          for (l in 1:length(tbrier)){
+            
+            predsurv <- rep(NA,length(ti)) # Conditional survival prob for all patients at tbrier[l]
+            
+            if (tbrier[l] >= min(tj)){
+              
+              ids <- which(tj == max(tj[tj <= tbrier[l]]))
+              predsurv <- exp(-cumhaz[ids]*predsurvexp)
+              ipw <- as.numeric(ti > tbrier[l])*predcens[l] + as.numeric(ti <= tbrier[l])*predcens
+              
+            }else if (tbrier[l] < min(tj)){
+              
+              predsurv <- rep(1,length(ti))
+              ipw <- 1
+              
             }
+            
+            preds <- 1 - predcure + predcure*predsurv
+            brier[l] <- mean(I(di==0)*(1 - preds)^2/(ipw+0.001) + I(di==1)*(0 - preds)^2/(ipw+0.001))
+            
           }
           
-          preds <- 1 - (1 - predcure + predcure*predsurv)
-          cv_cidx[j,k,i] <- concordance.index(x=preds,surv.time=ti,surv.event=di)$c.index
+          cv_brier[j,k,i] <- trapz(tbrier[1:(l-1)],brier[1:(l-1)])
+          
           
         }
         
@@ -152,12 +206,33 @@ cv.cureitlasso <- function(t,
     
   }
   
-  cv_cidx_mean <- apply(cv_cidx,c(1,2),function(x) mean(x))
-  cv_cidx_se <- apply(cv_cidx,c(1,2),function(x) sd(x)/sqrt(nfolds))
-  # pheatmap::pheatmap(cv_cidx_mean,cluster_cols = F,cluster_rows = F)
+  cv_brier_mean <- apply(cv_brier,c(1,2),function(x) mean(x))
+  cv_brier_se <- apply(cv_brier,c(1,2),function(x) sd(x)/sqrt(nfolds))
+  # pheatmap::pheatmap(cv_brier_mean,cluster_cols = F,cluster_rows = F)
   
-  return(list(fit=fit,
-              num_alpha=num_alpha,
-              num_beta=num_beta))
+  idxmin <- which(cv_brier_mean == min(cv_brier_mean), arr.ind = TRUE)
+  brier1se <- suppressWarnings(min(cv_brier_mean[1:idxmin[1],1:idxmin[2]][which(cv_brier_mean[1:idxmin[1],1:idxmin[2]] > cv_brier_mean[idxmin]+cv_brier_se[idxmin])]))
+  if (!is.infinite(brier1se)){
+    idx1se <- which(cv_brier_mean==brier1se, arr.ind = TRUE)
+  }else{
+    brier1se <- max(cv_brier_mean[1:idxmin[1],1:idxmin[2]])
+    idx1se <- which(cv_brier_mean==brier1se, arr.ind = TRUE)
+  }
+  
+  selectedmin <- list(cure=which(fit$fit[[idxmin[1]]][[idxmin[2]]]$alpha!=0),
+                      cox=which(fit$fit[[idxmin[1]]][[idxmin[2]]]$beta!=0))
+  
+  selected1se <- list(cure=which(fit$fit[[idx1se[1]]][[idx1se[2]]]$alpha!=0),
+                      cox=which(fit$fit[[idx1se[1]]][[idx1se[2]]]$beta!=0))
+  
+  return(list(fit=fit$fit,
+              mus=fit$mus,
+              lambdas=fit$lambdas,
+              cv_brier_mean = cv_brier_mean,
+              cv_brier_se = cv_brier_se,
+              index = list(min=idxmin,
+                           `1se`= idx1se)
+  )
+  )
   
 }
