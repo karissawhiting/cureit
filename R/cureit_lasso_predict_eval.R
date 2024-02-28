@@ -8,9 +8,9 @@ library(glmnet)
 
 load(here::here("inst", "cureit-simulation-results", "sim_data_list.RData"))
 load(here::here("inst", "cureit-simulation-results", "sim_valid_data_list.RData"))
-dat <- sim_data_list[[1]]
-
 load(here::here("inst","cureit-simulation-results", "cv_fits_100.RData"))
+
+dat <- sim_data_list[[1]]
 fit <- cv_fits_list[[1]]
 final_fit <- fit$fit[[fit$index$`min`[1]]][[fit$index$min[2]]]
 
@@ -117,17 +117,11 @@ predict_cure <- function(final_fit,
       ".weight_censored_raw" = censoring_weights[l],
       ".weight_censored" = ipw) %>%
       mutate(id = 1:nrow(.))
-    # 
-    # names(all_preds) <- c(
-    #                       "preds",
-    #                       "predcure", "predsurv", "weights",
-    #                       "id_num")
-    
+
     all_preds_nest <-  all_preds %>% nest(.preds = -c(id))
     
     all_preds_all_tps[[l]] <- all_preds
                             
-  #  names(all_preds) = c("pred", "pred_cure","pred_surv")
   }
   
   
@@ -145,7 +139,7 @@ predict_cure <- function(final_fit,
 
 predict_df <- predict_cure(final_fit = final_fit, data = data)
 
-# quick brier
+# quick brier ---
 x <- c()
 for (i in 1:10) {
   
@@ -161,6 +155,7 @@ for (i in 1:10) {
 # Brier With Yardstick -------------------------------------------------------
 library(yardstick)
 
+# Doesn't match- weights are wrong
 brier_scores <-
   predict_df %>% 
   mutate(truth = Surv(times, event)) %>%
@@ -197,7 +192,7 @@ brier_cure <- function(predict_df, truth = times, eval_timepoints = NULL) {
   
 
 
-# Former Brier Calculation ---------------------------------------------------
+# Simple Former Brier Calculation ---------------------------------------------------
 
 calc_brier_old <- function(dat, fit) {
   # ti <- dat_valid$t
@@ -255,6 +250,10 @@ calc_brier_old <- function(dat, fit) {
 x <- calc_brier_old(sim_data_list[[1]], cv_fits_list[[1]])
 x_val <- calc_brier_old(sim_valid_data_list[[1]], cv_fits_list[[1]])
 
-for (i in 1:length(cv_fits_list)) {
-  
+all_brier <- list()
+
+for (i in 1:10) {
+  all_brier[[i]] <- calc_brier_old(sim_data_list[[i]], fit = cv_fits_list[[i]])
 }
+
+
