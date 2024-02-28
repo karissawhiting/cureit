@@ -14,3 +14,7 @@
 ^\.Rproj\.user$
 ^.Rhistory$
 [~]
+^R/cv.cureitlasso.R
+^R/simulasso.R
+^R/coxsplit.R
+^R/run-simulations.R

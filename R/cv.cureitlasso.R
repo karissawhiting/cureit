@@ -1,10 +1,14 @@
+# Returns:
+# fit - 
+# arg: length.grid - 
+
 cv.cureitlasso <- function(t,
                            d,
                            x,
                            minmu.ratio=0.05, # minimum penalty value in the logistic model
                            minlambda.ratio=0.05, # minimum penalty value in the cox model
                            adaptive=FALSE,
-                           length.grid=10,
+                           length.grid=10, # tells how many hyperparameters to test. default is 10 for each 
                            nfolds=5,
                            tol=1e-2,
                            maxiter=100,
@@ -22,6 +26,7 @@ cv.cureitlasso <- function(t,
   require(survcomp)
   require(pracma)
   
+  # order data by times 
   order_idx <- order(t)
   t <- t[order_idx]
   d <- d[order_idx]
@@ -29,6 +34,7 @@ cv.cureitlasso <- function(t,
   
   if (progress) print("Fitting by EM algorithm ...")
   
+  # main model with no cross validation
   fit <- cureitlasso(t,d,x,
                      minmu.ratio,
                      minlambda.ratio,
@@ -38,7 +44,7 @@ cv.cureitlasso <- function(t,
                      lambdas=NULL,
                      tol,
                      maxiter,
-                     progress)
+                     progress = TRUE)
   
   if (progress) print("Running cross validations ...")
   
@@ -46,6 +52,8 @@ cv.cureitlasso <- function(t,
   
   # Fold split
   foldid <- coxsplit(as.matrix(Surv(t,d)), nfolds)
+  
+  # grid/array of values 
   cv_brier <- array(NA,dim=c(length.grid,length.grid,nfolds))
   
   # Run CVs
@@ -56,6 +64,7 @@ cv.cureitlasso <- function(t,
     for (i in 1:nfolds){
       
       if (progress) print(i)
+      
       
       cv.fit[[i]] <- cureitlasso(t[foldid != i],
                                  d[foldid != i],
@@ -114,6 +123,7 @@ cv.cureitlasso <- function(t,
             
           }
           
+          # calcualte trapazoidal area for brier score 
           cv_brier[j,k,i] <- trapz(tbrier,brier)
           
           
@@ -130,7 +140,7 @@ cv.cureitlasso <- function(t,
     
     cv.fit <- foreach(i = 1:nfolds) %dopar% {
       
-      source("~/Projects/Whiting-Qin-cureit/cureit/R/cureitlasso.R")
+      source(here::here("R/cureitlasso.R"))
       
       cureitlasso(t[foldid != i],
                   d[foldid != i],
@@ -206,6 +216,7 @@ cv.cureitlasso <- function(t,
     
   }
   
+  # summarize - take average across all folds 
   cv_brier_mean <- apply(cv_brier,c(1,2),function(x) mean(x))
   cv_brier_se <- apply(cv_brier,c(1,2),function(x) sd(x)/sqrt(nfolds))
   # pheatmap::pheatmap(cv_brier_mean,cluster_cols = F,cluster_rows = F)
