@@ -242,7 +242,8 @@ cv.cureitlasso <- function(t,
               cv_brier_mean = cv_brier_mean,
               cv_brier_se = cv_brier_se,
               index = list(min=idxmin,
-                           `1se`= idx1se)
+                           `1se`= idx1se), 
+              foldid = foldid
   )
   )
   

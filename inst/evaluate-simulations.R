@@ -12,18 +12,25 @@ load(here::here("inst", "sim_data_list.RData"))
 load(here::here("inst", "sim_valid_data_list.RData"))
 
 # * Calculate Sensitivity of Variable Selection in Training Fits -------
+spe_cox_min <- c()
+sen_cox_min <- c()
+
 x <- for (i in 1:50) {
   fit <- cv_fits_list[[i]]
   #fit <- x$fit
   dat <- sim_data_list[[i]]
   
-  sen_cox_min <- mean(dat$id_cox %in% which(fit$fit[[fit$index$min[1]]][[fit$index$min[2]]]$beta!=0))
-  print(sen_cox_min)
+  spe_cox_min[[i]] <- 1-mean(setdiff(1:200,dat$id_cure) %in% which(fit$fit[[fit$index$min[1]]][[fit$index$min[2]]]$beta!=0))
+  sen_cox_min[[i]] <- mean(dat$id_cox %in% which(fit$fit[[fit$index$min[1]]][[fit$index$min[2]]]$beta!=0))
+ # spe_cox_min <- 1-mean(setdiff(1:200,dat$id_cure) %in% which(fit$fit[[fit$index$min[1]]][[fit$index$min[2]]]$beta!=0))
+  
+ # print(sen_cox_min)
   
 }
 
 
-hist(x)
+hist(unlist(sen_cox_min))
+hist(unlist(sen_cox_min))
 
 # Sensitivity and specificity (for both min and 1se choices of parameters) ---
 

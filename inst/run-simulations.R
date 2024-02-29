@@ -10,6 +10,7 @@ source(here::here("R/coxsplit.R"))
 
 # Test- Try simulating one train and test set
 
+
 dat <- simulasso() # training data
 
 
@@ -24,8 +25,8 @@ setdiff(dat$id_cox, dat_valid$id_cox)
 
 
 # * Training- Simulate n Data Sets --------------------------------------------------------
-
 sim_data_list <- list()
+set.seed(999)
 
 for (i in 1:100) {
   sim_data_list[[i]] = simulasso()
@@ -45,10 +46,16 @@ for (i in 1:100) {
                                        coefs_cox = dat$coefs_cox)
 }
 
+sim_data_list[[1]]$id_cure
 sim_valid_data_list[[1]]$id_cure
 
-# save(sim_data_list, file = here::here("inst", "sim_data_list.RData"))
-# save(sim_valid_data_list, file = here::here("inst", "sim_valid_data_list.RData"))
+save(sim_data_list, file = here::here("inst", 
+                                      "cureit-simulation-results",
+                                      "sim_data_list_v2.RData"))
+
+save(sim_valid_data_list, file = here::here("inst", 
+                                            "cureit-simulation-results",
+                                            "sim_valid_data_list_v2.RData"))
 
 # Fit Lasso  ------------------------------------------------------------
 
@@ -98,7 +105,7 @@ test_list[[1]] <- test_single_cv
 cv_fits_list <- list()
 start_time <- Sys.time()
 
-for (i in 1:100) {
+for (i in 1:50) {
 
   dat_valid <- sim_data_list[[i]]
   
@@ -127,7 +134,7 @@ end_time <- Sys.time()
 end_time - start_time
 
 
-save(cv_fits_list, file = here::here("inst", "cv_fits_100.RData"))
+save(cv_fits_list, file = here::here("inst", "cureit-simulation-results", "cv_fits_50_v2.RData"))
 
 # * 50 Runs ----
 

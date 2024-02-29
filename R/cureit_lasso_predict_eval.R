@@ -21,22 +21,47 @@ data = data.frame(dat$x) %>%
          event = dat$d,
          "truth_survival" = Surv(dat$t, dat$d))
 
+# * Calculate Sensitivity of Variable Selection in Training Fits -------
+spe_cox_min <- c()
+sen_cox_min <- c()
+
+x <- for (i in 1:100) {
+  fit <- cv_fits_list[[i]]
+  #fit <- x$fit
+  dat <- sim_data_list[[i]]
+  
+  spe_cox_min[[i]] <- 1-mean(setdiff(1:200,dat$id_cure) %in% which(fit$fit[[fit$index$min[1]]][[fit$index$min[2]]]$beta!=0))
+  sen_cox_min[[i]] <- mean(dat$id_cox %in% which(fit$fit[[fit$index$min[1]]][[fit$index$min[2]]]$beta!=0))
+  # spe_cox_min <- 1-mean(setdiff(1:200,dat$id_cure) %in% which(fit$fit[[fit$index$min[1]]][[fit$index$min[2]]]$beta!=0))
+  
+  # print(sen_cox_min)
+  
+}
+
+
+hist(unlist(sen_cox_min))
+hist(unlist(spe_cox_min))
+
+# Check Variable Selection on Standard Lasso
+# will add foldid (see new version of cv.lassocure())
+cv.glmnet(x = dat$x, y = Surv(dat$t, dat$d), family = "cox")
+
 # Predict Function (glmnet cure) ---------------------------------------------
 
 # Trying to get predictions in similar format as tidymodels yardstick
 # Eventually will integrate this with existing predict method function
 
 predict_cure <- function(final_fit,
-                         data = NULL,
+                         new_data = NULL,
                          eval_timepoints = NULL) {
 
   # Get values from observed data
-  survival_times = data$times
+  survival_times = new_data$times
   sorted_survival_times <- sort(survival_times)
-  sorted_event_times = sort(data$times[data$event==1])
-  censoring_weights = survfit(Surv(data$times, 1 - data$event) ~ 1)$surv
+  sorted_event_times = sort(new_data$times[new_data$event==1])
+  censoring_weights = survfit(Surv(new_data$times, 1 - new_data$event) ~ 1)$surv
   
-  data_x <- data %>%
+  data_x <- new_data %>%
     select(-c(times, event, truth_survival)) %>%
     as.matrix()
   
@@ -93,7 +118,8 @@ predict_cure <- function(final_fit,
       
       # Conditional survival prob for all patients at given time
       predsurv <- exp(-cumhaz[ids]*predsurvexp)
-        
+      
+        # HERE- check this - tru predict of survfit 
       # inverse probability of the censoring weights
       ipw <- as.numeric(survival_times > eval_timepoints[l])*censoring_weights[l] + 
         as.numeric(survival_times <= eval_timepoints[l])*censoring_weights
@@ -130,14 +156,13 @@ predict_cure <- function(final_fit,
   
   all_pred_df <- all_pred_df %>%
     nest(.pred = -c(id)) %>% 
-    bind_cols(., "times" = data$times, 
-              "event" = data$event)
+    bind_cols(., "event" = new_data$event)
 
   
   return(all_pred_df)
 }
 
-predict_df <- predict_cure(final_fit = final_fit, data = data)
+predict_df <- predict_cure(final_fit = final_fit, new_data = data)
 
 # quick brier ---
 x <- c()
@@ -193,27 +218,36 @@ brier_cure <- function(predict_df, truth = times, eval_timepoints = NULL) {
 
 
 # Simple Former Brier Calculation ---------------------------------------------------
+library(glmnet)
+library(tidyverse)
+library(survival)
 
-calc_brier_old <- function(dat, fit) {
+calc_brier_old <- function(new_data, fit) {
   # ti <- dat_valid$t
   # di <- dat_valid$d
   # xi <- dat_valid$x
-  ti <- dat$t
-  di <- dat$d
-  xi <- dat$x
+  ti <- new_data$t
+  di <- new_data$d
+  xi <- new_data$x
+  
+  # tj from train data
   tj <- fit$fit[[fit$index$`min`[1]]][[fit$index$`min`[2]]]$tj
   final_fit <- fit$fit[[fit$index$`min`[1]]][[fit$index$`min`[2]]]
   
   fitcure <- final_fit$fitcure
   predcure <- predict(fitcure,newx=xi,s=min(fitcure$lambda),type="response")
+  
   fitcox <- final_fit$fitcox
   predsurvexp <- predict(fitcox,newx=xi,s=min(fitcox$lambda),type="response")
+  
   haz <- final_fit$haz
   cumhaz <- final_fit$cumhaz
   
+  # censoring weights from test data
   predcens <- survfit(Surv(ti,1-di)~1)$surv
   tcens <- survfit(Surv(ti,1-di)~1)$time
   
+  # tbrier is evaluation timepoints (default to all timepoints in test data)
   tbrier <- sort(ti)
   brier <- rep(NA,length(tbrier))
   ipw <- rep(NA,length(tbrier))
@@ -250,10 +284,19 @@ calc_brier_old <- function(dat, fit) {
 x <- calc_brier_old(sim_data_list[[1]], cv_fits_list[[1]])
 x_val <- calc_brier_old(sim_valid_data_list[[1]], cv_fits_list[[1]])
 
+plot(x$tbrier,x$brier,type="S")
+plot(x_val$tbrier,x_val$brier,type="S")
+
+
 all_brier <- list()
 
 for (i in 1:10) {
-  all_brier[[i]] <- calc_brier_old(sim_data_list[[i]], fit = cv_fits_list[[i]])
+  all_brier[[i]] <- calc_brier_old( new_data = sim_data_list[[i]], fit = cv_fits_list[[i]])
 }
+all_brier2 <- all_brier %>%
+  do.call("rbind", .)
 
+x <- all_brier2 %>% group_by(round(tbrier, 1)) %>%
+  summarize(mean = mean(brier))
 
+plot(x$`round(tbrier, 1)`, x$mean,type="S")
