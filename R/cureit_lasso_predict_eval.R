@@ -59,7 +59,11 @@ predict_cure <- function(final_fit,
   survival_times = new_data$times
   sorted_survival_times <- sort(survival_times)
   sorted_event_times = sort(new_data$times[new_data$event==1])
-  censoring_weights = survfit(Surv(new_data$times, 1 - new_data$event) ~ 1)$surv
+  
+  # This may need to be eval timepoints....
+  censoring_survfit = survfit(Surv(new_data$times, 1 - new_data$event) ~ 1)
+  censoring_weights = summary(censoring_survfit, times = survival_times)
+  censoring_weights = censoring_weights$surv
   
   data_x <- new_data %>%
     select(-c(times, event, truth_survival)) %>%
@@ -111,18 +115,23 @@ predict_cure <- function(final_fit,
     if (eval_timepoints[l] >= min(sorted_event_times)){
       
       # maximum event time that is less than timepoint we are evaluating 
+      
       ids <- which(
         sorted_event_times == 
           max(sorted_event_times[sorted_event_times <= eval_timepoints[l]])
         )
       
-      # Conditional survival prob for all patients at given time
+      # Conditional survival prob for all patients at given time-
+      # get cumhaz for time closest to eval timepoint
       predsurv <- exp(-cumhaz[ids]*predsurvexp)
       
         # HERE- check this - tru predict of survfit 
       # inverse probability of the censoring weights
+      
       ipw <- as.numeric(survival_times > eval_timepoints[l])*censoring_weights[l] + 
         as.numeric(survival_times <= eval_timepoints[l])*censoring_weights
+      
+      ipw = 1/ipw
       
       # if no events occurred before eval time 
     } else if (eval_timepoints[l] < min(sorted_event_times)) {
@@ -156,13 +165,16 @@ predict_cure <- function(final_fit,
   
   all_pred_df <- all_pred_df %>%
     nest(.pred = -c(id)) %>% 
-    bind_cols(., "event" = new_data$event)
+    bind_cols(., "event" = new_data$event, 
+              "times" = new_data$times)
 
   
   return(all_pred_df)
 }
 
 predict_df <- predict_cure(final_fit = final_fit, new_data = data)
+predict_df_long <- predict_df %>%
+  unnest(everything())
 
 # quick brier ---
 x <- c()
@@ -177,6 +189,7 @@ for (i in 1:10) {
          I(predict_df_long_1$event ==1)*(0 - predict_df_long_1$.pred_survival)^2/(predict_df_long_1$.weight_censored  + 0.001))
 }
 
+x
 # Brier With Yardstick -------------------------------------------------------
 library(yardstick)
 
@@ -244,8 +257,11 @@ calc_brier_old <- function(new_data, fit) {
   cumhaz <- final_fit$cumhaz
   
   # censoring weights from test data
-  predcens <- survfit(Surv(ti,1-di)~1)$surv
-  tcens <- survfit(Surv(ti,1-di)~1)$time
+  sf <- survfit(Surv(ti,1-di)~1)
+  sf_pred <- summary(sf, time = ti)
+  
+  predcens <- sf_pred$surv
+  tcens <- sf_pred$time
   
   # tbrier is evaluation timepoints (default to all timepoints in test data)
   tbrier <- sort(ti)
@@ -284,15 +300,42 @@ calc_brier_old <- function(new_data, fit) {
 x <- calc_brier_old(sim_data_list[[1]], cv_fits_list[[1]])
 x_val <- calc_brier_old(sim_valid_data_list[[1]], cv_fits_list[[1]])
 
+x
 plot(x$tbrier,x$brier,type="S")
 plot(x_val$tbrier,x_val$brier,type="S")
 
 
 all_brier <- list()
 
-for (i in 1:10) {
+for (i in 1:length(sim_data_list)) {
   all_brier[[i]] <- calc_brier_old( new_data = sim_data_list[[i]], fit = cv_fits_list[[i]])
 }
+
+all_brier_valid <- list()
+
+for (i in 1:length(sim_valid_data_list)) {
+  all_brier_valid[[i]] <- calc_brier_old( new_data = sim_valid_data_list[[i]],
+                                          fit = cv_fits_list[[i]])
+}
+
+x <- all_brier_valid[[1]]
+x_valid <- all_brier[[1]]
+
+ggplot(x, aes(x =  tbrier,y = brier)) + geom_line( aes(x =  tbrier,y = brier)) +
+  geom_line(data = x_valid, aes(x =tbrier, y = brier), color = "blue")
+
+plot(x$tbrier,x$brier,type="S")
+line(x_valid$tbrier,x_valid$brier,type="S")
+
+
+traps <- c()
+
+for (i in 1:length(all_brier)) {
+  traps[i] <- trapz(all_brier[[i]]$tbrier,all_brier[[i]]$brier)
+
+}
+
+
 all_brier2 <- all_brier %>%
   do.call("rbind", .)
 
@@ -300,3 +343,6 @@ x <- all_brier2 %>% group_by(round(tbrier, 1)) %>%
   summarize(mean = mean(brier))
 
 plot(x$`round(tbrier, 1)`, x$mean,type="S")
+
+
+
