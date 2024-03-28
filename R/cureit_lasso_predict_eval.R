@@ -51,130 +51,13 @@ cv.glmnet(x = dat$x, y = Surv(dat$t, dat$d), family = "cox")
 # Trying to get predictions in similar format as tidymodels yardstick
 # Eventually will integrate this with existing predict method function
 
-predict_cure <- function(final_fit,
-                         new_data = NULL,
-                         eval_timepoints = NULL) {
 
-  # Get values from observed data
-  survival_times = new_data$times
-  sorted_survival_times <- sort(survival_times)
-  sorted_event_times = sort(new_data$times[new_data$event==1])
-  
-  # This may need to be eval timepoints....
-  censoring_survfit = survfit(Surv(new_data$times, 1 - new_data$event) ~ 1)
-  censoring_weights = summary(censoring_survfit, times = survival_times)
-  censoring_weights = censoring_weights$surv
-  
-  data_x <- new_data %>%
-    select(-c(times, event, truth_survival)) %>%
-    as.matrix()
-  
-  
-  # Extract cumulative hazard from final fit (for event times)
-  haz <- final_fit$haz
-  cumhaz <- final_fit$cumhaz
-  
-  # default eval timepoints are observed event times if not supplied by user
-  if(is.null(eval_timepoints)) {
-    eval_timepoints = sorted_survival_times
-  }
-
-
-  # Get Relative Cure and Cox Risk (independent of timepoint) -------------------
-
-  # Cure probability risk prediction
-  fitcure <- final_fit$fitcure
-  predcure <- predict(fitcure, newx = data_x,
-                      s = min(fitcure$lambda), type = "response")
-  
-  # Cox survival probability risk prediction
-  fitcox <- final_fit$fitcox
-  predsurvexp <- predict(fitcox, 
-                         newx = data_x,
-                         s = min(fitcox$lambda),
-                         type = "response")
-
-
-  
-  # Get Predicted probabilities at Selected Timepoints -------------------
-  
-  all_preds_all_tps <- list()
-  
-  # for each eval timepoint, get predicted survival values
-  for (l in 1:length(eval_timepoints)) {
-    all_preds <- data.frame("eval_timepoint" = NA, 
-                            "preds" = NA, 
-                            "pred_cure" = NA, 
-                            "preds_surv" = NA, 
-                            "weights" = NA)
-    
-    # vector for conditional survival prob for all patients at sorted_survival_times[l]
-    #predsurv <- rep(NA,length(survival_times)) 
-    
-
-    if (eval_timepoints[l] >= min(sorted_event_times)){
-      
-      # maximum event time that is less than timepoint we are evaluating 
-      
-      ids <- which(
-        sorted_event_times == 
-          max(sorted_event_times[sorted_event_times <= eval_timepoints[l]])
-        )
-      
-      # Conditional survival prob for all patients at given time-
-      # get cumhaz for time closest to eval timepoint
-      predsurv <- exp(-cumhaz[ids]*predsurvexp)
-      
-        # HERE- check this - tru predict of survfit 
-      # inverse probability of the censoring weights
-      
-      ipw <- as.numeric(survival_times > eval_timepoints[l])*censoring_weights[l] + 
-        as.numeric(survival_times <= eval_timepoints[l])*censoring_weights
-      
-      ipw = 1/ipw
-      
-      # if no events occurred before eval time 
-    } else if (eval_timepoints[l] < min(sorted_event_times)) {
-      
-      predsurv <- rep(1,length(survival_times))
-      ipw <- 1
-      
-    }
-    
-    preds <- 1 - predcure + predcure*predsurv
-    
-    all_preds <- tibble(
-      
-      ".eval_time" = eval_timepoints[l],
-      ".pred_survival" = preds, 
-      ".predcure" = predcure, 
-      ".predsurv" = predsurv, 
-      ".weight_censored_raw" = censoring_weights[l],
-      ".weight_censored" = ipw) %>%
-      mutate(id = 1:nrow(.))
-
-    all_preds_nest <-  all_preds %>% nest(.preds = -c(id))
-    
-    all_preds_all_tps[[l]] <- all_preds
-                            
-  }
-  
-  
-  all_pred_df <- all_preds_all_tps %>% 
-    do.call("rbind", .)
-  
-  all_pred_df <- all_pred_df %>%
-    nest(.pred = -c(id)) %>% 
-    bind_cols(., "event" = new_data$event, 
-              "times" = new_data$times)
-
-  
-  return(all_pred_df)
-}
 
 predict_df <- predict_cure(final_fit = final_fit, new_data = data)
 predict_df_long <- predict_df %>%
   unnest(everything())
+
+
 
 # quick brier ---
 x <- c()
