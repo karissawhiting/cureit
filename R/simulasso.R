@@ -28,7 +28,7 @@ simulasso <- function(n=100,
   for(i in 1:n){
     U <- runif(1,min=0,max=1)
     t0 <- log(1-(log(1-U))/(0.1*lambda[i]))
-    c0 <- min(rexp(1,rate=0.1),runif(1,min=5,max=6))
+    c0 <- min(rexp(1,rate=1/30),runif(1,min=20,max=40))
     t[i] <- ifelse(uncure[i]==1, min(t0,c0), c0)
     d[i] <- ifelse(uncure[i]==1, as.numeric(I(t0 <= c0)), 0)
   }
