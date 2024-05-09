@@ -5,7 +5,7 @@
 #' @param cure_formula formula with covariates for cure fraction on RHS
 #' @param data data frame
 #' @param conf.level confidence level. Default is 0.95.
-#' @param nboot number of bootstrap samples used for inference.
+#' @param nboot number of bootstrap samples used for inference. Default number is 100. In the example provided below, `nboot = 1` is for demonstration purposes only.
 #' @param eps convergence criterion for the EM algorithm.
 #' @param ... passed to methods
 #'
@@ -13,8 +13,10 @@
 #' @family cureit() functions
 #' @name cureit
 #' @examples
+#' # nboot = 1 is utilized for demonstration purposes only.
+#' 
 #' cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
-#' cure_formula = ~ age + grade,  data = trial)
+#' cure_formula = ~ age + grade,  data = trial, nboot = 1)
 NULL
 
 # Formula method
