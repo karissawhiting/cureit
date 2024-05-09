@@ -9,7 +9,24 @@
 #' @param eps convergence criterion for the EM algorithm.
 #' @param ... passed to methods
 #'
-#' @return cureit object
+#' @return `cureit` object. The output includes the following:
+#' 
+#' * `surv_coefs`
+#' * `cure_coefs`
+#' * `surv_formula`
+#' * `cure_formula`
+#' * `data`
+#' * `conf.level`
+#' * `nboot`
+#' * `eps`
+#' * `surv_xlevels`
+#' * `cure_xlevels`
+#' * `tidy`
+#' * `smcure`
+#' * `surv_blueprint`
+#' * `cure_blueprint`
+#' * `blueprint`
+#' 
 #' @family cureit() functions
 #' @name cureit
 #' @examples
