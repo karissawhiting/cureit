@@ -129,9 +129,19 @@ cureitlasso <- function(t,
   predsurvexp <- predict(fitcox0,newx=x,s=lambdas,type="response") # exp(betaX)
   
   haz <- matrix(0,nrow=length(tj),ncol=length(lambdas))
+  
   for (i in 1:length(tj)){
-    haz[i,] <- 1/colSums(tau[t >= tj[i],2] * predsurvexp[t >= tj[i],])
+    if (sum(t >= tj[i]) > 1){
+      
+      haz[i,] <- 1/colSums(tau[t >= tj[i],2] * predsurvexp[t >= tj[i],])
+      
+    }else if (sum(t >= tj[i]) == 1){
+      
+      haz[i,] <- 1/(tau[t >= tj[i],2] * predsurvexp[t >= tj[i],])
+      
+    }
   }
+  
   cumhaz <- apply(haz,2,cumsum)
   
   predsurv <- matrix(0,nrow=length(t),ncol=length(lambdas))
@@ -158,7 +168,7 @@ cureitlasso <- function(t,
     for (j in 1:length(lambdas)){
       
       tau <- d + (1-d) * (predcure[,i] * predsurv[,j])/( (1 - predcure[,i]) + predcure[,i] * predsurv[,j] )
-      loglik <- sum((1-d)*log(1-predcure[,i] + predcure[,i] * predsurv[,j]) + d*log(predcure[,i] * predsurv[,j]))
+      loglik <- sum((1-d)*log(1-predcure[,i] + predcure[,i] * predsurv[,j] + 0.001) + d*log(predcure[,i] * predsurv[,j] + 0.001))
       
       if (mus[i] > musmax){
         alpha <- fitcure0$beta[,max(which(fitcure0$lambda >= musmax))]
@@ -230,7 +240,7 @@ cureitlasso <- function(t,
         }
         cumhaz <- cumsum(haz)
         
-        predsurv_iter <- rep(0,nrow=length(t))
+        predsurv_iter <- rep(0,length(t))
         for (k in 1:length(t)){
           if (t[k] %in% tj){
             predsurv_iter[k] <- haz[tj==t[k]]*predsurvexp_iter[k]*exp(-cumhaz[tj==t[k]]*predsurvexp_iter[k])
@@ -343,15 +353,15 @@ cureitlasso <- function(t,
       }
       
       fit[[i]][[j]] <- list(t=t,
-                            tj=tj,
+                            tj=tj, # times for hazard function
                             d=d,
                             x=x,
                             alpha0=fitcure$a0[length(fitcure$lambda)],
                             alpha=alpha,
                             beta=beta,
-                            haz=haz,
-                            cumhaz=cumhaz,
-                            tau=as.vector(tau),
+                            haz=haz, # values for hazard function
+                            cumhaz=cumhaz, # values for cumulative hazard
+                            tau=as.vector(tau), # posterior prob
                             predsurv=as.vector(predsurv_iter),
                             predcure=as.vector(predcure_iter),
                             fitcure=fitcure,
