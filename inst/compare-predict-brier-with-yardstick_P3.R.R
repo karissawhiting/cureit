@@ -107,63 +107,6 @@ all_brier <- brier_scores_yardstick %>%
 
 # Brier Function -------------------------------------------------------
 
-brier_cure <- function(predict_df, truth = times, eval_timepoints = NULL) {
-
-  
-  # Get values from observed data
-  survival_times = predict_df$times
-  sorted_survival_times <- sort(survival_times)
-  sorted_event_times = sort(data$times[data$event==1])
-  
-  
-  predict_df_long <- predict_df %>%
-    unnest(everything())
-  
-  predict_df_nest_time <- predict_df_long %>%
-    nest(data = -.eval_time)
-  
-
-  map(predict_df_nest_time$data, function(x) {
-    mean(I(x$event == 0)*(1 - x$.pred_survival)^2/(x$.weight_censored + 0.001) + I(x$event == 1)*(0 - x$.pred_survival)^2/(x$.weight_censored + 0.001))
-    
-  })
-  
-  for (l in 1:length(eval_timepoints)) {
-    brier[l] <- mean(I(di==0)*(1 - preds)^2/(ipw+0.001) + I(di==1)*(0 - preds)^2/(ipw+0.001))
-  
-    
-  }
-}
-  
-
-brier_cure_update <- function(predict_df, truth = times, eval_timepoints = NULL) {
-  
-  
-  # Get values from observed data
-  survival_times = predict_df$times
-  sorted_survival_times <- sort(survival_times)
-  sorted_event_times = sort(data$times[data$event==1])
-  
-  
-  predict_df_long <- predict_df %>%
-    unnest(everything())
-  
-  predict_df_nest_time <- predict_df_long %>%
-    nest(data = -.eval_time)
-  
-  
-  map(predict_df_nest_time$data, function(x) {
-    mean(I(x$event == 0)*(1 - x$.pred_survival)^2/(x$.weight_censored + 0.001) + I(x$event == 1)*(0 - x$.pred_survival)^2/(x$.weight_censored + 0.001))
-    
-  })
-  
-  for (l in 1:length(eval_timepoints)) {
-    brier[l] <- mean(I(di==0)*(1 - preds)^2/(ipw+0.001) + I(di==1)*(0 - preds)^2/(ipw+0.001))
-    
-    
-  }
-}
-
 predict_df_long <- predict_df %>%
   unnest(everything())
 

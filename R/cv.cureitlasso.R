@@ -246,6 +246,6 @@ cv.cureitlasso <- function(t,
                            `1se`= idx1se),
               foldid = foldid
   )
-  )
+  
   
 }

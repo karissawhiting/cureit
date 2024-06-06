@@ -1,4 +1,38 @@
-
+#' Predict Cure and Survival Probabilities
+#'
+#' This function predicts cure and survival probabilities for data based on a final fitted model.
+#' It calculates predicted survival probabilities at specified evaluation time points, accounting for censoring.
+#' Output is consistent with tidymodels predict guidelines and can be passed into yardstick functions like `brier()`
+#'
+#' @param final_fit A list containing the fitted cure and survival models. It should have elements `fitcure`, `fitcox`, `haz`, and `cumhaz`.
+#' @param new_data A data frame containing the new observations to predict on. It should include columns `times` (observed survival times), `event` (event indicator, 1 for event, 0 for censoring), and other covariates used for prediction.
+#' @param eval_timepoints Optional. A vector of time points at which to evaluate survival probabilities. If NULL, the function uses the observed event times from `new_data`.
+#' 
+#' @return A data frame containing the predicted survival probabilities, cure rates, and other related metrics for each observation at the specified evaluation time points. The returned data frame includes the following columns:
+#' \itemize{
+#'   \item \code{id}: Identifier for each observation.
+#'   \item \code{.eval_time}: Evaluation time point.
+#'   \item \code{.pred_survival}: Predicted survival probability at the evaluation time point.
+#'   \item \code{.pred_curerate}: Predicted cure rate for each observation.
+#'   \item \code{.pred_survportion}: Component of the survival prediction that excludes the cure component.
+#'   \item \code{.weight_censored_raw}: Raw censoring weight at each evaluation time point.
+#'   \item \code{.weight_censored}: Inverse probability weight for censoring.
+#'   \item \code{event}: Event indicator from the new data.
+#'   \item \code{times}: Observed survival times from the new data.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming `final_fit` is a fitted model list and `new_data` is a data frame with appropriate structure:
+#'   predict_df <- predict_cure(final_fit = final_fit, new_data = new_data)
+#'   print(predict_df)
+#' }
+#' 
+#' @importFrom dplyr select mutate bind_cols
+#' @importFrom tidyr nest unnest
+#' @importFrom tibble tibble
+#' 
+#' @export
 predict_cure <- function(final_fit,
                          new_data = NULL,
                          eval_timepoints = NULL) {

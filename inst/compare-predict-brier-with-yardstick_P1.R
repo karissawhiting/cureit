@@ -6,10 +6,11 @@ tidymodels_prefer()
 # Try Tidymodels Example --------------------------------------------------
 
 
-# Fit Lung Model  ---------------------------------------------------------
+# * Fit Lung Model  --------
 
 data(cancer, package="survival")
 data(lung_surv)
+
 #lung <- lung %>% drop_na()
 
 lung <- lung %>%
@@ -17,7 +18,6 @@ lung <- lung %>%
     status == 1 ~ 0, 
     status == 2 ~ 1
   ))
-
 
 
 ph_spec <- 
@@ -64,6 +64,7 @@ brier_scores_lung <-
   brier_survival(truth = surv_truth, .pred)
 
 brier_scores_lung
+
 # Try our code on their data ----------------------------------------------
 
 # 
