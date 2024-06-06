@@ -1,3 +1,47 @@
+
+# mu is penlanlity for cure
+# lamda is penality for cox
+# touch is posterior probabilty of being cured fr uncured (maybe don't need) (Entropy) 
+ # NOTE maybe change name of alphs 
+# calculated linear peredictor of that iteration 
+
+
+#' Lasso for Cure Models
+#'
+#' @param t Survival times
+#' @param d Event indicator
+#' @param x data n x p matrix or data.frame
+#' @param minmu.ratio minimum penalty value in the logistic model
+#' @param minlambda.ratio minimum penalty value in the cox model
+#' @param adaptive 
+#' @param length.grid 
+#' @param mus penalty for cure
+#' @param lambdas is penalty for cox
+#' @param tol posterior probability of being cured for uncured (maybe don't need) (Entropy) 
+#' @param maxiter 
+#' @param progress verbose iteration counter
+#'
+#' @return
+#' - `all_fits`
+#'  - `t`,
+#'  - `tj` - unique event times sorted,
+#'  - `d`- event indicator,
+#'  - `x`- data n x p matrix or data.frame,
+#'  - `alpha0` fitcure$a0[length(fitcure$lambda)],
+#'  - `alpha` =alpha,
+#'  - `beta` =beta,
+#'  - `haz`=haz,
+#'  - `cumhaz`=cumhaz,
+#'  - `tau`=as.vector(tau),
+#'  - `predsurv`=as.vector(predsurv_iter),
+#'  - `predcure`=as.vector(predcure_iter),
+#'  - `fitcure`=fitcure,
+#'  - `fitcox` =fitcox
+#' - `mus` - mus that were used as penalties for cure models in cross validation
+#' - `lambda` - lambdas that were used as penalities in cix model cross validation
+#' @export
+#'
+#' @examples
 cureitlasso <- function(t,
                         d,
                         x,
@@ -15,6 +59,7 @@ cureitlasso <- function(t,
   require(glmnet)
   require(survival)
   
+  # initialize initial weights 
   tau <- matrix(0.5,nrow=length(t),ncol=2) # First column: cured; second column: uncured
   tau[d==1,1] = 0
   tau[d==1,2] = 1
@@ -24,6 +69,7 @@ cureitlasso <- function(t,
   
   # CV: Be careful for fold split! Two replicates from the same subject should always be assigned to the same fold
   
+  #this is for later integreation with tuning
   penalty.factor.cure=rep(1,ncol(x))
   penalty.factor.cox=rep(1,ncol(x))
   
@@ -51,6 +97,8 @@ cureitlasso <- function(t,
   #   
   # }
   
+  # So this section is finding the set of optimal hyperparemters to test ----
+  # tau is uncure probability 
   fitcure0 <- glmnet(x=do.call("rbind", rep(list(x), 2)),
                      y=lab_class,
                      family="binomial",
@@ -72,8 +120,10 @@ cureitlasso <- function(t,
     lambdas <- fitcox0$lambda[idx_lambdas]
   }
   
+  
   musmax <- fitcure0$lambda[1]
   lambdasmax <- fitcox0$lambda[1]
+  # -----------------
   
   predcure <- predict(fitcure0,newx=x,s=mus,type="response") #Prob of uncured
   predsurvexp <- predict(fitcox0,newx=x,s=lambdas,type="response") # exp(betaX)
@@ -113,6 +163,7 @@ cureitlasso <- function(t,
   for (i in 1:length(mus)){
     
     fit[[i]] <- list()
+    
     
     for (j in 1:length(lambdas)){
       
@@ -319,14 +370,24 @@ cureitlasso <- function(t,
       # num_alpha[i,j] <- sum(alpha!=0)
       # num_beta[i,j] <- sum(beta!=0)
       
+    #  names(fit[i][j]) <- paste0("mu_fit_", i, "_lambda_fit_", "j")
+      
     }
     
+
+    names(fit[[i]]) <- paste0("lambda_fit_", 1:length(lambdas))
   }
   
-  return(list(fit=fit,
+  names(fit) <- paste0("mu_fit_", 1:length(mus))
+  
+  return(list(fit = fit,
               # num_alpha=num_alpha,
               # num_beta=num_beta,
               mus=mus,
               lambdas=lambdas))
   
 }
+
+# tj - is unique event times sorted
+# haz 
+
