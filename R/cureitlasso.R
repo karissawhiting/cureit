@@ -125,10 +125,10 @@ cureitlasso <- function(t,
         alpha <- fitcure0$beta[,max(which(fitcure0$lambda >= mus[i]))]
       }
       
-      if (lambdas[i] > lambdasmax){
+      if (lambdas[j] > lambdasmax){
         beta <- fitcox0$beta[,max(which(fitcox0$lambda >= lambdasmax))]
       }else{
-        beta <- fitcox0$beta[,max(which(fitcox0$lambda >= mus[i]))]
+        beta <- fitcox0$beta[,max(which(fitcox0$lambda >= lambdas[j]))]
       }
       
       
@@ -170,14 +170,14 @@ cureitlasso <- function(t,
                           y=lab_class,
                           family="binomial",
                           weights=c(1-tau0,tau0),
-                          lambda=10^(seq(musmax*10,log10(mus[i]),length.out=100)),
+                          lambda=10^(seq(log10(musmax*10),log10(mus[i]),length.out=100)),
                           penalty.factor = penalty.factor.cure)
         
         fitcox <- glmnet(x=x,
                          y=Surv(t,d),
                          family="cox",
                          weights=tau0,
-                         lambda=10^(seq(lambdasmax*10,log10(lambdas[i]),length.out=100)),
+                         lambda=10^(seq(log10(lambdasmax*10),log10(lambdas[j]),length.out=100)),
                          penalty.factor = penalty.factor.cox)
         
         predcure_iter <- predict(fitcure,newx=x,s=min(fitcure$lambda),type="response") #Prob of uncured
