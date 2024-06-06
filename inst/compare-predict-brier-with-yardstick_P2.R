@@ -46,6 +46,7 @@ get_brier_for_each_data <- function(dat, fit) {
 
 # * Version 1 -----
 
+# iterates over eval time 
 for (i in 1:100) {
   
   time_1 <- predict_df_long$.eval_time[[i]]
@@ -57,15 +58,15 @@ for (i in 1:100) {
                   I(predict_df_long_1$event == 1 & predict_df_long_1$times <= time_1)*
                   (0 - predict_df_long_1$.pred_survival)^2*(predict_df_long_1$.weight_censored))
   
-  # OLD -----
+  # OLD --
   # x[i] <- mean(I(predict_df_long_1$event == 0)*(1 - predict_df_long_1$.pred_survival)^2/(predict_df_long_1$.weight_censored + 0.001) + 
   #                I(predict_df_long_1$event ==1)*(0 - predict_df_long_1$.pred_survival)^2/(predict_df_long_1$.weight_censored  + 0.001))
   # 
-  # OLD ----
+  # OLD --
   # brier[l] <- mean(I(di==0)*(1 - preds)^2/(ipw+0.001) +
   #                    I(di==1)*(0 - preds)^2/(ipw+0.001))
   # 
-  # NEW ?-----
+  # NEW ?--
   # brier[l] <- mean(I(ti > tbrier[l])*(1 - preds)^2/(ipw+0.001) + 
   #                    I(di==1 & ti <= tbrier[l])*(0 - preds)^2/(ipw+0.001))
   
@@ -75,6 +76,7 @@ for (i in 1:100) {
 
 # * Version 2 -----
 
+# simple version of above- I think I can delete
 brier[l] <- mean(I(ti > tbrier[l])*
                    (1 - preds)^2/(ipw+0.001) + 
                    
@@ -82,36 +84,6 @@ brier[l] <- mean(I(ti > tbrier[l])*
 
 
 # * Version 3 -----
-
-brier_cure <- function(predict_df, truth = times, eval_timepoints = NULL) {
-  
-  
-  # Get values from observed data
-  survival_times = predict_df$times
-  sorted_survival_times <- sort(survival_times)
-  sorted_event_times = sort(data$times[data$event==1])
-  
-  
-  predict_df_long <- predict_df %>%
-    unnest(everything())
-  
-  predict_df_nest_time <- predict_df_long %>%
-    nest(data = -.eval_time)
-  
-  
-  map(predict_df_nest_time$data, function(x) {
-    mean(I(x$event == 0)*(1 - x$.pred_survival)^2/(x$.weight_censored + 0.001) + I(x$event == 1)*(0 - x$.pred_survival)^2/(x$.weight_censored + 0.001))
-    
-  })
-  
-  for (l in 1:length(eval_timepoints)) {
-    brier[l] <- mean(I(di==0)*(1 - preds)^2/(ipw+0.001) + I(di==1)*(0 - preds)^2/(ipw+0.001))
-    
-    
-  }
-}
-
-# * Version 4 -----
 brier_cure_update <- function(predict_df, truth = times, eval_timepoints = NULL) {
   
   
@@ -140,6 +112,45 @@ brier_cure_update <- function(predict_df, truth = times, eval_timepoints = NULL)
   }
 }
 
+# * Version 4 ----
+
+brier_for_each_eval <- function(predict_df_timepoint) {
+  
+  
+  x = mean(I(predict_df_timepoint$times > predict_df_timepoint$.eval_time )*(1 - predict_df_timepoint$.pred_survival)^2/(predict_df_timepoint$.weight_censored+0.001) + 
+             I(predict_df_timepoint$event == 1 & predict_df_timepoint$times <= predict_df_timepoint$.eval_time  )*
+             (0 - predict_df_timepoint$.pred_survival)^2/(predict_df_timepoint$.weight_censored+0.001))
+  x
+}
+
+
+brier_for_each_eval <- function(predict_df_timepoint) {
+  
+  
+  x = mean(
+    I(predict_df_timepoint$times > predict_df_timepoint$.eval_time)*(1 - predict_df_timepoint$.pred_survival)^2/(predict_df_timepoint$.weight_censored+0.001) + 
+      
+      I(predict_df_timepoint$event == 1 & predict_df_timepoint$times <= predict_df_timepoint$.eval_time  )*
+      (0 - predict_df_timepoint$.pred_survival)^2/(predict_df_timepoint$.weight_censored+0.001)
+  )
+  x/100
+}
+
+brier_for_each_eval2 <- function(predict_df_timepoint) {
+  
+  category1 = I(predict_df_timepoint$event == 1 & predict_df_timepoint$times <= predict_df_timepoint$.eval_time  )
+  category2 = I(predict_df_timepoint$times > predict_df_timepoint$.eval_time)
+  
+  x = mean(
+    category1*(0 - predict_df_timepoint$.pred_survival)^2/(predict_df_timepoint$.weight_censored) +
+      category2 *(1 - predict_df_timepoint$.pred_survival)^2/(predict_df_timepoint$.weight_censored) 
+    
+  )
+  x
+  
+}
+
+
 
 # Example on Single Data Set -------------------------------------------------
 
@@ -150,6 +161,7 @@ final_fit <- fit$fit[[fit$index$`min`[1]]][[fit$index$min[2]]]
 
 # Run predict functon
 predict_df <- predict_cure(final_fit = final_fit, new_data = data)
+
 predict_df_long <- predict_df %>%
   unnest(everything())
 
@@ -160,6 +172,9 @@ brier_scores_yardstick <-
   brier_survival(truth = truth, .pred)
 
 
+# Example on Multiple Data ------------------------------------------------
+
+ 
 b <- get_brier_for_each_data(dat = sim_data_list[[3]], fit = cv_fits_list[[3]])
 
 
