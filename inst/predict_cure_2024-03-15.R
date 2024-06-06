@@ -87,7 +87,7 @@ predict_cure <- function(final_fit,
         # if observed time is less than or equal to eval time, use censoring weight at it's own observed time
         as.numeric(survival_times <= eval_timepoint)*censoring_weights
       
-      ipw = 1/ipw
+      ipw = 1/(ipw+ 0.001)
       
       # if no events occurred before eval time 
     } else if (eval_timepoint < min(sorted_event_times)) {
