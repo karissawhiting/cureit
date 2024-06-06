@@ -10,3 +10,23 @@ coxsplit=function(y, nfolds){
   foldid=tem$foldid[order(tem$i)]
   return(foldid)
 }
+
+coxsplitb=function(y, b, nfolds){
+  N=nrow(y)
+  tem=data.frame(y, b, i=seq(N), foldid=0)
+  tem=tem[order(y[, "time"], y[, "status"]), ]
+
+  for (d in 0:1){
+    
+    for (batch in 1:max(b)){
+      
+      tem$foldid[tem[, "status"]==d & tem[,"b"] == batch] = sample(rep(seq(nfolds), length=sum(tem[, "status"]==d & tem[,"b"] == batch)))
+      
+    }
+    
+  }
+  
+  foldid=tem$foldid[order(tem$i)]
+  return(foldid)
+  
+}

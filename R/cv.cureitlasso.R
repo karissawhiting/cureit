@@ -119,7 +119,7 @@ cv.cureitlasso <- function(t,
             }
             
             preds <- 1 - predcure + predcure*predsurv
-            brier[l] <- mean(I(di==0)*(1 - preds)^2/(ipw+0.001) + I(di==1)*(0 - preds)^2/(ipw+0.001))
+            brier[l] <- mean(I(ti > tbrier[l])*(1 - preds)^2/(ipw+0.001) + I(di==1 & ti <= tbrier[l])*(0 - preds)^2/(ipw+0.001))
             
           }
           
@@ -244,7 +244,9 @@ cv.cureitlasso <- function(t,
               index = list(min=idxmin,
                            `1se`= idx1se), 
                            `1se`= idx1se),
-              foldid = foldid
+              foldid = foldid,
+              selected = list(min=selectedmin,
+                              `1se`=selected1se)
   )
   
   
