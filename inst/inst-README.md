@@ -1,6 +1,6 @@
 # inst
 
-- 
+
 - `compare-predict-brier-with-yardstick_P2.R` - compare yardstick prediction and brier using our simulation data. Using new predict_cure() compare Teng's manual brier score calc to yardstick brier score calc
 
 
@@ -10,6 +10,9 @@
 
 - `run-simulations.R` - produce simulated data for lasso cure models
 
+- `nomogram-custom-edits.R` - custom edits to nomogram for cureit paper
+
 - `archive`
 	- `evaluate-simulations.R` - old code to calculate brier score on simulations (modified from Teng)
 	- `testcode.R` - old code to calculate brier score
+
