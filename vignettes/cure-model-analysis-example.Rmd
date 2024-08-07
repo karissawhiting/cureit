@@ -12,7 +12,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", 
-  eval = FALSE
+  eval = TRUE
 )
 gt_compact_fun <- function(x) {
   gt::tab_options(x, 
@@ -46,23 +46,21 @@ This package allows you to easily build and report cure mixture models. The mode
 
 # Example data set
 
-We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The original data is available in the {ISwR} package (Dalgaard, 2008). A version of this data in available in the package `cureit::melanoma`
+We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The original data is available in the {ISwR} package (Dalgaard, 2008). A version of this data in available in the package `cureit::melanoma`.
 
 Variables include:
-- `ulc` - ulceration status
-- `thick` - tumor thickness in mm
-- `sex` - sex
+
+- `ulceration`: ulceration status
+- `tumor_thickness`: tumor thickness in mm
+- `sex`: sex
 
 A summary of the main available variables is below:
 
 ```{r}
-
 melanoma %>%
   select(tumor_thickness, sex, ulceration) %>%
   tbl_summary() %>%
   bold_labels()
-
-
 ```
 
 To calculate overall survival, we will only consider death from melanoma as an event. Patients who died from other cause or were lost to follow-up are censored. 
@@ -81,9 +79,9 @@ fit %>%
 
 ```
 
-From the Kaplan-meier curves we can see the disease death rate plateaus around .7, indicating that not all patients may experience disease-realted death. The patients that do experience this event, may be different from those who do not in a way that would be useful to categorize.
+From the Kaplan-meier curves we can see the disease death rate plateaus around .7, indicating that not all patients may experience disease-related death. The patients that do experience this event, may be different from those who do not in a way that would be useful to categorize.
 
-Cure models can help tease apart the contribution of clinical variables to these potentially heterogeneous sub cohorts. 
+Cure models can help tease apart the contribution of clinical variables to these potentially heterogeneous sub-cohorts. 
 
 # Fitting the Cure Model
 
