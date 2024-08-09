@@ -89,26 +89,12 @@ The `cureit()` function is a wrapper for `smcure::smcure()` that allows you to c
 
 Note: You can optionally provide different sets of covariates to the survival portion and the cure portion:
 
-
-```{r }
-
+```{r}
 fit <- cureit(surv_formula = Surv(days, status) ~ ulceration + sex + tumor_thickness,
               cure_formula = ~ ulceration + sex + tumor_thickness, data = melanoma)
-
-
 ```
 
-
-```{r}
-p <- cureit(Surv(days, status) ~ ulceration + sex + tumor_thickness,
-  cure_formula = ~ ulceration + sex + tumor_thickness,
-  data = melanoma)
-
-x <- predict(p, times = seq(100, 5000, 100), newdata = melanoma, brier = TRUE)
-
-x$
-```
-
+## Producing Table Summary of the Cure Model
 
 ```{r}
 tidy_mods <- tidy(fit)
@@ -119,78 +105,24 @@ tbl_regression(fit, tidy_fun = tidy.cureit) %>%
 tidy_df <- left_join(fit$tidy$df_cure, fit$tidy$df_surv)
 ```
 
+## Model Prediction
+
+```{r}
+p <- cureit(Surv(days, status) ~ ulceration + sex + tumor_thickness,
+  cure_formula = ~ ulceration + sex + tumor_thickness,
+  data = melanoma)
+
+x <- predict(p, times = seq(100, 5000, 100), newdata = melanoma, brier = TRUE)
+
+# names of lists that can be extracted from x
+names(x)
+```
 
 # Nomogram
 
 ```{r}
 nomogram.cureit(fit, time = 3)
-```
 
-# K-Index
-
-Below we calculate the K and C indicies for this model
-
-```{r, eval=FALSE}
-library(ROCR)
-  
-mod_data <- mel %>%
-  mutate(sex = as.integer(as.factor(sex))-1) 
-
-mm <- model.matrix(~ulc + sex + 
-                  thick_cat, data = mod_data)[, -1]
-
-mod2 <- mod_data %>%
-  dplyr::select(days, status) %>%
-  cbind(mm)
-  
-k_fit <- evacure::smcure1(Surv(days, status) ~ ulcpresent + 
-                            sex + 
-                            `thick_catgreater 322` + 
-                            `thick_catless equal 322`,
-      cureform = ~ ulcpresent + 
-                            sex + 
-                            `thick_catgreater 322` + 
-                            `thick_catless equal 322`,
-      data = mod2,
-      model = "ph",
-      nboot = 200,
-      Var = T
-      )
-```
-
-```{r, eval=FALSE}
-
-k_index <- k_fit$eva["K"]
-c_index <- k_fit$eva["C"]
-
-
-tribble(
-  ~"Statistic", ~"Value", 
-  "k-index", k_index, 
-  "c-index", c_index) %>%
-  mutate_if(is.numeric, ~round(.x, 3)) %>%
-  gt() %>%
-  gt::tab_options(table.font.size = "small", 
-        data_row.padding = gt::px(1),
-        summary_row.padding = gt::px(1), 
-        grand_summary_row.padding = gt::px(1),
-        footnotes.padding = gt::px(1), 
-        source_notes.padding = gt::px(1),
-        row_group.padding = gt::px(1))
-```
-
-
-# Calibration Curve
-
-```{r, eval=FALSE}
-
-cureit(fit, prediction_time = 1000)
-
-
-```
-
-
-```{r}
-
+cureit::nomogram(fit, time = 3)
 ```
 
