@@ -99,7 +99,7 @@ fit <- cureit(surv_formula = Surv(days, status) ~ ulceration + sex + tumor_thick
 ```{r}
 tidy_mods <- tidy(fit)
 
-tbl_regression(fit, tidy_fun = tidy) %>% 
+tbl_regression(fit, tidy_fun = cureit::tidy) %>% 
   bold_labels()
 
 # cure model tidy table
