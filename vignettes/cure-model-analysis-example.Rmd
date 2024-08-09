@@ -12,7 +12,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", 
-  eval = TRUE
+  eval = FALSE
 )
 gt_compact_fun <- function(x) {
   gt::tab_options(x, 
@@ -99,10 +99,14 @@ fit <- cureit(surv_formula = Surv(days, status) ~ ulceration + sex + tumor_thick
 ```{r}
 tidy_mods <- tidy(fit)
 
-tbl_regression(fit, tidy_fun = tidy.cureit) %>% 
+tbl_regression(fit, tidy_fun = tidy) %>% 
   bold_labels()
 
-tidy_df <- left_join(fit$tidy$df_cure, fit$tidy$df_surv)
+# cure model tidy table
+tidy_cure_df <- fit$tidy$df_cure
+
+# survival model tidy table
+tidy_surv_df <- fit$tidy$df_surv
 ```
 
 ## Model Prediction
@@ -121,8 +125,6 @@ names(x)
 # Nomogram
 
 ```{r}
-nomogram.cureit(fit, time = 3)
-
-cureit::nomogram(fit, time = 3)
+nomogram(fit, time = 3)
 ```
 
