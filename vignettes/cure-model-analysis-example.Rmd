@@ -44,7 +44,7 @@ library(forcats)
 
 {cureit} allows you to easily build and report mixture cure models. Functions are available to fit, diagnose, and visualize your cure model results. More information on theory and application of cure models using {cureit} in the supporting manuscript: 
 
-*[Karissa Whiting et al., Cureit: An End-to-End Pipeline for Implementing Mixture Cure Models With an Application to Liposarcoma Data. JCO Clin Cancer Inform 8, e2300234(2024).DOI:10.1200/CCI.23.00234](https://ascopubs.org/doi/abs/10.1200/CCI.23.00234)*
+> Whiting K, Fei T, Singer S, Qin, LX. Cureit: An End-to-End Pipeline for Implementing Mixture Cure Models With an Application to Liposarcoma Data. JCO Clin Cancer Inform 8, e2300234(2024).[DOI:10.1200/CCI.23.00234](https://ascopubs.org/doi/abs/10.1200/CCI.23.00234)
 
 # Example data set
 
@@ -98,7 +98,7 @@ fit <- cureit(
 
 ## Producing Table Summary of the Cure Model
 
-A tidy method is available to turn model estimates into a data.frame of model info.
+A tidy method is available to turn model estimates into a data frame of model info.
 
 
 ```{r}
@@ -109,10 +109,10 @@ Additionally, you can extract tidy fits of both sub models separately as well:
 ```{r }
 
 # cure model tidy table
-tidy_cure_df <- fit$tidy$df_cure
+fit$tidy$df_cure
 
 # survival model tidy table
-tidy_surv_df <- fit$tidy$df_surv
+fit$tidy$df_surv
 ```
 A basic `gtsummary::tbl_summary()` method for `cureit` model objects is also available **(please note: this is experimental and will be updated soon to include improved formatting of submodel components):**
 
