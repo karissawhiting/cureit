@@ -34,6 +34,6 @@ below to see their documentation.
 
   \item{gtsummary}{\code{\link[gtsummary]{add_n}}, \code{\link[gtsummary]{add_nevent}}, \code{\link[gtsummary]{add_p}}, \code{\link[gtsummary]{inline_text}}, \code{\link[gtsummary]{tbl_regression}}}
 
-  \item{survival}{\code{\link[survival]{Surv}}, \code{\link[survival]{coxph}}, \code{\link[survival]{survfit}}}
+  \item{survival}{\code{\link[survival]{coxph}}, \code{\link[survival]{Surv}}, \code{\link[survival]{survfit}}}
 }}
 

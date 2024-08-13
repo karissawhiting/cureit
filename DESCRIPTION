@@ -35,7 +35,8 @@ Imports:
     hardhat,
     janitor,
     forcats,
-    caret
+    caret,
+    broom.helpers
 Suggests: 
     knitr,
     rmarkdown,
