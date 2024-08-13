@@ -12,7 +12,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", 
-  eval = FALSE
+  eval = TRUE
 )
 gt_compact_fun <- function(x) {
   gt::tab_options(x, 
@@ -42,11 +42,13 @@ library(forcats)
 
 # Introduction
 
-This package allows you to easily build and report cure mixture models. The modeling functions are wrappers for the `smcure()` function from the {smcure} package and several functions are available to diagnose and visualize your cure model results.
+{cureit} allows you to easily build and report mixture cure models. Functions are available to fit, diagnose, and visualize your cure model results. More information on theory and application of cure models using {cureit} in the supporting manuscript: 
+
+*[Karissa Whiting et al., Cureit: An End-to-End Pipeline for Implementing Mixture Cure Models With an Application to Liposarcoma Data. JCO Clin Cancer Inform 8, e2300234(2024).DOI:10.1200/CCI.23.00234](https://ascopubs.org/doi/abs/10.1200/CCI.23.00234)*
 
 # Example data set
 
-We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The original data is available in the {ISwR} package (Dalgaard, 2008). A version of this data in available in the package `cureit::melanoma`.
+We will be using publicly available data on 205 stage I melanoma patients at the Department of Plastic Surgery, University Hospital of Odense, Denmark from 1962 to 1977. The original data is available in the {ISwR} package (`ISwR::melanom`, Dalgaard, 2008). A version of this data is available in the cureit package `cureit::melanoma`.
 
 Variables include:
 
@@ -54,7 +56,7 @@ Variables include:
 - `tumor_thickness`: tumor thickness in mm
 - `sex`: sex
 
-A summary of the main available variables is below:
+The main available variables in this data set are summarized below using the {gtsummary} package:
 
 ```{r}
 melanoma %>%
@@ -79,28 +81,32 @@ fit %>%
 
 ```
 
-From the Kaplan-meier curves we can see the disease death rate plateaus around .7, indicating that not all patients may experience disease-related death. The patients that do experience this event, may be different from those who do not in a way that would be useful to categorize.
-
-Cure models can help tease apart the contribution of clinical variables to these potentially heterogeneous sub-cohorts. 
+From the Kaplan-meier curves we can see the disease death rate plateaus around .7, indicating that not all patients may experience disease-related death. The patients that do experience this event, may have different clinical charcteristics from those who do not. Cure models can help characterize the contribution of clinical variables to these potentially heterogeneous sub-cohorts. 
 
 # Fitting the Cure Model
 
-The `cureit()` function is a wrapper for `smcure::smcure()` that allows you to code cure models using a tidy framework. Below, we will fit a model using ulceration status, sex and tumor thickness as variables of interest in both cure and survival portions. 
+The `cureit()` function is a wrapper for `smcure::smcure()` and allows you to fit cure models and estimate coefficients and confidence intervals (via bootstrapping). Results can be summarized and organized using a tidy framework (see {broom} package for more information). Below, we will fit a cure model using ulceration status, sex and tumor thickness as variables of interest in both cure and survival portions. 
 
 Note: You can optionally provide different sets of covariates to the survival portion and the cure portion:
 
 ```{r}
-fit <- cureit(surv_formula = Surv(days, status) ~ ulceration + sex + tumor_thickness,
-              cure_formula = ~ ulceration + sex + tumor_thickness, data = melanoma)
+fit <- cureit(
+  surv_formula = Surv(days, status) ~ ulceration + sex + tumor_thickness,
+  cure_formula = ~ ulceration + sex + tumor_thickness, data = melanoma
+)
 ```
 
 ## Producing Table Summary of the Cure Model
 
-```{r}
-tidy_mods <- tidy(fit)
+A tidy method is available to turn model estimates into a data.frame of model info.
 
-tbl_regression(fit, tidy_fun = cureit::tidy) %>% 
-  bold_labels()
+
+```{r}
+tidy(fit)
+```
+Additionally, you can extract tidy fits of both sub models separately as well: 
+
+```{r }
 
 # cure model tidy table
 tidy_cure_df <- fit$tidy$df_cure
@@ -108,8 +114,18 @@ tidy_cure_df <- fit$tidy$df_cure
 # survival model tidy table
 tidy_surv_df <- fit$tidy$df_surv
 ```
+A basic `gtsummary::tbl_summary()` method for `cureit` model objects is also available **(please note: this is experimental and will be updated soon to include improved formatting of submodel components):**
+
+```{r}
+
+tbl_regression(fit, exponentiate = TRUE) %>% 
+  bold_labels() %>%
+  bold_p()
+```
 
 ## Model Prediction
+
+Make predictions on cureit model: 
 
 ```{r}
 p <- cureit(Surv(days, status) ~ ulceration + sex + tumor_thickness,
@@ -123,6 +139,8 @@ names(x)
 ```
 
 # Nomogram
+
+Create a nomogram based on the model fit: 
 
 ```{r}
 nomogram(fit, time = 3)

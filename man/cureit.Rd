@@ -29,7 +29,7 @@ cureit(object, ...)
 
 \item{conf.level}{confidence level. Default is 0.95.}
 
-\item{nboot}{number of bootstrap samples used for inference.}
+\item{nboot}{number of bootstrap samples used for inference. Default number is 100.}
 
 \item{eps}{convergence criterion for the EM algorithm.}
 
@@ -38,14 +38,44 @@ cureit(object, ...)
 \item{object}{input object}
 }
 \value{
-cureit object
+\code{cureit} object. The output includes the following:
+\itemize{
+\item \code{surv_coefs}
+\item \code{cure_coefs}
+\item \code{surv_formula}
+\item \code{cure_formula}
+\item \code{data}
+\item \code{conf.level}
+\item \code{nboot}
+\item \code{eps}
+\item \code{surv_xlevels}
+\item \code{cure_xlevels}
+\item \code{tidy}
+\item \code{smcure}
+\item \code{surv_blueprint}
+\item \code{cure_blueprint}
+\item \code{blueprint}
+}
 }
 \description{
 Cure Model Regression
 }
 \examples{
-cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
-cure_formula = ~ age + grade,  data = trial)
+
+cureit_obj <- cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
+cure_formula = ~ age + grade,  data = trial, nboot = 10)
+
+# pulling survival coeffients
+cureit_obj$surv_coefs
+
+# pulling cure coefficients
+cureit_obj$coefs
+
+# `tidy` object of survival model output
+cureit_obj$tidy$df_surv
+
+# `tidy` object of cure model output
+cureit_obj$tidy$df_cure
 }
 \seealso{
 Other cureit() functions: 
