@@ -5,55 +5,47 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="cureit">
 <title>Cure Model Analysis Example • cureit</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Atkinson_Hyperlegible-0.4.9/font.css" rel="stylesheet">
-<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Cure Model Analysis Example">
-<meta property="og:description" content="cureit">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Cure Model Analysis Example">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">cureit</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/cure-model-analysis-example.html">Cure Model Analysis Example</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/cure-model-analysis-example.html">Cure Model Analysis Example</a></li>
+  </ul>
 </li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav"></ul>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+      </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -62,10 +54,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Cure Model Analysis Example</h1>
+
+      <h1>Cure Model Analysis Example</h1>
             
       
-      
+
       <div class="d-none name"><code>cure-model-analysis-example.Rmd</code></div>
     </div>
 
@@ -74,11 +67,15 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This package allows you to easily build and report cure mixture
-models. The modeling functions are wrappers for the
-<code>smcure()</code> function from the {smcure} package and several
-functions are available to diagnose and visualize your cure model
-results.</p>
+<p>{cureit} allows you to easily build and report mixture cure models.
+Functions are available to fit, diagnose, and visualize your cure model
+results. More information on theory and application of cure models using
+{cureit} in the supporting manuscript:</p>
+<blockquote>
+<p>Whiting K, Fei T, Singer S, Qin, LX. Cureit: An End-to-End Pipeline
+for Implementing Mixture Cure Models With an Application to Liposarcoma
+Data. JCO Clin Cancer Inform 8, e2300234(2024).<a href="https://ascopubs.org/doi/abs/10.1200/CCI.23.00234" class="external-link">DOI:10.1200/CCI.23.00234</a></p>
+</blockquote>
 </div>
 <div class="section level2">
 <h2 id="example-data-set">Example data set<a class="anchor" aria-label="anchor" href="#example-data-set"></a>
@@ -86,17 +83,522 @@ results.</p>
 <p>We will be using publicly available data on 205 stage I melanoma
 patients at the Department of Plastic Surgery, University Hospital of
 Odense, Denmark from 1962 to 1977. The original data is available in the
-{ISwR} package (Dalgaard, 2008). A version of this data in available in
-the package <code><a href="../reference/melanoma.html">cureit::melanoma</a></code></p>
-<p>Variables include: - <code>ulc</code> - ulceration status -
-<code>thick</code> - tumor thickness in mm - <code>sex</code> - sex</p>
-<p>A summary of the main available variables is below:</p>
+{ISwR} package (<code>ISwR::melanom</code>, Dalgaard, 2008). A version
+of this data is available in the cureit package
+<code><a href="../reference/melanoma.html">cureit::melanoma</a></code>.</p>
+<p>Variables include:</p>
+<ul>
+<li>
+<code>ulceration</code>: ulceration status</li>
+<li>
+<code>tumor_thickness</code>: tumor thickness in mm</li>
+<li>
+<code>sex</code>: sex</li>
+</ul>
+<p>The main available variables in this data set are summarized below
+using the {gtsummary} package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">melanoma</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">melanoma</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">tumor_thickness</span>, <span class="va">sex</span>, <span class="va">ulceration</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">tbl_summary</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">bold_labels</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div id="mwlefoodfi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mwlefoodfi table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#mwlefoodfi thead, #mwlefoodfi tbody, #mwlefoodfi tfoot, #mwlefoodfi tr, #mwlefoodfi td, #mwlefoodfi th {
+  border-style: none;
+}
+
+#mwlefoodfi p {
+  margin: 0;
+  padding: 0;
+}
+
+#mwlefoodfi .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#mwlefoodfi .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mwlefoodfi .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mwlefoodfi .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mwlefoodfi .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mwlefoodfi .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mwlefoodfi .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mwlefoodfi .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mwlefoodfi .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#mwlefoodfi .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#mwlefoodfi .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mwlefoodfi .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mwlefoodfi .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mwlefoodfi .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mwlefoodfi .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mwlefoodfi .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#mwlefoodfi .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#mwlefoodfi .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#mwlefoodfi .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mwlefoodfi .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#mwlefoodfi .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mwlefoodfi .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mwlefoodfi .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mwlefoodfi .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mwlefoodfi .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mwlefoodfi .gt_left {
+  text-align: left;
+}
+
+#mwlefoodfi .gt_center {
+  text-align: center;
+}
+
+#mwlefoodfi .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mwlefoodfi .gt_font_normal {
+  font-weight: normal;
+}
+
+#mwlefoodfi .gt_font_bold {
+  font-weight: bold;
+}
+
+#mwlefoodfi .gt_font_italic {
+  font-style: italic;
+}
+
+#mwlefoodfi .gt_super {
+  font-size: 65%;
+}
+
+#mwlefoodfi .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#mwlefoodfi .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#mwlefoodfi .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#mwlefoodfi .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#mwlefoodfi .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#mwlefoodfi .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#mwlefoodfi .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#mwlefoodfi .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#mwlefoodfi div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="&lt;span class='gt_from_md'&gt;&lt;strong&gt;Characteristic&lt;/strong&gt;&lt;/span&gt;"><span class="gt_from_md"><strong>Characteristic</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;span class='gt_from_md'&gt;&lt;strong&gt;N = 205&lt;/strong&gt;&lt;/span&gt;&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;">
+<span class="gt_from_md"><strong>N = 205</strong></span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;"><sup>1</sup></span>
+</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">Tumor Thickness</td>
+<td headers="stat_0" class="gt_row gt_center"><br></td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left">    ≤ 129</td>
+<td headers="stat_0" class="gt_row gt_center">77 (38%)</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left">    &gt; 129 &amp; ≤ 322</td>
+<td headers="stat_0" class="gt_row gt_center">68 (33%)</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left">    &gt; 322</td>
+<td headers="stat_0" class="gt_row gt_center">60 (29%)</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">Sex</td>
+<td headers="stat_0" class="gt_row gt_center"><br></td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left">    Female</td>
+<td headers="stat_0" class="gt_row gt_center">126 (61%)</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left">    Male</td>
+<td headers="stat_0" class="gt_row gt_center">79 (39%)</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">Ulceration</td>
+<td headers="stat_0" class="gt_row gt_center">90 (44%)</td>
+</tr>
+</tbody>
+<tfoot class="gt_footnotes"><tr>
+<td class="gt_footnote" colspan="2">
+<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;"><sup>1</sup></span> <span class="gt_from_md">n (%)</span>
+</td>
+    </tr></tfoot>
+</table>
+</div>
 <p>To calculate overall survival, we will only consider death from
 melanoma as an event. Patients who died from other cause or were lost to
 follow-up are censored.</p>
@@ -111,128 +613,651 @@ follow-up are censored.</p>
 <span>  <span class="fu">xlab</span><span class="op">(</span><span class="st">"Years"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu">ylim</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cure-model-analysis-example_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <p>From the Kaplan-meier curves we can see the disease death rate
 plateaus around .7, indicating that not all patients may experience
-disease-realted death. The patients that do experience this event, may
-be different from those who do not in a way that would be useful to
-categorize.</p>
-<p>Cure models can help tease apart the contribution of clinical
-variables to these potentially heterogeneous sub cohorts.</p>
+disease-related death. The patients that do experience this event, may
+have different clinical charcteristics from those who do not. Cure
+models can help characterize the contribution of clinical variables to
+these potentially heterogeneous sub-cohorts.</p>
 </div>
 <div class="section level2">
 <h2 id="fitting-the-cure-model">Fitting the Cure Model<a class="anchor" aria-label="anchor" href="#fitting-the-cure-model"></a>
 </h2>
 <p>The <code><a href="../reference/cureit.html">cureit()</a></code> function is a wrapper for
-<code><a href="https://rdrr.io/pkg/smcure/man/smcure.html" class="external-link">smcure::smcure()</a></code> that allows you to code cure models using
-a tidy framework. Below, we will fit a model using ulceration status,
-sex and tumor thickness as variables of interest in both cure and
-survival portions.</p>
+<code><a href="https://rdrr.io/pkg/smcure/man/smcure.html" class="external-link">smcure::smcure()</a></code> and allows you to fit cure models and
+estimate coefficients and confidence intervals (via bootstrapping).
+Results can be summarized and organized using a tidy framework (see
+{broom} package for more information). Below, we will fit a cure model
+using ulceration status, sex and tumor thickness as variables of
+interest in both cure and survival portions.</p>
 <p>Note: You can optionally provide different sets of covariates to the
 survival portion and the cure portion:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span>surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>,</span>
-<span>              cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>, data <span class="op">=</span> <span class="va">melanoma</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">cureit</span>(<span class="fu">Surv</span>(days, status) <span class="sc">~</span> ulceration <span class="sc">+</span> sex <span class="sc">+</span> tumor_thickness,</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">cure_formula =</span> <span class="sc">~</span> ulceration <span class="sc">+</span> sex <span class="sc">+</span> tumor_thickness,</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">data =</span> melanoma)</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">predict</span>(p, <span class="at">times =</span> <span class="fu">seq</span>(<span class="dv">100</span>, <span class="dv">5000</span>, <span class="dv">100</span>), <span class="at">newdata =</span> melanoma, <span class="at">brier =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>x<span class="sc">$</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span></span>
+<span>  surv_formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>,</span>
+<span>  cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>, data <span class="op">=</span> <span class="va">melanoma</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: 0 of 100 did not converge.</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="producing-table-summary-of-the-cure-model">Producing Table Summary of the Cure Model<a class="anchor" aria-label="anchor" href="#producing-table-summary-of-the-cure-model"></a>
+</h3>
+<p>A tidy method is available to turn model estimates into a data frame
+of model info.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 5</span></span></span>
+<span><span class="co">#&gt;   term                                    estimate std.error statistic   p.value</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> (Intercept), Cure model                   -<span style="color: #BB0000;">2.25</span>      0.563    -<span style="color: #BB0000;">4.00</span>  0.000<span style="text-decoration: underline;">063</span>6</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ulceration_yes, Cure model                 1.25      0.472     2.64  0.008<span style="text-decoration: underline;">18</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sex_male, Cure model                       0.283     0.488     0.579 0.562    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> tumor_thickness_129_322, Cure model        1.34      0.584     2.30  0.021<span style="text-decoration: underline;">7</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> tumor_thickness_322, Cure model            1.38      0.685     2.01  0.044<span style="text-decoration: underline;">1</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ulceration_yes, Survival model            -<span style="color: #BB0000;">0.167</span>     0.448    -<span style="color: #BB0000;">0.373</span> 0.709    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> sex_male, Survival model                   0.443     0.443     1.00  0.317    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> tumor_thickness_129_322, Survival model    0.120     0.542     0.221 0.825    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> tumor_thickness_322, Survival model        1.37      0.758     1.81  0.070<span style="text-decoration: underline;">7</span></span></span></code></pre></div>
+<p>Additionally, you can extract tidy fits of both sub models separately
+as well:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tidy_mods</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="co"># cure model tidy table</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_cure</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 7</span></span></span>
+<span><span class="co">#&gt;   term                   estimate std.error statistic conf.low conf.high p.value</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> (Intercept), Cure mod…   -<span style="color: #BB0000;">2.25</span>      0.563    -<span style="color: #BB0000;">4.00</span>   -<span style="color: #BB0000;">3.35</span>       -<span style="color: #BB0000;">1.15</span> 6.36<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ulceration_yes, Cure …    1.25      0.472     2.64    0.323       2.17 8.18<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> sex_male, Cure model      0.283     0.488     0.579  -<span style="color: #BB0000;">0.674</span>       1.24 5.62<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> tumor_thickness_129_3…    1.34      0.584     2.30    0.196       2.49 2.17<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> tumor_thickness_322, …    1.38      0.685     2.01    0.036<span style="text-decoration: underline;">3</span>      2.72 4.41<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span></span></span>
 <span></span>
-<span><span class="fu">tbl_regression</span><span class="op">(</span><span class="va">fit</span>, tidy_fun <span class="op">=</span> <span class="va">tidy.cureit</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">bold_labels</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># survival model tidy table</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_surv</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 7</span></span></span>
+<span><span class="co">#&gt;   term                   estimate std.error statistic conf.low conf.high p.value</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ulceration_yes, Survi…   -<span style="color: #BB0000;">0.167</span>     0.448    -<span style="color: #BB0000;">0.373</span>   -<span style="color: #BB0000;">1.05</span>      0.711  0.709 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> sex_male, Survival mo…    0.443     0.443     1.00    -<span style="color: #BB0000;">0.425</span>     1.31   0.317 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> tumor_thickness_129_3…    0.120     0.542     0.221   -<span style="color: #BB0000;">0.942</span>     1.18   0.825 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> tumor_thickness_322, …    1.37      0.758     1.81    -<span style="color: #BB0000;">0.116</span>     2.85   0.070<span style="text-decoration: underline;">7</span></span></span></code></pre></div>
+<p>A basic <code><a href="https://www.danieldsjoberg.com/gtsummary/reference/tbl_summary.html" class="external-link">gtsummary::tbl_summary()</a></code> method for
+<code>cureit</code> model objects is also available <strong>(please
+note: this is experimental and will be updated soon to include improved
+formatting of submodel components):</strong></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://www.danieldsjoberg.com/gtsummary/reference/tbl_regression.html" class="external-link">tbl_regression</a></span><span class="op">(</span><span class="va">fit</span>, exponentiate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">bold_labels</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">bold_p</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div id="iuvfruuewh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#iuvfruuewh table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#iuvfruuewh thead, #iuvfruuewh tbody, #iuvfruuewh tfoot, #iuvfruuewh tr, #iuvfruuewh td, #iuvfruuewh th {
+  border-style: none;
+}
+
+#iuvfruuewh p {
+  margin: 0;
+  padding: 0;
+}
+
+#iuvfruuewh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#iuvfruuewh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#iuvfruuewh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#iuvfruuewh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#iuvfruuewh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#iuvfruuewh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#iuvfruuewh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#iuvfruuewh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#iuvfruuewh .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#iuvfruuewh .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#iuvfruuewh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#iuvfruuewh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#iuvfruuewh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#iuvfruuewh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#iuvfruuewh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iuvfruuewh .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#iuvfruuewh .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#iuvfruuewh .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#iuvfruuewh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iuvfruuewh .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#iuvfruuewh .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iuvfruuewh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#iuvfruuewh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iuvfruuewh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iuvfruuewh .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iuvfruuewh .gt_left {
+  text-align: left;
+}
+
+#iuvfruuewh .gt_center {
+  text-align: center;
+}
+
+#iuvfruuewh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#iuvfruuewh .gt_font_normal {
+  font-weight: normal;
+}
+
+#iuvfruuewh .gt_font_bold {
+  font-weight: bold;
+}
+
+#iuvfruuewh .gt_font_italic {
+  font-style: italic;
+}
+
+#iuvfruuewh .gt_super {
+  font-size: 65%;
+}
+
+#iuvfruuewh .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#iuvfruuewh .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#iuvfruuewh .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#iuvfruuewh .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#iuvfruuewh .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#iuvfruuewh .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#iuvfruuewh .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#iuvfruuewh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#iuvfruuewh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="&lt;span class='gt_from_md'&gt;&lt;strong&gt;Characteristic&lt;/strong&gt;&lt;/span&gt;"><span class="gt_from_md"><strong>Characteristic</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;span class='gt_from_md'&gt;&lt;strong&gt;exp(Beta)&lt;/strong&gt;&lt;/span&gt;"><span class="gt_from_md"><strong>exp(Beta)</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;span class='gt_from_md'&gt;&lt;strong&gt;95% CI&lt;/strong&gt;&lt;/span&gt;&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;">
+<span class="gt_from_md"><strong>95% CI</strong></span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;"><sup>1</sup></span>
+</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;span class='gt_from_md'&gt;&lt;strong&gt;p-value&lt;/strong&gt;&lt;/span&gt;"><span class="gt_from_md"><strong>p-value</strong></span></th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">(Intercept), Cure model</td>
+<td headers="estimate" class="gt_row gt_center">0.11</td>
+<td headers="conf.low" class="gt_row gt_center">0.03, 0.32</td>
+<td headers="p.value" class="gt_row gt_center" style="font-weight: bold;"></td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">ulceration_yes, Cure model</td>
+<td headers="estimate" class="gt_row gt_center">3.48</td>
+<td headers="conf.low" class="gt_row gt_center">1.38, 8.78</td>
+<td headers="p.value" class="gt_row gt_center" style="font-weight: bold;">0.008</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">sex_male, Cure model</td>
+<td headers="estimate" class="gt_row gt_center">1.33</td>
+<td headers="conf.low" class="gt_row gt_center">0.51, 3.46</td>
+<td headers="p.value" class="gt_row gt_center">0.6</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">tumor_thickness_129_322, Cure model</td>
+<td headers="estimate" class="gt_row gt_center">3.83</td>
+<td headers="conf.low" class="gt_row gt_center">1.22, 12.0</td>
+<td headers="p.value" class="gt_row gt_center" style="font-weight: bold;">0.022</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">tumor_thickness_322, Cure model</td>
+<td headers="estimate" class="gt_row gt_center">3.97</td>
+<td headers="conf.low" class="gt_row gt_center">1.04, 15.2</td>
+<td headers="p.value" class="gt_row gt_center" style="font-weight: bold;">0.044</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">ulceration_yes, Survival model</td>
+<td headers="estimate" class="gt_row gt_center">0.85</td>
+<td headers="conf.low" class="gt_row gt_center">0.35, 2.04</td>
+<td headers="p.value" class="gt_row gt_center">0.7</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">sex_male, Survival model</td>
+<td headers="estimate" class="gt_row gt_center">1.56</td>
+<td headers="conf.low" class="gt_row gt_center">0.65, 3.71</td>
+<td headers="p.value" class="gt_row gt_center">0.3</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">tumor_thickness_129_322, Survival model</td>
+<td headers="estimate" class="gt_row gt_center">1.13</td>
+<td headers="conf.low" class="gt_row gt_center">0.39, 3.26</td>
+<td headers="p.value" class="gt_row gt_center">0.8</td>
+</tr>
+<tr>
+<td headers="label" class="gt_row gt_left" style="font-weight: bold;">tumor_thickness_322, Survival model</td>
+<td headers="estimate" class="gt_row gt_center">3.93</td>
+<td headers="conf.low" class="gt_row gt_center">0.89, 17.4</td>
+<td headers="p.value" class="gt_row gt_center">0.071</td>
+</tr>
+</tbody>
+<tfoot class="gt_footnotes"><tr>
+<td class="gt_footnote" colspan="4">
+<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;"><sup>1</sup></span> <span class="gt_from_md">CI = Confidence Interval</span>
+</td>
+    </tr></tfoot>
+</table>
+</div>
+</div>
+<div class="section level3">
+<h3 id="model-prediction">Model Prediction<a class="anchor" aria-label="anchor" href="#model-prediction"></a>
+</h3>
+<p>Make predictions on cureit model:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>,</span>
+<span>  cure_formula <span class="op">=</span> <span class="op">~</span> <span class="va">ulceration</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">tumor_thickness</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">melanoma</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: 0 of 100 did not converge.</span></span>
 <span></span>
-<span><span class="va">tidy_df</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_cure</span>, <span class="va">fit</span><span class="op">$</span><span class="va">tidy</span><span class="op">$</span><span class="va">df_surv</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">p</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">5000</span>, <span class="fl">100</span><span class="op">)</span>, newdata <span class="op">=</span> <span class="va">melanoma</span>, brier <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># names of lists that can be extracted from x</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "cured"         "surv_uncured"  "surv_marginal" "brier"</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="nomogram">Nomogram<a class="anchor" aria-label="anchor" href="#nomogram"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">nomogram.cureit</span><span class="op">(</span><span class="va">fit</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="k-index">K-Index<a class="anchor" aria-label="anchor" href="#k-index"></a>
-</h2>
-<p>Below we calculate the K and C indicies for this model</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://ipa-tys.github.io/ROCR/" class="external-link">ROCR</a></span><span class="op">)</span></span>
-<span>  </span>
-<span><span class="va">mod_data</span> <span class="op">&lt;-</span> <span class="va">mel</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">ulc</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> </span>
-<span>                  <span class="va">thick_cat</span>, data <span class="op">=</span> <span class="va">mod_data</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">mod2</span> <span class="op">&lt;-</span> <span class="va">mod_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">mm</span><span class="op">)</span></span>
-<span>  </span>
-<span><span class="va">k_fit</span> <span class="op">&lt;-</span> <span class="fu">evacure</span><span class="fu">::</span><span class="fu">smcure1</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">days</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">ulcpresent</span> <span class="op">+</span> </span>
-<span>                            <span class="va">sex</span> <span class="op">+</span> </span>
-<span>                            <span class="va">`thick_catgreater 322`</span> <span class="op">+</span> </span>
-<span>                            <span class="va">`thick_catless equal 322`</span>,</span>
-<span>      cureform <span class="op">=</span> <span class="op">~</span> <span class="va">ulcpresent</span> <span class="op">+</span> </span>
-<span>                            <span class="va">sex</span> <span class="op">+</span> </span>
-<span>                            <span class="va">`thick_catgreater 322`</span> <span class="op">+</span> </span>
-<span>                            <span class="va">`thick_catless equal 322`</span>,</span>
-<span>      data <span class="op">=</span> <span class="va">mod2</span>,</span>
-<span>      model <span class="op">=</span> <span class="st">"ph"</span>,</span>
-<span>      nboot <span class="op">=</span> <span class="fl">200</span>,</span>
-<span>      Var <span class="op">=</span> <span class="cn">T</span></span>
-<span>      <span class="op">)</span></span></code></pre></div>
+<p>Create a nomogram based on the model fit:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">k_index</span> <span class="op">&lt;-</span> <span class="va">k_fit</span><span class="op">$</span><span class="va">eva</span><span class="op">[</span><span class="st">"K"</span><span class="op">]</span></span>
-<span><span class="va">c_index</span> <span class="op">&lt;-</span> <span class="va">k_fit</span><span class="op">$</span><span class="va">eva</span><span class="op">[</span><span class="st">"C"</span><span class="op">]</span></span>
-<span></span>
-<span></span>
-<span><span class="fu">tribble</span><span class="op">(</span></span>
-<span>  <span class="op">~</span><span class="st">"Statistic"</span>, <span class="op">~</span><span class="st">"Value"</span>, </span>
-<span>  <span class="st">"k-index"</span>, <span class="va">k_index</span>, </span>
-<span>  <span class="st">"c-index"</span>, <span class="va">c_index</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate_if</span><span class="op">(</span><span class="va">is.numeric</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">.x</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">gt</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_options.html" class="external-link">tab_options</a></span><span class="op">(</span>table.font.size <span class="op">=</span> <span class="st">"small"</span>, </span>
-<span>        data_row.padding <span class="op">=</span> <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/px.html" class="external-link">px</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>        summary_row.padding <span class="op">=</span> <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/px.html" class="external-link">px</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, </span>
-<span>        grand_summary_row.padding <span class="op">=</span> <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/px.html" class="external-link">px</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>        footnotes.padding <span class="op">=</span> <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/px.html" class="external-link">px</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, </span>
-<span>        source_notes.padding <span class="op">=</span> <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/px.html" class="external-link">px</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>        row_group.padding <span class="op">=</span> <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/px.html" class="external-link">px</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/nomogram_methods_cureit.html">nomogram</a></span><span class="op">(</span><span class="va">fit</span>, time <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="cure-model-analysis-example_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
-<div class="section level2">
-<h2 id="calibration-curve">Calibration Curve<a class="anchor" aria-label="anchor" href="#calibration-curve"></a>
-</h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/cureit.html">cureit</a></span><span class="op">(</span><span class="va">fit</span>, prediction_time <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
-</div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by <a href="https://www.karissawhiting.com/" class="external-link">Karissa Whiting</a>, <a href="https://www.mskcc.org/profile/teng-fei" class="external-link">Teng Fei</a>.</p>
+  <p>Developed by <a href="https://www.karissawhiting.com/" class="external-link">Karissa Whiting</a>, <a href="https://www.mskcc.org/profile/teng-fei" class="external-link">Teng Fei</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

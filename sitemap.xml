@@ -1,63 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/404.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/articles/cure-model-analysis-example.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/authors.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/index.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/Brier_inference_cureit.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/broom_methods_cureit.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/broom_methods_smcure.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/cureit-package.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/cureit.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/dot-calc_k_index.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/k_index.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/melanoma.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/nomogram_methods_cureit.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/predict.cureit.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>http://www.karissawhiting.com/cureit/reference/trial.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>http://www.karissawhiting.com/cureit/404.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/LICENSE-text.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/LICENSE.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/articles/cure-model-analysis-example.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/articles/index.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/authors.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/index.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/Brier_inference_cureit.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/broom_methods_cureit.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/broom_methods_smcure.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/cureit-package.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/cureit.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/dot-calc_k_index.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/index.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/k_index.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/melanoma.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/nomogram_methods_cureit.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/predict.cureit.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/reexports.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/tbl_regression.cureit.html</loc></url>
+<url><loc>http://www.karissawhiting.com/cureit/reference/trial.html</loc></url>
 </urlset>
+
