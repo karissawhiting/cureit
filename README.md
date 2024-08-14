@@ -40,6 +40,7 @@ creating a model matrix:
 p <- cureit(surv_formula = Surv(ttdeath, death) ~ age,
    cure_formula = ~ age,
    data = trial)
+#> Warning: 0 of 100 did not converge.
 
 p$surv_coefs
 #> age, Survival model 
@@ -49,3 +50,12 @@ p$cure_coefs
 #> (Intercept), Cure model         age, Cure model 
 #>             -0.32294763              0.01067634
 ```
+
+# Contributing
+
+Please note that the cureit project is released with a [Contributor Code
+of Conduct](http://www.karissawhiting.com/cureit/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
+
+Thank you to [Sabrina Lin (@stl2137)](https://github.com/stl2137) for
+package contributions!

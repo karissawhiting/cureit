@@ -5,16 +5,46 @@
 #' @param cure_formula formula with covariates for cure fraction on RHS
 #' @param data data frame
 #' @param conf.level confidence level. Default is 0.95.
-#' @param nboot number of bootstrap samples used for inference.
+#' @param nboot number of bootstrap samples used for inference. Default number is 100.
 #' @param eps convergence criterion for the EM algorithm.
 #' @param ... passed to methods
 #'
-#' @return cureit object
+#' @return `cureit` object. The output includes the following:
+#' 
+#' * `surv_coefs`
+#' * `cure_coefs`
+#' * `surv_formula`
+#' * `cure_formula`
+#' * `data`
+#' * `conf.level`
+#' * `nboot`
+#' * `eps`
+#' * `surv_xlevels`
+#' * `cure_xlevels`
+#' * `tidy`
+#' * `smcure`
+#' * `surv_blueprint`
+#' * `cure_blueprint`
+#' * `blueprint`
+#' 
 #' @family cureit() functions
 #' @name cureit
 #' @examples
-#' cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
-#' cure_formula = ~ age + grade,  data = trial)
+#' 
+#' cureit_obj <- cureit(surv_formula = Surv(ttdeath, death) ~ age + grade, 
+#' cure_formula = ~ age + grade,  data = trial, nboot = 10)
+#' 
+#' # pulling survival coeffients
+#' cureit_obj$surv_coefs
+#' 
+#' # pulling cure coefficients
+#' cureit_obj$coefs
+#' 
+#' # `tidy` object of survival model output
+#' cureit_obj$tidy$df_surv
+#' 
+#' # `tidy` object of cure model output
+#' cureit_obj$tidy$df_cure
 NULL
 
 # Formula method

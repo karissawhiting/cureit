@@ -36,6 +36,10 @@ broom::augment
 
 # gtsummary --------------------------------------------------------------------
 #' @export
+#' @importFrom gtsummary tbl_regression
+gtsummary::tbl_regression
+
+#' @export
 #' @importFrom gtsummary add_n
 gtsummary::add_n
 

@@ -11,6 +11,7 @@
 \alias{tidy}
 \alias{glance}
 \alias{augment}
+\alias{tbl_regression}
 \alias{add_n}
 \alias{add_nevent}
 \alias{add_p}
@@ -31,7 +32,7 @@ below to see their documentation.
 
   \item{ggplot2}{\code{\link[ggplot2]{autoplot}}}
 
-  \item{gtsummary}{\code{\link[gtsummary]{add_n}}, \code{\link[gtsummary]{add_nevent}}, \code{\link[gtsummary]{add_p}}, \code{\link[gtsummary]{inline_text}}}
+  \item{gtsummary}{\code{\link[gtsummary]{add_n}}, \code{\link[gtsummary]{add_nevent}}, \code{\link[gtsummary]{add_p}}, \code{\link[gtsummary]{inline_text}}, \code{\link[gtsummary]{tbl_regression}}}
 
   \item{survival}{\code{\link[survival]{coxph}}, \code{\link[survival]{Surv}}, \code{\link[survival]{survfit}}}
 }}
